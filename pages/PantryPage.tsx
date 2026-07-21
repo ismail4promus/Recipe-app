@@ -14,6 +14,7 @@ import { AddIngredientModal } from '../components/pantry/AddIngredientModal';
 import { EditIngredientModal } from '../components/pantry/EditIngredientModal';
 import { PantryItemCard } from '../components/pantry/PantryItemCard';
 import { Button, Chip, IconButton } from '../components/ui/kit';
+import { StickyToolbar } from '../components/ui/StickyToolbar';
 
 const CATEGORIES = ["Protein", "Vegetable", "Fruit", "Grains", "Dairy", "Spices", "Oils & Fats", "Baking", "Condiments", "Beverage", "Other"];
 
@@ -141,8 +142,7 @@ export default function PantryPage() {
             </motion.div>
 
             {/* Filter bar */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="sticky top-14 md:top-16 z-30 bg-app-bg/95 backdrop-blur-md py-4">
-                <div className="bg-app-card border border-app-border p-3 rounded-lg flex flex-col lg:flex-row gap-3 shadow-soft">
+            <StickyToolbar innerClassName="flex flex-col lg:flex-row gap-3">
                     <div className="relative flex-grow">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
                         <input
@@ -174,13 +174,12 @@ export default function PantryPage() {
                             </Chip>
                         ))}
                         <div className="w-px h-8 bg-app-border mx-1 shrink-0"></div>
-                        <div className="flex gap-1 bg-app-elevated p-1 rounded-full shrink-0">
+                        <div className="flex gap-1 bg-app-elevated p-1 rounded-md shrink-0">
                             <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode==='grid'} className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-all", viewMode==='grid'?'bg-app-primary text-primary-foreground':'text-app-muted hover:text-app-text')}><LayoutGrid className="h-4 w-4" /></button>
                             <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode==='list'} className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-all", viewMode==='list'?'bg-app-primary text-primary-foreground':'text-app-muted hover:text-app-text')}><ListIcon className="h-4 w-4" /></button>
                         </div>
                     </div>
-                </div>
-            </motion.div>
+            </StickyToolbar>
 
             {/* Content Feed */}
             <div className="min-h-[500px]">

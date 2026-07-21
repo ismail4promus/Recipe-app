@@ -14,6 +14,7 @@ import { InvoiceModal } from '../components/orders/InvoiceModal';
 import { OrderFormModal } from '../components/orders/OrderFormModal';
 import OrderCard from '../components/orders/OrderCard';
 import { Button, Chip } from '../components/ui/kit';
+import { StickyToolbar } from '../components/ui/StickyToolbar';
 
 const OrdersPage: React.FC = () => {
     const { orders, updateOrderStatus, addOrder, updateOrder, deleteOrder, recipes } = useData();
@@ -115,8 +116,7 @@ const OrdersPage: React.FC = () => {
             </motion.div>
 
             {/* Controls */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="sticky top-14 md:top-16 z-30 py-2">
-                <div className="bg-app-card/80 backdrop-blur-xl border border-app-border p-3 rounded-lg flex flex-col lg:flex-row gap-3 shadow-soft">
+            <StickyToolbar innerClassName="flex flex-col lg:flex-row gap-3">
                     <div className="relative flex-grow">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
                         <input
@@ -144,8 +144,7 @@ const OrdersPage: React.FC = () => {
                             </Chip>
                         ))}
                     </div>
-                </div>
-            </motion.div>
+            </StickyToolbar>
 
             {/* Main Terminal Feed */}
             <div className="grid grid-cols-1 gap-4">

@@ -6,6 +6,7 @@ import { Recipe, Ingredient } from "../types";
 import { formatCurrency, cn, ANIMATION_VARIANTS } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Chip } from "../components/ui/kit";
+import { StickyToolbar } from "../components/ui/StickyToolbar";
 
 const CATEGORIES = ["All", "Main Course", "Appetizer", "Dessert", "Beverage"];
 type SortKey = "featured" | "name" | "cost" | "time";
@@ -173,7 +174,7 @@ export default function RecipesPage() {
       </motion.div>
 
       {/* Search + filters + sort */}
-      <motion.div variants={ANIMATION_VARIANTS.item} className="sticky top-14 z-30 -mx-1 rounded-md border border-app-border bg-app-card/90 p-2 backdrop-blur-md shadow-soft">
+      <StickyToolbar>
         <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
           <div className="relative flex-grow">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-app-muted" />
@@ -217,7 +218,7 @@ export default function RecipesPage() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </StickyToolbar>
 
       {/* Results */}
       {filteredRecipes.length > 0 ? (
