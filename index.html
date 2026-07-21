@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>iKitchen</title>
+  <title>iCooking</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -16,6 +16,7 @@
             // Channel form enables opacity modifiers (bg-app-primary/10).
             app: {
               bg: 'rgb(var(--c-bg) / <alpha-value>)',
+              secondary: 'rgb(var(--c-secondary) / <alpha-value>)',
               sidebar: 'rgb(var(--c-sidebar) / <alpha-value>)',
               card: 'rgb(var(--c-card) / <alpha-value>)',
               elevated: 'rgb(var(--c-elevated) / <alpha-value>)',
@@ -25,6 +26,7 @@
               warning: 'rgb(var(--c-warning) / <alpha-value>)',
               danger: 'rgb(var(--c-danger) / <alpha-value>)',
               muted: 'rgb(var(--c-muted) / <alpha-value>)',
+              faint: 'rgb(var(--c-faint) / <alpha-value>)',
               text: 'rgb(var(--c-text) / <alpha-value>)',
               border: 'var(--c-border)',
             },
@@ -39,16 +41,16 @@
             }
           },
           borderRadius: {
-            'sm': '0.5rem',
-            'md': '0.75rem',
-            'lg': '1rem',
-            'xl': '1.25rem',
-            '2xl': '1.5rem',
+            'sm': '3px',
+            'md': '4px',
+            'lg': '6px',
+            'xl': '8px',
+            '2xl': '10px',
           },
           boxShadow: {
-            soft: '0 2px 8px rgba(0,0,0,0.20)',
-            card: '0 8px 28px -12px rgba(0,0,0,0.45)',
-            float: '0 10px 30px -6px rgba(242,107,33,0.45)',
+            soft: '0 1px 2px rgba(20,40,50,0.06), 0 1px 3px rgba(20,40,50,0.08)',
+            card: '0 1px 2px rgba(20,40,50,0.06), 0 4px 12px -6px rgba(20,40,50,0.14)',
+            float: '0 2px 8px -2px rgba(20,40,50,0.18)',
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
@@ -63,42 +65,58 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
   <style>
-    /* ---- Dark theme (default, matches reference) ---- */
-    :root {
-      --c-bg: 16 16 16;           /* #101010 near-black */
-      --c-sidebar: 22 22 22;      /* #161616 */
-      --c-card: 28 28 28;         /* #1C1C1C */
-      --c-elevated: 38 38 38;     /* #262626 list rows */
-      --c-primary: 242 107 33;    /* #F26B21 vibrant orange */
+    /* ---- Light theme (default) — pale, airy, slightly blue ---- */
+    :root, .light {
+      --c-bg: 237 247 250;        /* #EDF7FA main */
+      --c-secondary: 228 242 246; /* #E4F2F6 */
+      --c-sidebar: 225 241 245;   /* #E1F1F5 navigation */
+      --c-card: 255 255 255;      /* #FFFFFF */
+      --c-elevated: 248 251 252;  /* #F8FBFC */
+      --c-primary: 42 145 179;    /* #2A91B3 teal */
       --c-primary-fg: 255 255 255;
-      --c-info: 96 165 250;       /* #60A5FA */
-      --c-success: 74 222 128;    /* #4ADE80 */
-      --c-warning: 251 191 36;    /* #FBBF24 */
-      --c-danger: 248 113 113;    /* #F87171 */
-      --c-muted: 156 156 156;     /* #9C9C9C */
-      --c-text: 245 245 245;      /* #F5F5F5 */
-      --c-border: rgba(255, 255, 255, 0.08);
+      --c-info: 42 145 179;       /* teal = information */
+      --c-success: 32 184 131;    /* #20B883 */
+      --c-warning: 243 154 35;    /* #F39A23 */
+      --c-danger: 216 93 104;     /* #D85D68 */
+      --c-muted: 100 116 125;     /* #64747D secondary text */
+      --c-faint: 152 166 172;     /* #98A6AC muted text */
+      --c-text: 32 42 51;         /* #202A33 */
+      --c-border: #D8E5E9;
+      --c-scrollbar: rgba(32, 42, 51, 0.20);
+      color-scheme: light;
+    }
+
+    /* ---- Dark theme — charcoal blue, not pure black ---- */
+    .dark {
+      --c-bg: 39 50 58;           /* #27323A main */
+      --c-secondary: 48 61 69;    /* #303D45 */
+      --c-sidebar: 37 48 57;      /* #253039 navigation */
+      --c-card: 55 70 78;         /* #37464E */
+      --c-elevated: 61 77 85;     /* #3D4D55 */
+      --c-primary: 40 163 204;    /* #28A3CC teal */
+      --c-primary-fg: 255 255 255;
+      --c-info: 40 163 204;       /* teal */
+      --c-success: 40 201 145;    /* #28C991 */
+      --c-warning: 245 160 42;    /* #F5A02A */
+      --c-danger: 224 105 114;    /* #E06972 */
+      --c-muted: 194 205 210;     /* #C2CDD2 secondary text */
+      --c-faint: 135 150 158;     /* #87969E muted text */
+      --c-text: 246 248 249;      /* #F6F8F9 */
+      --c-border: #46565E;
       --c-scrollbar: rgba(255, 255, 255, 0.16);
       color-scheme: dark;
     }
 
-    /* ---- Light theme (toggle) ---- */
-    .light {
-      --c-bg: 250 247 242;        /* warm cream #FAF7F2 */
-      --c-sidebar: 255 255 255;
-      --c-card: 255 255 255;
-      --c-elevated: 245 241 235;
-      --c-primary: 242 107 33;    /* same orange */
-      --c-primary-fg: 255 255 255;
-      --c-info: 37 99 235;
-      --c-success: 22 163 74;
-      --c-warning: 180 83 9;
-      --c-danger: 220 38 38;
-      --c-muted: 120 116 110;
-      --c-text: 26 24 22;         /* #1A1816 */
-      --c-border: rgba(26, 24, 22, 0.10);
-      --c-scrollbar: rgba(26, 24, 22, 0.20);
-      color-scheme: light;
+    /* First-use: respect device dark preference before JS applies a class */
+    @media (prefers-color-scheme: dark) {
+      :root:not(.light):not(.dark) {
+        --c-bg: 39 50 58; --c-secondary: 48 61 69; --c-sidebar: 37 48 57;
+        --c-card: 55 70 78; --c-elevated: 61 77 85;
+        --c-primary: 40 163 204; --c-primary-fg: 255 255 255; --c-info: 40 163 204;
+        --c-success: 40 201 145; --c-warning: 245 160 42; --c-danger: 224 105 114;
+        --c-muted: 194 205 210; --c-faint: 135 150 158; --c-text: 246 248 249;
+        --c-border: #46565E; --c-scrollbar: rgba(255,255,255,0.16); color-scheme: dark;
+      }
     }
 
     body {
@@ -109,6 +127,8 @@
       text-rendering: optimizeLegibility;
       transition: background-color 0.2s ease, color 0.2s ease;
     }
+
+    .app-shell-bg { background-color: rgb(var(--c-bg)); }
 
     h1, h2, h3, h4, h5, h6 {
       letter-spacing: -0.02em;
@@ -146,6 +166,11 @@
     ::-webkit-scrollbar-thumb { background: var(--c-scrollbar); border-radius: 8px; }
     ::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-primary)); }
 
+    /* Mobile uses overlay/touch scrolling — reclaim the scrollbar gutter */
+    @media (max-width: 767px) {
+      ::-webkit-scrollbar { width: 0; height: 0; }
+    }
+
     .tabular-nums {
         font-variant-numeric: tabular-nums;
         font-family: 'JetBrains Mono', monospace;
@@ -174,7 +199,7 @@
 </script>
 <link rel="stylesheet" href="/index.css">
 </head>
-<body class="dark">
+<body>
   <div id="root"></div>
 <script type="module" src="/index.tsx"></script>
 </body>

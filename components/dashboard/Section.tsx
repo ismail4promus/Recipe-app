@@ -15,15 +15,15 @@ interface SectionProps {
 
 // Card wrapper with a clear title + optional "view all" link. Used for every dashboard block.
 const Section: React.FC<SectionProps> = ({ title, icon: Icon, action, className, count, countTone = 'muted', children }) => (
-  <section className={cn('rounded-xl border border-app-border bg-app-card', className)}>
-    <header className="flex items-center justify-between gap-3 border-b border-app-border px-4 py-3">
+  <section className={cn('rounded-lg border border-app-border bg-app-card', className)}>
+    <header className="flex items-center justify-between gap-3 border-b border-app-border px-3 py-2">
       <div className="flex items-center gap-2">
         {Icon && <Icon className="h-4 w-4 text-app-muted" />}
         <h2 className="text-sm font-bold text-app-text">{title}</h2>
         {count !== undefined && count > 0 && (
           <span
             className={cn(
-              'rounded-full px-2 py-0.5 text-xs font-bold tabular-nums',
+              'rounded-md px-2 py-0.5 text-xs font-bold tabular-nums',
               countTone === 'danger' && 'bg-app-danger/15 text-app-danger',
               countTone === 'warning' && 'bg-app-warning/15 text-app-warning',
               countTone === 'muted' && 'bg-white/5 text-app-muted'

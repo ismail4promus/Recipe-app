@@ -11,12 +11,12 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-[68px] items-center gap-3 border-b border-app-border bg-app-bg/85 px-3 backdrop-blur-md md:px-6">
+      <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-app-border bg-app-sidebar/90 px-3 backdrop-blur-md md:px-4">
         {/* Mobile menu */}
         <button
           onClick={() => setDrawerOpen(true)}
           aria-label="Open menu"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text md:hidden"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-app-muted hover:bg-app-muted/10 hover:text-app-text md:hidden"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -31,7 +31,7 @@ const Header: React.FC = () => {
         <div className="flex shrink-0 items-center gap-1.5">
           {/* Connection problem indicator — only when there's a real issue */}
           {isDemoMode && (
-            <span className="hidden items-center gap-1.5 rounded-lg border border-app-warning/25 bg-app-warning/10 px-2.5 py-1.5 text-xs font-semibold text-app-warning sm:inline-flex" title="Working offline with local data">
+            <span className="hidden items-center gap-1.5 rounded-md border border-app-warning/25 bg-app-warning/10 px-2.5 py-1.5 text-xs font-semibold text-app-warning sm:inline-flex" title="Working offline with local data">
               <CloudOff className="h-3.5 w-3.5" /> Offline
             </span>
           )}
@@ -40,14 +40,14 @@ const Header: React.FC = () => {
           <button
             onClick={() => setMobileSearch(s => !s)}
             aria-label="Search"
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text md:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-app-muted hover:bg-app-muted/10 hover:text-app-text md:hidden"
           >
             <Search className="h-5 w-5" />
           </button>
 
           <button
             aria-label="Notifications"
-            className="relative flex h-10 w-10 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text"
+            className="relative flex h-9 w-9 items-center justify-center rounded-md text-app-muted hover:bg-app-muted/10 hover:text-app-text"
           >
             <Bell className="h-5 w-5" />
             <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-app-primary" />
@@ -55,7 +55,7 @@ const Header: React.FC = () => {
 
           <button
             aria-label="Profile"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-app-border bg-app-card text-app-muted hover:text-app-text"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-app-border bg-app-card text-app-muted hover:text-app-text"
           >
             <User className="h-4 w-4" />
           </button>

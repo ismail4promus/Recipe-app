@@ -24,6 +24,7 @@ const CookingPage: React.FC = () => {
     const active: CookingTask[] = inProgress.map(s => {
       const r = getRecipeById(s.recipeId);
       const status: CookingStatus = s.currentStep > 0 ? 'Cooking' : 'Preparing';
+      const stepCount = r?.steps?.length || 0;
       return {
         key: `sess-${s.id}`,
         recipeName: r?.name || s.sessionName || 'Cooking session',
@@ -32,6 +33,8 @@ const CookingPage: React.FC = () => {
         status,
         actionLabel: 'Continue',
         to: `/recipes/${s.recipeId}/cook?sessionId=${s.id}`,
+        progress: stepCount ? Math.min(1, s.currentStep / stepCount) : 0,
+        progressLabel: stepCount ? `Step ${Math.min(s.currentStep + 1, stepCount)}/${stepCount}` : undefined,
       };
     });
 
@@ -76,7 +79,7 @@ const CookingPage: React.FC = () => {
   return (
     <motion.div
       initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
-      className="mx-auto max-w-5xl space-y-6 px-1 pb-24"
+      className="mx-auto max-w-5xl space-y-4 px-1 pb-20"
     >
       <motion.header variants={ANIMATION_VARIANTS.item}>
         <h1 className="text-2xl font-bold tracking-tight text-app-text">Cooking</h1>

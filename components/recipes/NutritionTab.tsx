@@ -23,14 +23,14 @@ export const NutritionTab: React.FC<{ recipe: Recipe; scaleFactor: number }> = (
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {!hasData && (
-                <div className="bg-app-muted/10 rounded-2xl p-4 flex items-center gap-3 border border-app-border">
+                <div className="bg-app-muted/10 rounded-lg p-4 flex items-center gap-3 border border-app-border">
                     <Info className="h-5 w-5 text-app-muted" />
                     <p className="text-sm text-app-muted">Nutrition data has not been added for this recipe.</p>
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-app-card border border-app-border shadow-soft p-6 rounded-2xl flex flex-col justify-center items-center relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-app-card border border-app-border shadow-soft p-6 rounded-lg flex flex-col justify-center items-center relative">
                     <h3 className="absolute top-4 left-4 text-sm font-semibold text-app-muted">Calorie Breakdown</h3>
                     <div className="h-48 w-full flex items-center justify-center relative">
                         {hasData ? (
@@ -63,7 +63,7 @@ export const NutritionTab: React.FC<{ recipe: Recipe; scaleFactor: number }> = (
                     </div>
                 </div>
 
-                <div className="bg-app-card border border-app-border shadow-soft p-6 rounded-2xl space-y-6">
+                <div className="bg-app-card border border-app-border shadow-soft p-6 rounded-lg space-y-6">
                     <h3 className="text-sm font-semibold text-app-muted">Macronutrients</h3>
                     <div className="space-y-4">
                         <div className="space-y-1">
@@ -107,13 +107,13 @@ export const NutritionTab: React.FC<{ recipe: Recipe; scaleFactor: number }> = (
             </div>
 
             {allergens.length > 0 && (
-                <div className="p-4 bg-app-danger/10 border border-app-danger/20 rounded-2xl">
+                <div className="p-4 bg-app-danger/10 border border-app-danger/20 rounded-lg">
                     <h4 className="flex items-center gap-2 text-app-danger font-semibold text-sm mb-2">
                         <AlertCircle className="h-4 w-4" /> Allergen Warning
                     </h4>
                     <div className="flex flex-wrap gap-2">
                         {allergens.map(allergen => (
-                            <span key={allergen} className="px-3 py-1 bg-app-danger/15 text-app-danger rounded-full text-xs font-medium">
+                            <span key={allergen} className="px-3 py-1 bg-app-danger/15 text-app-danger rounded-md text-xs font-medium">
                                 {allergen}
                             </span>
                         ))}

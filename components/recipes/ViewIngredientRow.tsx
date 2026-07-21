@@ -63,151 +63,122 @@ export const ViewIngredientRow: React.FC<{
 
     const isConverted = safeIngUnit !== safeCurrentUnit;
 
+    const priceEl = isEditingPrice ? (
+        <div className="flex items-center gap-1">
+            <input
+                type="number"
+                aria-label="Total cost"
+                value={editPriceValue}
+                onChange={(e) => setEditPriceValue(e.target.value)}
+                className="w-16 h-8 text-xs px-2 border border-app-primary rounded-md bg-app-elevated text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+                autoFocus
+                onKeyDown={(e) => e.key === 'Enter' && handlePriceSave()}
+                onClick={(e) => e.stopPropagation()}
+            />
+            <button aria-label="Save cost" onClick={(e) => { e.stopPropagation(); handlePriceSave(); }} className="bg-app-primary text-primary-foreground p-1.5 rounded-md hover:brightness-105">
+                <Check className="h-3.5 w-3.5" />
+            </button>
+        </div>
+    ) : (
+        <button
+            className="flex items-center gap-1 cursor-pointer group/price focus:outline-none"
+            onClick={(e) => { e.stopPropagation(); setIsEditingPrice(true); }}
+            title="Click to edit total cost"
+        >
+            <span className="text-sm font-semibold text-app-text tabular-nums">{formatCurrency(totalRowCost)}</span>
+            <Edit className="h-3 w-3 text-app-muted opacity-0 group-hover/price:opacity-100 transition-opacity" />
+        </button>
+    );
+
     return (
         <div className={cn(
-            "p-3 md:p-4 hover:bg-muted/30 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3 group relative border-b border-border/40 last:border-0",
-            isLowStock && "bg-red-50/50 dark:bg-red-900/5"
+            "p-2.5 md:p-3 hover:bg-app-muted/10 transition-colors flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-3 group relative border-b border-app-border last:border-0",
+            isLowStock && "bg-app-danger/5"
         )}>
-            {/* Left: Ingredient Info */}
-            <div className="flex items-start gap-3 flex-1">
-                {/* Index / Checkbox */}
+            {/* Info + cost (line 1 on mobile) */}
+            <div className="flex items-start gap-2.5 flex-1 min-w-0">
                 <div className={cn(
-                    "mt-0.5 h-6 w-6 rounded-md border flex items-center justify-center shrink-0 transition-all text-[10px] font-bold select-none",
-                    isLowStock 
-                        ? "border-red-200 bg-red-100 text-red-600 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400" 
-                        : "border-border/60 bg-muted/20 text-muted-foreground"
+                    "mt-px h-6 w-6 rounded-md border flex items-center justify-center shrink-0 text-xs font-semibold select-none",
+                    isLowStock ? "border-app-danger/40 bg-app-danger/10 text-app-danger" : "border-app-border bg-app-muted/10 text-app-muted"
                 )}>
-                    <span className="group-hover:hidden">{(index + 1)}</span>
-                    <Check className="h-3.5 w-3.5 hidden group-hover:block text-primary" />
+                    <span className="group-hover:hidden">{index + 1}</span>
+                    <Check className="h-3.5 w-3.5 hidden group-hover:block text-app-primary" />
                 </div>
 
-                {/* Name & Details */}
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <span className={cn("font-bold text-foreground text-sm", isLowStock && "text-red-700 dark:text-red-400")}>
-                            {formatIngredientName(ing.name)}
-                        </span>
-                        {ing.type && (
-                            <span className="text-[9px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground font-medium uppercase tracking-wide border border-border/50">
-                                {ing.type}
+                    <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
+                            <span className={cn("font-semibold text-app-text text-sm", isLowStock && "text-app-danger")}>
+                                {formatIngredientName(ing.name)}
                             </span>
-                        )}
-                        {ing.notes && <span className="text-xs text-muted-foreground truncate max-w-[200px] border-l border-border pl-2">{ing.notes}</span>}
+                            {ing.type && (
+                                <span className="text-[11px] bg-app-elevated px-1.5 py-0.5 rounded-sm text-app-muted font-medium border border-app-border">{ing.type}</span>
+                            )}
+                        </div>
+                        {/* cost — shown inline on mobile, moves to right column on desktop */}
+                        <div className="shrink-0 md:hidden">{priceEl}</div>
                     </div>
-                    
-                    {/* Tags Row */}
-                    <div className="flex items-center gap-2 mt-1.5">
-                        {isLowStock && (
-                            <span className="text-[9px] font-bold bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-1.5 py-0.5 rounded uppercase tracking-wider">
-                                Low Stock
-                            </span>
-                        )}
-                         {ing.manualCostPerUnit !== undefined && (
-                            <span className="text-[9px] font-bold bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded uppercase tracking-wider">
-                                Manual Price
-                            </span>
-                        )}
-                    </div>
+
+                    {(ing.notes || isLowStock || ing.manualCostPerUnit !== undefined) && (
+                        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            {isLowStock && <span className="text-[11px] font-medium bg-app-danger/10 text-app-danger px-1.5 py-0.5 rounded-sm">Low Stock</span>}
+                            {ing.manualCostPerUnit !== undefined && <span className="text-[11px] font-medium bg-app-info/10 text-app-info px-1.5 py-0.5 rounded-sm">Manual Price</span>}
+                            {ing.notes && <span className="text-[11px] text-app-muted truncate max-w-[220px]">{ing.notes}</span>}
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Center: Quantities & Conversion */}
-            <div className="flex items-center gap-2 pl-9 md:pl-0">
-                <div className="flex items-center bg-muted/40 rounded-lg p-1 border border-border/50">
-                    {/* Original Quantity (if converted) */}
+            {/* Quantity + stock — one row (line 2) on mobile; dissolves into the desktop row */}
+            <div className="flex items-center justify-between gap-2 pl-[34px] md:pl-0 md:contents">
+                {/* Quantity */}
+                <div className="flex items-center bg-app-muted/10 rounded-md p-0.5 border border-app-border">
                     {isConverted && (
-                        <div className="flex items-center px-2 py-1 gap-1 text-muted-foreground opacity-70">
-                            <span className="font-medium text-xs">
-                                {requiredAmountBase.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                            </span>
-                            <span className="text-[10px] font-bold uppercase">{safeIngUnit}</span>
-                            <ArrowRight className="h-3 w-3 mx-1" />
+                        <div className="flex items-center px-2 py-1 gap-1 text-app-muted opacity-70">
+                            <span className="font-medium text-xs">{requiredAmountBase.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                            <span className="text-xs font-medium">{safeIngUnit}</span>
+                            <ArrowRight className="h-3 w-3 mx-0.5" />
                         </div>
                     )}
-
-                    {/* Active/Converted Quantity */}
-                    <div className="flex items-center bg-background rounded-md px-2 py-1 shadow-sm border border-border/50">
-                        <span className="font-bold text-sm text-primary tabular-nums mr-1.5">
-                            {displayedAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                        </span>
+                    <div className="flex items-center bg-app-card rounded-sm px-2.5 py-1 shadow-soft border border-app-border">
+                        <span className="font-semibold text-sm text-app-primary tabular-nums mr-1.5">{displayedAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                         <div className="relative">
-                            <select 
+                            <select
                                 value={safeCurrentUnit}
+                                aria-label="Display unit"
                                 onChange={(e) => onUnitChange(ing.id, e.target.value)}
-                                className="appearance-none bg-transparent text-[10px] font-black uppercase text-foreground pr-3 focus:outline-none cursor-pointer hover:text-primary transition-colors text-right"
+                                className="appearance-none bg-transparent text-xs font-semibold text-app-text pr-3 focus:outline-none cursor-pointer hover:text-app-primary transition-colors text-right"
                             >
                                 {AVAILABLE_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
                             </select>
-                            <span className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-[8px]">▼</span>
+                            <span className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-app-muted text-[8px]">▼</span>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Right: Pantry & Cost Actions */}
-            <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center gap-2 pl-9 md:pl-0 min-w-[80px]">
-                {/* Price Display */}
-                {isEditingPrice ? (
-                     <div className="flex items-center gap-1 animate-in fade-in zoom-in duration-200">
-                        <input 
-                            type="number" 
-                            value={editPriceValue}
-                            onChange={(e) => setEditPriceValue(e.target.value)}
-                            className="w-16 h-7 text-xs px-1 border border-primary rounded bg-background"
-                            autoFocus
-                            onKeyDown={(e) => e.key === 'Enter' && handlePriceSave()}
-                        />
-                        <button onClick={handlePriceSave} className="bg-primary text-primary-foreground p-1 rounded hover:bg-primary/90">
-                            <Check className="h-3.5 w-3.5" />
-                        </button>
-                     </div>
-                ) : (
-                    <div 
-                        className="flex items-center gap-1.5 cursor-pointer group/price"
-                        onClick={() => setIsEditingPrice(true)}
-                        title="Click to edit total cost"
-                    >
-                        <span className="text-xs font-bold text-muted-foreground/80 group-hover/price:text-foreground transition-colors font-mono">
-                            {formatCurrency(totalRowCost)}
-                        </span>
-                         <Edit className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover/price:opacity-100 transition-opacity" />
-                    </div>
-                )}
+                {/* Right: cost (desktop) + stock/link */}
+                <div className="flex items-center gap-2 md:flex-col md:items-end md:gap-1 md:min-w-[84px]">
+                    <div className="hidden md:block">{priceEl}</div>
 
-                {/* Linking / Stock Status */}
-                {pantryItem ? (
-                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/30 px-1.5 py-0.5 rounded-full border border-border/30">
-                        <span className={cn("font-medium", isLowStock ? "text-red-600 font-bold" : "")}>
-                            {pantryItem.packagesInStock} {pantryItem.packageUnit}
-                        </span>
-                         <button 
-                            onClick={(e) => { e.stopPropagation(); onEditPantryItem(pantryItem); }}
-                            className="hover:text-primary transition-colors border-l border-border/50 pl-1 ml-1"
-                        >
-                            <Edit className="h-2.5 w-2.5" />
-                        </button>
-                    </div>
-                ) : (
-                    <div className="flex flex-col items-end gap-1">
-                         {suggestions.length > 0 ? (
-                            <div className="flex gap-1">
-                                {suggestions.map(s => (
-                                    <button
-                                        key={s.id}
-                                        onClick={() => onLinkIngredient(ing.id, s.id)}
-                                        className="text-[9px] flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded hover:bg-primary/20 transition-colors font-bold border border-primary/20"
-                                    >
-                                        <LinkIcon className="h-2 w-2" /> {s.name}
-                                    </button>
-                                ))}
-                            </div>
-                        ) : (
-                             <span className="text-[9px] text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-900/20 px-1.5 py-0.5 rounded border border-amber-200 dark:border-amber-800">
-                                 Unlinked
-                             </span>
-                        )}
-                    </div>
-                )}
+                    {pantryItem ? (
+                        <div className="flex items-center gap-1 text-[11px] text-app-muted bg-app-muted/10 px-1.5 py-0.5 rounded-sm border border-app-border">
+                            <span className={cn("font-medium", isLowStock && "text-app-danger font-semibold")}>{pantryItem.packagesInStock} {pantryItem.packageUnit}</span>
+                            <button aria-label="Edit inventory" onClick={(e) => { e.stopPropagation(); onEditPantryItem(pantryItem); }} className="hover:text-app-primary transition-colors border-l border-app-border pl-1 ml-0.5">
+                                <Edit className="h-2.5 w-2.5" />
+                            </button>
+                        </div>
+                    ) : suggestions.length > 0 ? (
+                        <div className="flex gap-1">
+                            {suggestions.map(s => (
+                                <button key={s.id} onClick={(e) => { e.stopPropagation(); onLinkIngredient(ing.id, s.id); }} className="text-[11px] flex items-center gap-1 bg-app-primary/10 text-app-primary px-1.5 py-0.5 rounded-sm hover:bg-app-primary/20 transition-colors font-medium border border-app-primary/20">
+                                    <LinkIcon className="h-2.5 w-2.5" /> {s.name}
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <span className="text-[11px] text-app-warning font-medium bg-app-warning/10 px-1.5 py-0.5 rounded-sm border border-app-warning/20">Unlinked</span>
+                    )}
+                </div>
             </div>
         </div>
     );

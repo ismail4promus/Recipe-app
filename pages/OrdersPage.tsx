@@ -76,16 +76,16 @@ const OrdersPage: React.FC = () => {
     return (
         <motion.div 
             initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
-            className="space-y-8 pb-32 max-w-7xl mx-auto font-sans"
+            className="space-y-5 pb-20 max-w-7xl mx-auto font-sans"
         >
             {/* Header */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 border-b border-app-border pb-8">
+            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-app-border pb-4">
                 <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 bg-app-primary/10 rounded-2xl flex items-center justify-center">
+                    <div className="h-10 w-10 bg-app-primary/10 rounded-md flex items-center justify-center">
                         <ShoppingBag className="h-6 w-6 text-app-primary" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold tracking-tight text-app-text leading-none">Orders</h1>
+                        <h1 className="text-xl md:text-2xl font-bold tracking-tight text-app-text leading-tight">Orders</h1>
                         <p className="text-sm text-app-muted mt-1.5">Manage and track your kitchen orders</p>
                     </div>
                 </div>
@@ -96,19 +96,19 @@ const OrdersPage: React.FC = () => {
             </motion.div>
 
             {/* Metrics */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-3 gap-2 md:gap-4">
                 {[
                     { label: 'Pending', val: metrics.pending, icon: Clock, color: 'text-app-warning', tint: 'bg-app-warning/15' },
                     { label: 'In Progress', val: metrics.active, icon: Utensils, color: 'text-app-primary', tint: 'bg-app-primary/10' },
                     { label: 'Revenue', val: formatCurrency(metrics.revenue).split('.')[0], icon: DollarSign, color: 'text-app-success', tint: 'bg-app-success/15' }
                 ].map((m) => (
-                    <div key={m.label} className="bg-app-card border border-app-border p-5 rounded-2xl shadow-soft flex items-center gap-4">
-                        <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center shrink-0", m.tint)}>
-                            <m.icon className={cn("h-6 w-6", m.color)} />
+                    <div key={m.label} className="bg-app-card border border-app-border rounded-lg shadow-soft p-3 md:p-4 md:flex md:items-center md:gap-3">
+                        <div className={cn("h-8 w-8 md:h-10 md:w-10 rounded-md flex items-center justify-center shrink-0 mb-2 md:mb-0", m.tint)}>
+                            <m.icon className={cn("h-4 w-4 md:h-5 md:w-5", m.color)} />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-xs text-app-muted font-medium mb-1">{m.label}</p>
-                            <span className="text-2xl font-bold tabular-nums text-app-text leading-none">{m.val}</span>
+                            <p className="text-[11px] md:text-xs text-app-muted font-medium leading-tight">{m.label}</p>
+                            <span className="text-lg md:text-2xl font-bold tabular-nums text-app-text leading-tight">{m.val}</span>
                         </div>
                     </div>
                 ))}
@@ -116,14 +116,14 @@ const OrdersPage: React.FC = () => {
 
             {/* Controls */}
             <motion.div variants={ANIMATION_VARIANTS.item} className="sticky top-14 md:top-16 z-30 py-2">
-                <div className="bg-app-card/80 backdrop-blur-xl border border-app-border p-3 rounded-2xl flex flex-col lg:flex-row gap-3 shadow-soft">
+                <div className="bg-app-card/80 backdrop-blur-xl border border-app-border p-3 rounded-lg flex flex-col lg:flex-row gap-3 shadow-soft">
                     <div className="relative flex-grow">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
                         <input
                             placeholder="Search orders…"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full min-h-[44px] pl-11 pr-4 rounded-full bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary text-sm text-app-text transition-all placeholder:text-app-muted"
+                            className="w-full min-h-[44px] pl-11 pr-4 rounded-md bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary text-sm text-app-text transition-all placeholder:text-app-muted"
                         />
                     </div>
 
@@ -167,7 +167,7 @@ const OrdersPage: React.FC = () => {
                         <motion.div
                             key="empty"
                             variants={ANIMATION_VARIANTS.item}
-                            className="flex flex-col items-center justify-center py-32 bg-app-card border border-dashed border-app-border rounded-2xl"
+                            className="flex flex-col items-center justify-center py-16 bg-app-card border border-dashed border-app-border rounded-lg"
                         >
                             <Box className="h-14 w-14 text-app-muted mb-5 stroke-1" />
                             <p className="text-sm text-app-muted font-medium">No orders yet</p>

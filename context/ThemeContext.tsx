@@ -10,12 +10,15 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const STORAGE_KEY = 'icooking-theme';
+
 const getInitial = (): Mode => {
   try {
-    const stored = localStorage.getItem('theme');
+    const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === 'light' || stored === 'dark') return stored;
+    if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) return 'dark';
   } catch { /* ignore */ }
-  return 'dark'; // dark is the default look (matches the reference design)
+  return 'light';
 };
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -23,13 +26,13 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   useEffect(() => {
     const root = window.document.documentElement;
-    // :root defaults to dark; adding `light` switches the palette.
+    // Apply an explicit class so it wins over the prefers-color-scheme fallback.
+    root.classList.toggle('dark', theme === 'dark');
     root.classList.toggle('light', theme === 'light');
-    root.classList.remove('ocean', 'sunset', 'rose', 'forest');
-    try { localStorage.setItem('theme', theme); } catch { /* ignore */ }
+    try { localStorage.setItem(STORAGE_KEY, theme); } catch { /* ignore */ }
   }, [theme]);
 
-  const setTheme = useCallback((t: Mode) => setThemeState(t === 'light' ? 'light' : 'dark'), []);
+  const setTheme = useCallback((t: Mode) => setThemeState(t === 'dark' ? 'dark' : 'light'), []);
   const toggleTheme = useCallback(() => setThemeState(t => (t === 'dark' ? 'light' : 'dark')), []);
 
   return (

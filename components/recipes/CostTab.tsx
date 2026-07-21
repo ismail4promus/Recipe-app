@@ -38,9 +38,9 @@ export const CostTab: React.FC<{
     const suggestedPrice = totalCost + overheadCost + profitAmount;
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {unlinkedCount > 0 && (
-                 <div className="bg-app-warning/10 border border-app-warning/20 rounded-2xl p-5 flex items-center gap-4">
+                 <div className="bg-app-warning/10 border border-app-warning/20 rounded-lg p-5 flex items-center gap-4">
                     <AlertTriangle className="h-6 w-6 text-app-warning shrink-0" />
                     <p className="text-sm text-app-text font-medium">
                         {unlinkedCount} ingredients are missing pricing. Link them for an accurate cost.
@@ -48,8 +48,8 @@ export const CostTab: React.FC<{
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-app-elevated border border-app-border p-6 md:p-8 rounded-2xl relative overflow-hidden group shadow-soft">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-app-elevated border border-app-border p-6 md:p-5 rounded-lg relative overflow-hidden group shadow-soft">
                     <p className="text-sm font-medium text-app-muted mb-4 flex items-center gap-2">
                         <Package className="h-4 w-4" /> Ingredient Cost
                     </p>
@@ -59,7 +59,7 @@ export const CostTab: React.FC<{
                     </div>
                 </div>
 
-                <div className="bg-app-elevated border border-app-border p-6 md:p-8 rounded-2xl relative overflow-hidden group shadow-soft">
+                <div className="bg-app-elevated border border-app-border p-6 md:p-5 rounded-lg relative overflow-hidden group shadow-soft">
                     <p className="text-sm font-medium text-app-muted mb-4 flex items-center gap-2">
                         <Calculator className="h-4 w-4" /> Profit
                     </p>
@@ -69,7 +69,7 @@ export const CostTab: React.FC<{
                     </div>
                 </div>
 
-                <div className="bg-app-primary p-6 md:p-8 rounded-2xl relative overflow-hidden group shadow-soft border border-app-primary">
+                <div className="bg-app-primary p-6 md:p-5 rounded-lg relative overflow-hidden group shadow-soft border border-app-primary">
                     <DollarSign className="absolute -bottom-4 -right-4 h-24 w-24 text-white/[0.1]" />
                     <p className="text-sm font-medium text-white/80 mb-4">Suggested Price</p>
                     <p className="text-4xl font-bold text-white tabular-nums leading-none tracking-tight">{formatCurrency(suggestedPrice)}</p>
@@ -79,7 +79,7 @@ export const CostTab: React.FC<{
                 </div>
             </div>
 
-            <div className="bg-app-elevated rounded-2xl border border-app-border shadow-soft overflow-hidden">
+            <div className="bg-app-elevated rounded-lg border border-app-border shadow-soft overflow-hidden">
                 <div className="p-5 border-b border-app-border font-semibold text-sm text-app-text flex items-center gap-3">
                     <Calculator className="h-4 w-4 text-app-primary" /> Cost Breakdown
                 </div>

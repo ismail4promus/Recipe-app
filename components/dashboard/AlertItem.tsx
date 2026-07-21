@@ -25,7 +25,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ icon: Icon, title, message, sever
   return (
     <div
       className={cn(
-        'flex items-center gap-3 rounded-lg border border-app-border border-l-[3px] bg-app-card/60 p-3',
+        'flex items-center gap-3 rounded-md border border-app-border border-l-[3px] bg-app-card/60 p-3',
         s.border
       )}
     >
@@ -38,7 +38,7 @@ const AlertItem: React.FC<AlertItemProps> = ({ icon: Icon, title, message, sever
       </div>
       <Link
         to={to}
-        className="shrink-0 rounded-lg border border-app-border px-3 py-1.5 text-xs font-semibold text-app-text transition-colors hover:border-app-primary/50 hover:text-app-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+        className="shrink-0 rounded-md border border-app-border px-3 py-1.5 text-xs font-semibold text-app-text transition-colors hover:border-app-primary/50 hover:text-app-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
       >
         {actionLabel}
       </Link>

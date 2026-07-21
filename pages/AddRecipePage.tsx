@@ -244,9 +244,9 @@ export default function AddRecipePage() {
     if (loading) return null;
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-6 pb-24 px-4 md:px-0 font-sans">
+        <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-6 pb-20 px-4 md:px-0 font-sans">
             {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-app-border pb-6">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-app-border pb-6">
                 <div className="flex items-center gap-4">
                     <button aria-label="Go back" type="button" onClick={() => navigate(-1)} className="h-11 w-11 flex items-center justify-center bg-app-card border border-app-border rounded-full text-app-muted hover:text-app-primary transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
                         <ArrowLeft className="h-5 w-5" />
@@ -267,7 +267,7 @@ export default function AddRecipePage() {
                 </div>
                 <button
                     type="submit"
-                    className="bg-app-primary text-primary-foreground min-h-[44px] px-8 rounded-full font-semibold text-sm shadow-soft hover:brightness-105 active:scale-[0.97] transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+                    className="bg-app-primary text-primary-foreground min-h-[44px] px-8 rounded-md font-semibold text-sm shadow-soft hover:brightness-105 active:scale-[0.97] transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
                 >
                     <Save className="h-4 w-4" /> Save Recipe
                 </button>
@@ -286,7 +286,7 @@ export default function AddRecipePage() {
                         type="button"
                         onClick={() => setActiveTab(tab.id as any)}
                         className={cn(
-                            "flex-1 min-w-[110px] py-3 px-6 text-sm font-semibold flex items-center justify-center gap-2 transition-all relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60",
+                            "flex-1 min-w-[110px] py-3 px-6 text-sm font-semibold flex items-center justify-center gap-2 transition-all relative rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60",
                             activeTab === tab.id
                                 ? "text-primary-foreground"
                                 : "text-app-muted hover:text-app-text"
@@ -301,17 +301,17 @@ export default function AddRecipePage() {
             <div className="min-h-[500px]">
                 <AnimatePresence mode="wait">
                     {activeTab === 'general' && (
-                        <motion.div key="general" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                            <div className="lg:col-span-8 bg-app-card border border-app-border p-6 md:p-8 rounded-2xl relative overflow-hidden group shadow-soft">
-                                <div className="space-y-8 relative z-10">
-                                    <div className="relative aspect-video w-full rounded-xl bg-app-elevated overflow-hidden group/img border border-app-border">
+                        <motion.div key="general" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                            <div className="lg:col-span-8 bg-app-card border border-app-border p-6 md:p-5 rounded-lg relative overflow-hidden group shadow-soft">
+                                <div className="space-y-5 relative z-10">
+                                    <div className="relative aspect-video w-full rounded-md bg-app-elevated overflow-hidden group/img border border-app-border">
                                         <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity gap-4 p-8">
+                                        <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity gap-4 p-5">
                                             <div className="flex gap-4">
-                                                <button type="button" onClick={() => imageInputRef.current?.click()} className="bg-app-primary text-primary-foreground px-6 min-h-[44px] rounded-full font-semibold text-sm flex items-center gap-2 shadow-soft hover:brightness-105 transition-all">
+                                                <button type="button" onClick={() => imageInputRef.current?.click()} className="bg-app-primary text-primary-foreground px-6 min-h-[44px] rounded-md font-semibold text-sm flex items-center gap-2 shadow-soft hover:brightness-105 transition-all">
                                                     <Upload className="h-4 w-4" /> Upload
                                                 </button>
-                                                <button type="button" onClick={() => setShowUrlInput(!showUrlInput)} className="bg-app-elevated text-app-text px-6 min-h-[44px] rounded-full font-semibold text-sm flex items-center gap-2 border border-app-border hover:bg-app-muted/10 transition-all">
+                                                <button type="button" onClick={() => setShowUrlInput(!showUrlInput)} className="bg-app-elevated text-app-text px-6 min-h-[44px] rounded-md font-semibold text-sm flex items-center gap-2 border border-app-border hover:bg-app-muted/10 transition-all">
                                                     <LinkIcon className="h-4 w-4" /> Link URL
                                                 </button>
                                             </div>
@@ -320,7 +320,7 @@ export default function AddRecipePage() {
                                                     type="text"
                                                     value={formData.imageUrl}
                                                     onChange={(e) => handleChange('imageUrl', e.target.value)}
-                                                    className="w-full max-w-md h-12 rounded-full px-4 text-sm bg-app-elevated border border-app-primary text-app-text outline-none font-medium"
+                                                    className="w-full max-w-md h-12 rounded-md px-4 text-sm bg-app-elevated border border-app-primary text-app-text outline-none font-medium"
                                                     placeholder="Paste image URL…"
                                                     autoFocus
                                                 />
@@ -335,7 +335,7 @@ export default function AddRecipePage() {
                                         </div>
                                         <div className="flex flex-wrap gap-2">
                                             {formData.tags?.map(tag => (
-                                                <span key={tag} className="px-3 py-1 bg-app-primary/10 text-app-primary border border-app-primary/30 rounded-full text-xs font-medium flex items-center gap-2">
+                                                <span key={tag} className="px-3 py-1 bg-app-primary/10 text-app-primary border border-app-primary/30 rounded-md text-xs font-medium flex items-center gap-2">
                                                     {tag} <button aria-label={`Remove ${tag}`} type="button" onClick={() => removeTag(tag)} className="hover:text-app-danger"><X className="h-3 w-3"/></button>
                                                 </span>
                                             ))}
@@ -350,32 +350,32 @@ export default function AddRecipePage() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="lg:col-span-4 bg-app-card border border-app-border p-6 md:p-8 rounded-2xl h-fit space-y-8 shadow-soft">
+                            <div className="lg:col-span-4 bg-app-card border border-app-border p-6 md:p-5 rounded-lg h-fit space-y-5 shadow-soft">
                                 <div className="space-y-6">
                                     <div className="space-y-2">
                                         <label className="text-xs font-medium text-app-muted">Category</label>
-                                        <select value={formData.category} onChange={e => handleChange('category', e.target.value)} className="w-full h-12 px-4 rounded-xl bg-app-elevated border border-app-border text-sm font-medium text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 appearance-none cursor-pointer">
+                                        <select value={formData.category} onChange={e => handleChange('category', e.target.value)} className="w-full h-12 px-4 rounded-md bg-app-elevated border border-app-border text-sm font-medium text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 appearance-none cursor-pointer">
                                             {categories.map(c => <option key={c} value={c}>{c}</option>)}
                                         </select>
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-medium text-app-muted">Cuisine</label>
-                                        <select value={formData.cuisine} onChange={e => handleChange('cuisine', e.target.value)} className="w-full h-12 px-4 rounded-xl bg-app-elevated border border-app-border text-sm font-medium text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 appearance-none cursor-pointer">
+                                        <select value={formData.cuisine} onChange={e => handleChange('cuisine', e.target.value)} className="w-full h-12 px-4 rounded-md bg-app-elevated border border-app-border text-sm font-medium text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 appearance-none cursor-pointer">
                                             {cuisines.map(c => <option key={c} value={c}>{c}</option>)}
                                         </select>
                                     </div>
                                     <div className="grid grid-cols-3 gap-4 border-t border-app-border pt-6">
                                         <div className="space-y-2">
                                             <label className="text-xs font-medium text-app-muted text-center block">Prep (min)</label>
-                                            <input type="number" value={formData.prepTime} onChange={e => handleChange('prepTime', parseInt(e.target.value))} className="w-full h-11 px-2 rounded-xl bg-app-elevated border border-app-border text-sm font-semibold text-center text-app-primary tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
+                                            <input type="number" value={formData.prepTime} onChange={e => handleChange('prepTime', parseInt(e.target.value))} className="w-full h-11 px-2 rounded-md bg-app-elevated border border-app-border text-sm font-semibold text-center text-app-primary tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-xs font-medium text-app-muted text-center block">Cook (min)</label>
-                                            <input type="number" value={formData.cookTime} onChange={e => handleChange('cookTime', parseInt(e.target.value))} className="w-full h-11 px-2 rounded-xl bg-app-elevated border border-app-border text-sm font-semibold text-center text-app-primary tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
+                                            <input type="number" value={formData.cookTime} onChange={e => handleChange('cookTime', parseInt(e.target.value))} className="w-full h-11 px-2 rounded-md bg-app-elevated border border-app-border text-sm font-semibold text-center text-app-primary tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-xs font-medium text-app-muted text-center block">Servings</label>
-                                            <input type="number" min="1" value={formData.servings} onChange={e => handleChange('servings', parseInt(e.target.value))} className="w-full h-11 px-2 rounded-xl bg-app-elevated border border-app-border text-sm font-semibold text-center text-app-success tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
+                                            <input type="number" min="1" value={formData.servings} onChange={e => handleChange('servings', parseInt(e.target.value))} className="w-full h-11 px-2 rounded-md bg-app-elevated border border-app-border text-sm font-semibold text-center text-app-success tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
                                         </div>
                                     </div>
                                 </div>
@@ -388,13 +388,13 @@ export default function AddRecipePage() {
                              <div className="flex items-center gap-4 mb-4 px-2">
                                 <h3 className="font-semibold text-base tracking-tight text-app-text">Ingredients</h3>
                                 <div className="h-px flex-1 bg-app-border"></div>
-                                <button type="button" onClick={addSection} className="text-sm font-semibold text-app-primary bg-app-primary/10 px-4 min-h-[40px] rounded-full border border-app-primary/30 flex items-center gap-2 hover:bg-app-primary hover:text-primary-foreground transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+                                <button type="button" onClick={addSection} className="text-sm font-semibold text-app-primary bg-app-primary/10 px-4 min-h-[40px] rounded-md border border-app-primary/30 flex items-center gap-2 hover:bg-app-primary hover:text-primary-foreground transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
                                     <Plus className="h-4 w-4" /> Add Section
                                 </button>
                             </div>
-                            <div className="space-y-8">
+                            <div className="space-y-5">
                                 {formData.ingredientSections.map((section, sIdx) => (
-                                    <div key={section.id} onDragOver={(e) => onDragOver(e, sIdx)} onDrop={(e) => onDropToSection(e, sIdx)} className={cn("bg-app-card border rounded-2xl transition-all relative overflow-hidden shadow-soft", overSectionIdx === sIdx ? "border-app-primary bg-app-primary/5" : "border-app-border")}>
+                                    <div key={section.id} onDragOver={(e) => onDragOver(e, sIdx)} onDrop={(e) => onDropToSection(e, sIdx)} className={cn("bg-app-card border rounded-lg transition-all relative overflow-hidden shadow-soft", overSectionIdx === sIdx ? "border-app-primary bg-app-primary/5" : "border-app-border")}>
                                         <div className="bg-app-elevated/50 px-6 py-4 border-b border-app-border flex items-center justify-between">
                                             <div className="flex items-center gap-4">
                                                 <span className="text-sm font-semibold text-app-primary tabular-nums">Section {(sIdx + 1).toString().padStart(2, '0')}</span>
@@ -425,7 +425,7 @@ export default function AddRecipePage() {
                                                     isDragging={draggedItem?.sIdx === sIdx && draggedItem?.iIdx === iIdx}
                                                 />
                                             ))}
-                                            <button type="button" onClick={() => addIngredientToSection(sIdx)} className="w-full py-4 border border-dashed border-app-border hover:border-app-primary/40 hover:bg-app-primary/5 rounded-xl text-sm font-semibold text-app-muted hover:text-app-primary transition-all flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+                                            <button type="button" onClick={() => addIngredientToSection(sIdx)} className="w-full py-4 border border-dashed border-app-border hover:border-app-primary/40 hover:bg-app-primary/5 rounded-md text-sm font-semibold text-app-muted hover:text-app-primary transition-all flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
                                                 <Plus className="h-4 w-4" /> Add Ingredient
                                             </button>
                                         </div>
@@ -436,15 +436,15 @@ export default function AddRecipePage() {
                     )}
 
                     {activeTab === 'steps' && (
-                        <motion.div key="steps" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+                        <motion.div key="steps" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-5">
                              <div className="flex items-center gap-4 mb-4 px-2">
                                 <h3 className="font-semibold text-base tracking-tight text-app-text">Method</h3>
                                 <div className="h-px flex-1 bg-app-border"></div>
                             </div>
-                            <div className="bg-app-card border border-app-border p-6 md:p-8 rounded-2xl space-y-6 shadow-soft">
+                            <div className="bg-app-card border border-app-border p-6 md:p-5 rounded-lg space-y-6 shadow-soft">
                                 <AnimatePresence>
                                     {formData.steps.map((step, idx) => (
-                                        <motion.div key={step.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="flex gap-6 relative pb-8 group border-b border-app-border last:border-0 mb-8 last:mb-0">
+                                        <motion.div key={step.id} layout initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="flex gap-4 relative pb-8 group border-b border-app-border last:border-0 mb-8 last:mb-0">
                                             <div className="flex flex-col items-center gap-2">
                                                 <div className="h-12 w-12 rounded-full bg-app-elevated border border-app-primary/30 flex items-center justify-center shadow-soft relative group/step">
                                                     <span className="text-sm font-semibold text-app-primary tabular-nums">{step.stepNumber}</span>
@@ -456,10 +456,10 @@ export default function AddRecipePage() {
                                                     value={step.instruction}
                                                     onChange={(e) => updateStep(idx, 'instruction', e.target.value)}
                                                     placeholder="Describe this step…"
-                                                    className="w-full p-4 rounded-xl bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm font-medium text-app-text min-h-[80px]"
+                                                    className="w-full p-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm font-medium text-app-text min-h-[80px]"
                                                 />
 
-                                                <div className="bg-app-elevated/50 p-4 rounded-xl border border-app-border">
+                                                <div className="bg-app-elevated/50 p-4 rounded-md border border-app-border">
                                                     <div className="flex items-center justify-between mb-3">
                                                         <div className="flex items-center gap-2">
                                                             <Box className="h-4 w-4 text-app-muted" />
@@ -468,7 +468,7 @@ export default function AddRecipePage() {
                                                         <button
                                                             type="button"
                                                             onClick={() => setActiveStepLinker(activeStepLinker === step.id ? null : step.id)}
-                                                            className={cn("text-xs font-semibold px-3 py-1.5 rounded-full transition-all border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60", activeStepLinker === step.id ? "bg-app-primary text-primary-foreground border-app-primary" : "text-app-primary bg-app-primary/5 border-app-primary/30 hover:bg-app-primary/10")}
+                                                            className={cn("text-xs font-semibold px-3 py-1.5 rounded-md transition-all border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60", activeStepLinker === step.id ? "bg-app-primary text-primary-foreground border-app-primary" : "text-app-primary bg-app-primary/5 border-app-primary/30 hover:bg-app-primary/10")}
                                                         >
                                                             {activeStepLinker === step.id ? "Done" : "Link ingredients"}
                                                         </button>
@@ -479,7 +479,7 @@ export default function AddRecipePage() {
                                                             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pt-4 border-t border-app-border mt-4 max-h-48 overflow-y-auto">
                                                                     {allIngredientsInRecipe.map(ing => (
-                                                                        <button key={ing.id} type="button" onClick={() => toggleIngredientLink(idx, ing.id)} className={cn("flex items-center gap-3 p-2 rounded-xl text-xs font-medium border transition-all truncate", step.linkedIngredientIds?.includes(ing.id) ? "bg-app-primary text-primary-foreground border-app-primary" : "bg-app-elevated text-app-muted border-app-border hover:border-app-primary/30")}>
+                                                                        <button key={ing.id} type="button" onClick={() => toggleIngredientLink(idx, ing.id)} className={cn("flex items-center gap-3 p-2 rounded-md text-xs font-medium border transition-all truncate", step.linkedIngredientIds?.includes(ing.id) ? "bg-app-primary text-primary-foreground border-app-primary" : "bg-app-elevated text-app-muted border-app-border hover:border-app-primary/30")}>
                                                                             <div className={cn("h-4 w-4 rounded flex items-center justify-center border", step.linkedIngredientIds?.includes(ing.id) ? "bg-white border-white text-app-primary" : "bg-app-muted/10 border-app-border")}>
                                                                                 {step.linkedIngredientIds?.includes(ing.id) && <Check className="h-3 w-3" strokeWidth={3} />}
                                                                             </div>
@@ -495,14 +495,14 @@ export default function AddRecipePage() {
                                                             {(step.linkedIngredientIds || []).map(id => {
                                                                 const ing = allIngredientsInRecipe.find(i => i.id === id);
                                                                 if (!ing) return null;
-                                                                return <span key={id} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-app-primary/10 text-app-primary text-xs font-medium border border-app-primary/20"><Box className="h-3 w-3" /> {ing.name}</span>;
+                                                                return <span key={id} className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-app-primary/10 text-app-primary text-xs font-medium border border-app-primary/20"><Box className="h-3 w-3" /> {ing.name}</span>;
                                                             })}
                                                         </div>
                                                     )}
                                                 </div>
 
                                                 <div className="flex items-center justify-between pt-2">
-                                                    <div className="flex items-center gap-3 bg-app-elevated px-4 py-2 rounded-full border border-app-border">
+                                                    <div className="flex items-center gap-3 bg-app-elevated px-4 py-2 rounded-md border border-app-border">
                                                         <Clock className="h-4 w-4 text-app-muted" />
                                                         <input type="number" aria-label="Step duration in minutes" value={step.duration || ''} onChange={(e) => updateStep(idx, 'duration', parseInt(e.target.value))} className="w-12 bg-transparent text-sm font-semibold text-center outline-none tabular-nums text-app-primary" placeholder="0" />
                                                         <span className="text-xs text-app-muted font-medium">min</span>
@@ -515,7 +515,7 @@ export default function AddRecipePage() {
                                         </motion.div>
                                     ))}
                                 </AnimatePresence>
-                                <button type="button" onClick={addStep} className="w-full py-6 border-2 border-dashed border-app-border hover:border-app-primary/40 hover:bg-app-primary/5 rounded-xl text-sm font-semibold text-app-muted hover:text-app-primary transition-all flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+                                <button type="button" onClick={addStep} className="w-full py-6 border-2 border-dashed border-app-border hover:border-app-primary/40 hover:bg-app-primary/5 rounded-md text-sm font-semibold text-app-muted hover:text-app-primary transition-all flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
                                     <Plus className="h-5 w-5" /> Add Step
                                 </button>
                             </div>
@@ -523,20 +523,20 @@ export default function AddRecipePage() {
                     )}
 
                     {activeTab === 'specs' && (
-                        <motion.div key="specs" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-app-card border border-app-border p-6 md:p-8 rounded-2xl space-y-8 relative overflow-hidden shadow-soft">
+                        <motion.div key="specs" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-app-card border border-app-border p-6 md:p-5 rounded-lg space-y-5 relative overflow-hidden shadow-soft">
                                 <h3 className="text-base font-semibold text-app-text tracking-tight flex items-center gap-3">
                                     <HeartPulse className="h-5 w-5 text-app-danger" /> Nutrition
                                 </h3>
-                                <div className="grid grid-cols-2 gap-6 relative z-10">
+                                <div className="grid grid-cols-2 gap-4 relative z-10">
                                     <div className="col-span-2 space-y-2">
                                         <label className="text-xs font-medium text-app-muted">Total Calories (kcal)</label>
-                                        <input type="number" value={formData.nutrition?.calories} onChange={e => handleNutritionChange('calories', parseInt(e.target.value))} className="w-full h-12 px-4 rounded-xl bg-app-elevated border border-app-border text-sm font-semibold text-app-primary outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
+                                        <input type="number" value={formData.nutrition?.calories} onChange={e => handleNutritionChange('calories', parseInt(e.target.value))} className="w-full h-12 px-4 rounded-md bg-app-elevated border border-app-border text-sm font-semibold text-app-primary outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
                                     </div>
                                     {['protein', 'carbs', 'fat'].map(mac => (
                                         <div key={mac} className="space-y-2">
                                             <label className="text-xs font-medium text-app-muted capitalize">{mac} (g)</label>
-                                            <input type="number" step="0.1" value={(formData.nutrition as any)?.[mac]} onChange={e => handleNutritionChange(mac as any, parseFloat(e.target.value))} className="w-full h-11 px-4 rounded-xl bg-app-elevated border border-app-border text-sm font-semibold text-app-text outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
+                                            <input type="number" step="0.1" value={(formData.nutrition as any)?.[mac]} onChange={e => handleNutritionChange(mac as any, parseFloat(e.target.value))} className="w-full h-11 px-4 rounded-md bg-app-elevated border border-app-border text-sm font-semibold text-app-text outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60" />
                                         </div>
                                     ))}
                                 </div>
@@ -544,7 +544,7 @@ export default function AddRecipePage() {
                                     <label className="text-sm font-semibold text-app-text mb-4 flex items-center gap-2"><ShieldAlert className="h-4 w-4 text-app-danger"/> Allergens</label>
                                     <div className="flex flex-wrap gap-2">
                                         {commonAllergens.map(a => (
-                                            <button key={a} type="button" onClick={() => toggleAllergen(a)} className={cn("px-4 py-2 text-xs font-medium rounded-full border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60", formData.allergens?.includes(a) ? "bg-app-danger text-white border-app-danger" : "bg-app-elevated text-app-muted border-app-border hover:border-app-muted")}>
+                                            <button key={a} type="button" onClick={() => toggleAllergen(a)} className={cn("px-4 py-2 text-xs font-medium rounded-md border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60", formData.allergens?.includes(a) ? "bg-app-danger text-white border-app-danger" : "bg-app-elevated text-app-muted border-app-border hover:border-app-muted")}>
                                                 {a}
                                             </button>
                                         ))}
@@ -552,7 +552,7 @@ export default function AddRecipePage() {
                                 </div>
                             </div>
 
-                            <div className="bg-app-card border border-app-border p-6 md:p-8 rounded-2xl space-y-8 relative overflow-hidden shadow-soft">
+                            <div className="bg-app-card border border-app-border p-6 md:p-5 rounded-lg space-y-5 relative overflow-hidden shadow-soft">
                                 <h3 className="text-base font-semibold text-app-text tracking-tight flex items-center gap-3">
                                     <Calculator className="h-5 w-5 text-app-success" /> Pricing
                                 </h3>
@@ -571,11 +571,11 @@ export default function AddRecipePage() {
                                         </div>
                                         <input type="range" aria-label="Profit margin percentage" min="0" max="200" value={formData.profitMargin} onChange={e => handleChange('profitMargin', parseInt(e.target.value))} className="w-full accent-app-success bg-app-elevated" />
                                     </div>
-                                    <div className="p-6 bg-app-elevated rounded-xl border border-app-border flex items-center justify-between">
+                                    <div className="p-6 bg-app-elevated rounded-md border border-app-border flex items-center justify-between">
                                         <span className="text-sm font-medium text-app-muted">Difficulty</span>
                                         <div className="flex gap-2">
                                             {(['Easy', 'Medium', 'Hard'] as const).map(lvl => (
-                                                <button key={lvl} type="button" onClick={() => handleChange('difficulty', lvl)} className={cn("px-5 py-2 rounded-full text-xs font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60", formData.difficulty === lvl ? "bg-app-primary text-primary-foreground border-app-primary" : "bg-app-card text-app-muted border border-app-border hover:border-app-muted")}>
+                                                <button key={lvl} type="button" onClick={() => handleChange('difficulty', lvl)} className={cn("px-5 py-2 rounded-md text-xs font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60", formData.difficulty === lvl ? "bg-app-primary text-primary-foreground border-app-primary" : "bg-app-card text-app-muted border border-app-border hover:border-app-muted")}>
                                                     {lvl}
                                                 </button>
                                             ))}

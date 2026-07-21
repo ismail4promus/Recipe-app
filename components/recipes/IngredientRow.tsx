@@ -105,7 +105,7 @@ const IngredientRow: React.FC<IngredientRowProps> = React.memo(({
             onDragOver={onDragOver}
             onDrop={onDrop}
             className={cn(
-                "flex flex-col sm:flex-row gap-2 items-stretch sm:items-center p-2 rounded-xl border transition-all duration-200 group bg-app-card",
+                "flex flex-col sm:flex-row gap-2 items-stretch sm:items-center p-2 rounded-md border transition-all duration-200 group bg-app-card",
                 isLinked
                     ? "border-app-success/40 bg-app-success/5"
                     : "border-app-border hover:border-app-primary/30",
@@ -119,7 +119,7 @@ const IngredientRow: React.FC<IngredientRowProps> = React.memo(({
 
             <div className="relative flex-grow w-full min-w-[140px]" ref={dropdownRef}>
                 {isLinked ? (
-                    <div className="flex items-center justify-between bg-app-elevated border border-app-success/40 rounded-full px-3 py-1.5 relative h-9">
+                    <div className="flex items-center justify-between bg-app-elevated border border-app-success/40 rounded-md px-3 py-1.5 relative h-9">
                         <div className="flex items-center gap-2 overflow-hidden">
                             <span className="font-semibold text-sm text-app-text truncate">{ingredient.name}</span>
                         </div>
@@ -147,7 +147,7 @@ const IngredientRow: React.FC<IngredientRowProps> = React.memo(({
                             }}
                             onFocus={() => setIsSearchOpen(true)}
                             placeholder="Search ingredient…"
-                            className="w-full pl-9 pr-3 h-9 text-sm rounded-full border border-app-border bg-app-elevated text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 transition-all placeholder:text-app-muted"
+                            className="w-full pl-9 pr-3 h-9 text-sm rounded-md border border-app-border bg-app-elevated text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 transition-all placeholder:text-app-muted"
                         />
                         <AnimatePresence>
                             {isSearchOpen && (
@@ -155,7 +155,7 @@ const IngredientRow: React.FC<IngredientRowProps> = React.memo(({
                                     initial={{ opacity: 0, y: 5 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: 5 }}
-                                    className="absolute z-50 left-0 right-0 top-full mt-1 bg-app-card border border-app-border rounded-xl shadow-soft max-h-48 overflow-y-auto p-1"
+                                    className="absolute z-50 left-0 right-0 top-full mt-1 bg-app-card border border-app-border rounded-md shadow-soft max-h-48 overflow-y-auto p-1"
                                 >
                                     {filteredPantry.length > 0 ? (
                                         filteredPantry.map(pi => (
@@ -190,7 +190,7 @@ const IngredientRow: React.FC<IngredientRowProps> = React.memo(({
                         value={ingredient.quantity || ''}
                         onChange={(e) => onUpdate('quantity', parseFloat(e.target.value))}
                         className={cn(
-                            "w-full px-2 h-9 text-sm rounded-full border focus:outline-none transition-all font-semibold text-center",
+                            "w-full px-2 h-9 text-sm rounded-md border focus:outline-none transition-all font-semibold text-center",
                             isLowStock && isLinked
                                 ? "border-app-danger/40 bg-app-danger/10 text-app-danger focus-visible:ring-2 focus-visible:ring-app-danger/40"
                                 : "border-app-border bg-app-elevated text-app-text focus-visible:ring-2 focus-visible:ring-app-primary/60"
@@ -204,7 +204,7 @@ const IngredientRow: React.FC<IngredientRowProps> = React.memo(({
                         aria-label="Unit"
                         onChange={(e) => handleUnitChange(e.target.value)}
                         className={cn(
-                            "w-full px-2 h-9 text-sm rounded-full border bg-app-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 transition-all text-center appearance-none cursor-pointer",
+                            "w-full px-2 h-9 text-sm rounded-md border bg-app-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 transition-all text-center appearance-none cursor-pointer",
                             isLinked ? "font-semibold text-app-primary" : "text-app-muted"
                         )}
                     >

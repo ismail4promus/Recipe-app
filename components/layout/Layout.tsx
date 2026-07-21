@@ -9,21 +9,21 @@ const Layout: React.FC = () => {
   const location = useLocation();
 
   return (
-    <div className="flex h-screen w-full bg-app-bg text-app-text">
+    <div className="app-shell-bg flex h-screen w-full text-app-text">
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden relative">
         <Header />
         
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto scrollbar-hide pb-20 md:pb-0">
+        <main className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-16 md:pb-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="p-2 md:p-6 lg:p-8 max-w-7xl mx-auto w-full"
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="p-2 md:p-3 lg:p-4 max-w-[1600px] mx-auto w-full"
             >
               <Outlet />
             </motion.div>

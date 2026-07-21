@@ -104,10 +104,10 @@ export default function PantryPage() {
     return (
         <motion.div 
             initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
-            className="space-y-6 max-w-7xl mx-auto pb-24 px-4 md:px-0"
+            className="space-y-6 max-w-7xl mx-auto pb-20 px-4 md:px-0"
         >
             {/* Header */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-app-border pb-6">
+            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-app-border pb-6">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
                         <Warehouse className="h-6 w-6 text-app-primary" />
@@ -125,31 +125,31 @@ export default function PantryPage() {
             </motion.div>
 
             {/* Stat tiles */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-4 gap-2 md:gap-4">
                 {[
                     { label: 'Total Value', val: formatCurrency(totalValue).split('.')[0], icon: BarChart3, color: 'text-app-text' },
                     { label: 'Total Items', val: ingredients.length, icon: Boxes, color: 'text-app-primary' },
                     { label: 'Low Stock', val: lowStockCount, icon: ShieldAlert, color: 'text-app-warning' },
                     { label: 'Expiring Soon', val: expiringSoonCount, icon: Activity, color: 'text-app-success' }
                 ].map((stat, i) => (
-                    <div key={i} className="bg-app-card border border-app-border p-5 rounded-xl relative overflow-hidden group shadow-soft">
-                        <stat.icon className="absolute -bottom-4 -right-4 h-20 w-20 text-app-muted/10 group-hover:scale-110 transition-transform" />
-                        <p className="text-xs text-app-muted font-medium mb-2">{stat.label}</p>
-                        <p className={cn("text-3xl font-bold tabular-nums leading-none tracking-tight", stat.color)}>{stat.val}</p>
+                    <div key={i} className="bg-app-card border border-app-border p-3 md:p-4 rounded-md relative overflow-hidden group shadow-soft">
+                        <stat.icon className="absolute -bottom-3 -right-3 h-16 w-16 text-app-muted/10 group-hover:scale-110 transition-transform" />
+                        <p className="text-[11px] md:text-xs text-app-muted font-medium mb-1 leading-tight truncate">{stat.label}</p>
+                        <p className={cn("text-lg md:text-2xl font-bold tabular-nums leading-tight tracking-tight", stat.color)}>{stat.val}</p>
                     </div>
                 ))}
             </motion.div>
 
             {/* Filter bar */}
             <motion.div variants={ANIMATION_VARIANTS.item} className="sticky top-14 md:top-16 z-30 bg-app-bg/95 backdrop-blur-md py-4">
-                <div className="bg-app-card border border-app-border p-3 rounded-2xl flex flex-col lg:flex-row gap-3 shadow-soft">
+                <div className="bg-app-card border border-app-border p-3 rounded-lg flex flex-col lg:flex-row gap-3 shadow-soft">
                     <div className="relative flex-grow">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
                         <input
                             placeholder="Search inventory…"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full min-h-[44px] pl-12 pr-4 rounded-full bg-app-elevated border border-app-border text-sm text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 placeholder:text-app-muted"
+                            className="w-full min-h-[44px] pl-12 pr-4 rounded-md bg-app-elevated border border-app-border text-sm text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 placeholder:text-app-muted"
                         />
                     </div>
 
@@ -157,7 +157,7 @@ export default function PantryPage() {
                         {stockFilter !== 'all' && (
                             <button
                                 onClick={() => setStockFilter('all')}
-                                className="flex items-center gap-2 whitespace-nowrap rounded-full border border-app-warning/30 bg-app-warning/15 px-4 min-h-[40px] text-sm font-medium text-app-warning shrink-0"
+                                className="flex items-center gap-2 whitespace-nowrap rounded-md border border-app-warning/30 bg-app-warning/15 px-4 min-h-[40px] text-sm font-medium text-app-warning shrink-0"
                             >
                                 {stockFilter === 'low' ? 'Low stock' : 'Expiring soon'}
                                 <X className="h-3.5 w-3.5" />
@@ -175,8 +175,8 @@ export default function PantryPage() {
                         ))}
                         <div className="w-px h-8 bg-app-border mx-1 shrink-0"></div>
                         <div className="flex gap-1 bg-app-elevated p-1 rounded-full shrink-0">
-                            <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode==='grid'} className={cn("flex h-9 w-9 items-center justify-center rounded-full transition-all", viewMode==='grid'?'bg-app-primary text-primary-foreground':'text-app-muted hover:text-app-text')}><LayoutGrid className="h-4 w-4" /></button>
-                            <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode==='list'} className={cn("flex h-9 w-9 items-center justify-center rounded-full transition-all", viewMode==='list'?'bg-app-primary text-primary-foreground':'text-app-muted hover:text-app-text')}><ListIcon className="h-4 w-4" /></button>
+                            <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode==='grid'} className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-all", viewMode==='grid'?'bg-app-primary text-primary-foreground':'text-app-muted hover:text-app-text')}><LayoutGrid className="h-4 w-4" /></button>
+                            <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode==='list'} className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-all", viewMode==='list'?'bg-app-primary text-primary-foreground':'text-app-muted hover:text-app-text')}><ListIcon className="h-4 w-4" /></button>
                         </div>
                     </div>
                 </div>
@@ -185,12 +185,12 @@ export default function PantryPage() {
             {/* Content Feed */}
             <div className="min-h-[500px]">
                 {filteredIngredients.length === 0 ? (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-40 text-center border border-dashed border-app-border rounded-2xl bg-app-card/30">
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center border border-dashed border-app-border rounded-lg bg-app-card/30">
                         <Package className="h-12 w-12 text-app-muted opacity-30 mx-auto mb-6" />
                         <p className="text-sm text-app-muted font-medium">No items found</p>
                     </motion.div>
                 ) : (
-                    <div className="space-y-12">
+                    <div className="space-y-5">
                          {Object.entries(groupedIngredients).map(([groupName, groupItems]) => (
                             <div key={groupName} className="space-y-4">
                                 <div className="flex items-center gap-4 px-2">

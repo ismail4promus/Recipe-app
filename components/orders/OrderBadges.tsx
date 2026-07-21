@@ -13,7 +13,7 @@ export const StatusBadge: React.FC<{ status: OrderStatus }> = ({ status }) => {
     };
     const { color, icon: Icon, label } = config[status];
     return (
-        <span className={cn("inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold", color)}>
+        <span className={cn("inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold", color)}>
             <Icon className="h-3 w-3" /> {label}
         </span>
     );
@@ -30,7 +30,7 @@ export const PriorityBadge: React.FC<{ priority: OrderPriority }> = ({ priority 
     const { color, icon: Icon, label } = config[safePriority as keyof typeof config];
 
     return (
-        <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold", color)}>
+        <span className={cn("inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-semibold", color)}>
             <Icon className="h-2.5 w-2.5" /> {label}
         </span>
     );

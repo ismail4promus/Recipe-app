@@ -40,18 +40,18 @@ const LogItem: React.FC<{
     return (
         <motion.div
             layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-app-card border border-app-border rounded-2xl p-6 hover:border-app-primary/40 transition-all group relative overflow-hidden shadow-soft"
+            className="bg-app-card border border-app-border rounded-lg p-6 hover:border-app-primary/40 transition-all group relative overflow-hidden shadow-soft"
         >
             <div className={cn("absolute top-0 left-0 w-1.5 h-full transition-colors", session.status === 'in_progress' ? "bg-app-primary" : "bg-app-muted/20")}></div>
 
-            <div className="flex flex-col md:flex-row gap-6 items-stretch md:items-center relative z-10">
+            <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center relative z-10">
                 <div className="flex-1 min-w-0 md:pl-4">
                     <div className="flex items-center gap-3 mb-2">
                         {isEditing ? (
                             <div className="flex items-center gap-2 w-full max-w-sm">
                                 <input
                                     autoFocus value={tempName} onChange={e => setTempName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSave()}
-                                    className="bg-app-bg border border-app-primary/50 rounded-full px-4 py-1.5 text-sm font-medium text-app-text tracking-tight w-full outline-none focus:ring-2 focus:ring-app-primary"
+                                    className="bg-app-bg border border-app-primary/50 rounded-md px-4 py-1.5 text-sm font-medium text-app-text tracking-tight w-full outline-none focus:ring-2 focus:ring-app-primary"
                                 />
                                 <button aria-label="Save name" onClick={handleSave} className="p-2 bg-app-primary text-primary-foreground rounded-full shadow-soft active:scale-90"><Check className="h-4 w-4" /></button>
                             </div>
@@ -97,7 +97,7 @@ const LogItem: React.FC<{
                             Continue
                         </Button>
                     ) : (
-                         <div className={cn("px-4 py-2 rounded-full text-xs font-semibold border", session.status === 'completed' ? "bg-app-success/10 text-app-success border-app-success/30" : "bg-app-danger/10 text-app-danger border-app-danger/30")}>
+                         <div className={cn("px-4 py-2 rounded-md text-xs font-semibold border", session.status === 'completed' ? "bg-app-success/10 text-app-success border-app-success/30" : "bg-app-danger/10 text-app-danger border-app-danger/30")}>
                             {session.status === 'completed' ? 'Completed' : session.status === 'abandoned' ? 'Stopped' : session.status}
                          </div>
                     )}
@@ -149,9 +149,9 @@ export default function CookingLogsPage() {
     if (!recipe) return null;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6 pb-24 font-sans px-4 md:px-0">
+        <div className="max-w-7xl mx-auto space-y-6 pb-20 font-sans px-4 md:px-0">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-app-border pb-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-app-border pb-6">
                 <div className="flex items-center gap-4">
                     <IconButton icon={ArrowLeft} label="Back to recipe" onClick={() => navigate(`/recipes/${recipeId}`)} className="h-12 w-12" />
                     <div>
@@ -163,7 +163,7 @@ export default function CookingLogsPage() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 bg-app-card border border-app-border p-4 rounded-2xl shadow-soft min-w-[360px]">
+                <div className="grid grid-cols-3 gap-3 bg-app-card border border-app-border p-4 rounded-lg shadow-soft min-w-[360px]">
                     <div className="text-center px-2">
                         <p className="text-xs text-app-muted font-medium mb-1">Success rate</p>
                         <p className="text-xl font-bold text-app-success tabular-nums leading-none">{stats.successRate}%</p>
@@ -180,8 +180,8 @@ export default function CookingLogsPage() {
             </div>
 
             {/* Start cooking */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-app-card border border-app-border p-8 md:p-10 rounded-2xl relative overflow-hidden group shadow-soft">
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-app-card border border-app-border p-5 md:p-10 rounded-lg relative overflow-hidden group shadow-soft">
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="text-center md:text-left space-y-2">
                         <div className="flex items-center gap-3 justify-center md:justify-start">
                             <span className="h-2 w-2 rounded-full bg-app-success animate-pulse" />
@@ -197,7 +197,7 @@ export default function CookingLogsPage() {
             </motion.div>
 
             {/* Filter Hub */}
-            <div className="bg-app-card border border-app-border p-3 rounded-2xl flex flex-col md:flex-row gap-3 shadow-soft sticky top-14 md:top-20 z-30 backdrop-blur-md">
+            <div className="bg-app-card border border-app-border p-3 rounded-lg flex flex-col md:flex-row gap-3 shadow-soft sticky top-14 md:top-20 z-30 backdrop-blur-md">
                 <Segmented
                     value={activeTab}
                     onChange={setActiveTab}
@@ -211,7 +211,7 @@ export default function CookingLogsPage() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
                     <input
                         placeholder="Search sessions..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                        className="w-full h-12 pl-12 pr-4 bg-app-bg border border-app-border rounded-full text-sm text-app-text focus:ring-2 focus:ring-app-primary outline-none transition-all placeholder:text-app-muted"
+                        className="w-full h-12 pl-12 pr-4 bg-app-bg border border-app-border rounded-md text-sm text-app-text focus:ring-2 focus:ring-app-primary outline-none transition-all placeholder:text-app-muted"
                     />
                 </div>
             </div>
@@ -224,7 +224,7 @@ export default function CookingLogsPage() {
                             <LogItem key={session.id} session={session} recipeStepsCount={recipe.steps.length} onUpdate={updateCookingSession} onDelete={(id) => { if (window.confirm("Delete this session?")) deleteCookingSession(id); }} onResume={(s) => navigate(`/recipes/${recipeId}/cook?sessionId=${s.id}`)} />
                         ))
                     ) : (
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-40 text-center border border-dashed border-app-border rounded-2xl bg-app-card/30">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center border border-dashed border-app-border rounded-lg bg-app-card/30">
                             <Activity className="h-12 w-12 text-app-muted opacity-20 mx-auto mb-6" />
                             <p className="text-sm text-app-muted font-medium">No sessions yet</p>
                         </motion.div>

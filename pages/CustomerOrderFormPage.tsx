@@ -68,7 +68,7 @@ const CustomerOrderFormPage: React.FC = () => {
     if (submitted) {
         return (
             <div className="min-h-screen bg-app-bg flex items-center justify-center p-4">
-                <Card className="w-full max-w-md text-center rounded-2xl bg-app-card border border-app-border shadow-soft">
+                <Card className="w-full max-w-md text-center rounded-lg bg-app-card border border-app-border shadow-soft">
                     <CardHeader>
                         <div className="mx-auto bg-app-success/10 rounded-full p-3 w-fit">
                             <PartyPopper className="h-10 w-10 text-app-success" />
@@ -88,10 +88,10 @@ const CustomerOrderFormPage: React.FC = () => {
         <div className="min-h-screen bg-app-bg flex justify-center p-4">
             <div className="w-full max-w-4xl space-y-6">
                 <h1 className="text-4xl font-bold tracking-tight text-center text-app-text">Place Your Order</h1>
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid md:grid-cols-3 gap-4">
                     <div className="md:col-span-2 space-y-4">
                         {recipes.map(recipe => (
-                            <Card key={recipe.id} className="flex items-center overflow-hidden rounded-2xl bg-app-card border border-app-border shadow-soft">
+                            <Card key={recipe.id} className="flex items-center overflow-hidden rounded-lg bg-app-card border border-app-border shadow-soft">
                                 <div className="w-24 h-24 bg-app-elevated shrink-0">
                                     <img src={recipe.imageUrl} alt={recipe.name} className="w-full h-full object-cover" />
                                 </div>
@@ -112,7 +112,7 @@ const CustomerOrderFormPage: React.FC = () => {
                     </div>
 
                     <div className="md:col-span-1">
-                        <Card className="sticky top-4 rounded-2xl bg-app-card border border-app-border shadow-soft">
+                        <Card className="sticky top-4 rounded-lg bg-app-card border border-app-border shadow-soft">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-app-text"><ShoppingCart /> Your Cart</CardTitle>
                             </CardHeader>

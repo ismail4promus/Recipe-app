@@ -47,7 +47,7 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
             layout
             variants={ANIMATION_VARIANTS.item}
             className={cn(
-                "bg-app-card border border-app-border rounded-2xl overflow-hidden transition-all duration-300 shadow-soft group",
+                "bg-app-card border border-app-border rounded-lg overflow-hidden transition-all duration-300 shadow-soft group",
                 isExpanded ? "border-app-primary/40" : "hover:border-app-primary/30",
                 isUrgent && "border-app-danger/40"
             )}
@@ -58,7 +58,7 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
             >
                 <div className="flex items-center gap-4 min-w-0">
                     <div className={cn(
-                        "h-12 w-12 rounded-2xl flex items-center justify-center text-base font-semibold shrink-0 transition-all",
+                        "h-12 w-12 rounded-lg flex items-center justify-center text-base font-semibold shrink-0 transition-all",
                         isUrgent ? "bg-app-danger/15 text-app-danger" : "bg-app-elevated text-app-muted group-hover:text-app-primary"
                     )}>
                         {order.customerName.charAt(0).toUpperCase()}
@@ -82,7 +82,7 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
                     <div className="hidden lg:flex flex-col items-end gap-1.5">
                         <StatusBadge status={order.status} />
                         {order.dueDate && (
-                             <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-app-elevated text-[11px] text-app-muted tabular-nums">
+                             <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-app-elevated text-[11px] text-app-muted tabular-nums">
                                 <Calendar className="h-3 w-3" />
                                 {new Date(order.dueDate).toLocaleDateString([], { month: 'short', day: 'numeric' })}
                              </div>
@@ -105,8 +105,8 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
                         <div className="p-5 md:p-6 space-y-6">
                             {/* Info Panel */}
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                <div className="bg-app-elevated p-4 rounded-xl flex items-start gap-3">
-                                    <div className="h-8 w-8 rounded-xl bg-app-primary/10 flex items-center justify-center shrink-0">
+                                <div className="bg-app-elevated p-4 rounded-md flex items-start gap-3">
+                                    <div className="h-8 w-8 rounded-md bg-app-primary/10 flex items-center justify-center shrink-0">
                                         <User className="h-4 w-4 text-app-primary" />
                                     </div>
                                     <div className="min-w-0">
@@ -115,8 +115,8 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
                                         {order.customerPhone && <p className="text-xs text-app-muted tabular-nums mt-0.5">{order.customerPhone}</p>}
                                     </div>
                                 </div>
-                                <div className="bg-app-elevated p-4 rounded-xl flex items-start gap-3">
-                                    <div className="h-8 w-8 rounded-xl bg-app-success/15 flex items-center justify-center shrink-0">
+                                <div className="bg-app-elevated p-4 rounded-md flex items-start gap-3">
+                                    <div className="h-8 w-8 rounded-md bg-app-success/15 flex items-center justify-center shrink-0">
                                         <MapPin className="h-4 w-4 text-app-success" />
                                     </div>
                                     <div className="min-w-0">
@@ -124,8 +124,8 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
                                         <p className="text-sm font-medium text-app-text truncate">{order.deliveryAddress || "Pickup"}</p>
                                     </div>
                                 </div>
-                                <div className="bg-app-elevated p-4 rounded-xl flex items-start gap-3">
-                                    <div className="h-8 w-8 rounded-xl bg-app-warning/15 flex items-center justify-center shrink-0">
+                                <div className="bg-app-elevated p-4 rounded-md flex items-start gap-3">
+                                    <div className="h-8 w-8 rounded-md bg-app-warning/15 flex items-center justify-center shrink-0">
                                         <StickyNote className="h-4 w-4 text-app-warning" />
                                     </div>
                                     <div className="min-w-0">
@@ -143,9 +143,9 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
                                 </div>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                                     {order.items.map((item, idx) => (
-                                        <div key={idx} className="flex items-center justify-between p-4 bg-app-elevated rounded-xl hover:bg-app-muted/10 transition-all">
+                                        <div key={idx} className="flex items-center justify-between p-4 bg-app-elevated rounded-md hover:bg-app-muted/10 transition-all">
                                             <div className="flex items-center gap-4">
-                                                <div className="h-10 w-10 rounded-xl bg-app-primary/10 flex items-center justify-center font-bold text-lg text-app-primary tabular-nums shrink-0">
+                                                <div className="h-10 w-10 rounded-md bg-app-primary/10 flex items-center justify-center font-bold text-lg text-app-primary tabular-nums shrink-0">
                                                     {item.quantity}
                                                 </div>
                                                 <div className="min-w-0">
@@ -170,16 +170,16 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
                             {/* Actions */}
                             <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pt-5 border-t border-app-border">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <button onClick={(e) => { e.stopPropagation(); onShowInvoice(order); }} className="inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 text-sm font-semibold bg-app-elevated text-app-text hover:bg-app-muted/15 transition-all">
+                                    <button onClick={(e) => { e.stopPropagation(); onShowInvoice(order); }} className="inline-flex min-h-[44px] items-center gap-2 rounded-md px-4 text-sm font-semibold bg-app-elevated text-app-text hover:bg-app-muted/15 transition-all">
                                         <FileText className="h-4 w-4 text-app-primary" /> Invoice
                                     </button>
                                     {(order.status === 'approved' || order.status === 'processing') && (
-                                         <button onClick={(e) => { e.stopPropagation(); onShowTicket(order); }} className="inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 text-sm font-semibold bg-app-elevated text-app-text hover:bg-app-muted/15 transition-all">
+                                         <button onClick={(e) => { e.stopPropagation(); onShowTicket(order); }} className="inline-flex min-h-[44px] items-center gap-2 rounded-md px-4 text-sm font-semibold bg-app-elevated text-app-text hover:bg-app-muted/15 transition-all">
                                             <Printer className="h-4 w-4 text-app-success" /> Ticket
                                         </button>
                                     )}
                                     {order.status === 'pending_approval' && (
-                                        <button onClick={(e) => { e.stopPropagation(); onEdit(order); }} className="inline-flex min-h-[44px] items-center gap-2 rounded-full px-4 text-sm font-semibold bg-app-elevated text-app-text hover:bg-app-muted/15 transition-all">
+                                        <button onClick={(e) => { e.stopPropagation(); onEdit(order); }} className="inline-flex min-h-[44px] items-center gap-2 rounded-md px-4 text-sm font-semibold bg-app-elevated text-app-text hover:bg-app-muted/15 transition-all">
                                             <Edit className="h-4 w-4 text-app-warning" /> Edit
                                         </button>
                                     )}
@@ -204,13 +204,13 @@ const OrderCard: React.FC<OrderCardProps> = React.memo(({ order, onStatusChange,
                                     )}
 
                                     {order.status === 'processing' && (
-                                         <button onClick={(e) => { e.stopPropagation(); onStatusChange(order.id, 'completed'); }} className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold bg-app-success text-white hover:brightness-105 active:scale-[0.97] shadow-soft transition-all">
+                                         <button onClick={(e) => { e.stopPropagation(); onStatusChange(order.id, 'completed'); }} className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md px-6 text-sm font-semibold bg-app-success text-white hover:brightness-105 active:scale-[0.97] shadow-soft transition-all">
                                             <PackageCheck className="h-5 w-5" /> Mark Completed
                                         </button>
                                     )}
 
                                     {order.status === 'completed' && (
-                                         <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-app-success/15 text-app-success rounded-full font-semibold text-sm">
+                                         <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-app-success/15 text-app-success rounded-md font-semibold text-sm">
                                             <CheckCircle2 className="h-4 w-4" /> Completed
                                          </div>
                                     )}

@@ -20,38 +20,40 @@ export const PrintRecipeModal: React.FC<{ recipe: Recipe; onClose: () => void }>
     };
 
     return (
-        <div className="fixed inset-0 z-[100] bg-black/80 flex justify-center overflow-y-auto p-4 md:p-8 backdrop-blur-sm print:p-0 print:bg-white print:overflow-visible">
+        <div className="fixed inset-0 z-[100] bg-black/80 flex justify-center overflow-y-auto p-4 md:p-5 backdrop-blur-sm print:p-0 print:bg-white print:overflow-visible">
             
             {/* Control Bar (Hidden on Print) */}
             <div className="fixed top-4 right-4 flex gap-2 print:hidden z-50 items-center">
-                <div className="bg-white/10 backdrop-blur-md rounded-lg flex items-center p-1 mr-2 border border-white/20">
-                    <button 
+                <div className="bg-app-card/90 backdrop-blur-md rounded-full flex items-center p-1 mr-2 border border-app-border shadow-soft">
+                    <button
+                        aria-label="Decrease servings"
                         onClick={() => setDesiredServings(Math.max(1, desiredServings - 1))}
-                        className="h-8 w-8 flex items-center justify-center rounded hover:bg-white/10 text-white transition-colors"
+                        className="h-9 w-9 flex items-center justify-center rounded-full hover:bg-app-muted/10 text-app-text transition-colors"
                     >
                         <Minus className="h-4 w-4" />
                     </button>
                     <div className="px-3 text-center min-w-[3rem]">
-                        <span className="text-xs text-white/60 font-bold uppercase block leading-none mb-0.5">Servings</span>
-                        <span className="text-sm font-black text-white leading-none">{desiredServings}</span>
+                        <span className="text-xs text-app-muted font-medium block leading-none mb-0.5">Servings</span>
+                        <span className="text-sm font-semibold text-app-text leading-none">{desiredServings}</span>
                     </div>
-                    <button 
+                    <button
+                        aria-label="Increase servings"
                         onClick={() => setDesiredServings(desiredServings + 1)}
-                        className="h-8 w-8 flex items-center justify-center rounded hover:bg-white/10 text-white transition-colors"
+                        className="h-9 w-9 flex items-center justify-center rounded-full hover:bg-app-muted/10 text-app-text transition-colors"
                     >
                         <Plus className="h-4 w-4" />
                     </button>
                 </div>
 
-                <button 
-                    onClick={handlePrint} 
-                    className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-bold shadow-lg hover:bg-primary/90 transition-all flex items-center gap-2"
+                <button
+                    onClick={handlePrint}
+                    className="bg-app-primary text-primary-foreground px-5 min-h-[44px] rounded-md font-semibold shadow-soft hover:brightness-105 transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
                 >
                     <Printer className="h-4 w-4" /> Print
                 </button>
-                <button 
-                    onClick={onClose} 
-                    className="bg-white/10 text-white px-4 py-2 rounded-lg font-bold hover:bg-white/20 transition-all backdrop-blur-md"
+                <button
+                    onClick={onClose}
+                    className="bg-app-elevated text-app-text px-5 min-h-[44px] rounded-md font-semibold border border-app-border hover:bg-app-muted/10 transition-all backdrop-blur-md flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
                 >
                     <X className="h-4 w-4" /> Close
                 </button>
@@ -61,7 +63,7 @@ export const PrintRecipeModal: React.FC<{ recipe: Recipe; onClose: () => void }>
             <div 
                 ref={printRef}
                 id="printable-area" 
-                className="bg-white text-black w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-8 relative print:shadow-none print:w-full print:max-w-none print:p-0 print:m-0"
+                className="bg-white text-black w-full max-w-[210mm] min-h-[297mm] shadow-2xl p-5 relative print:shadow-none print:w-full print:max-w-none print:p-0 print:m-0"
             >
                 <style>
                     {`
@@ -128,13 +130,13 @@ export const PrintRecipeModal: React.FC<{ recipe: Recipe; onClose: () => void }>
                     <div className="text-right pl-4">
                         <div className="flex items-center justify-end gap-1 text-black mb-0.5">
                             <ChefHat className="h-4 w-4" />
-                            <span className="font-bold text-sm tracking-tight">iKITCHEN</span>
+                            <span className="font-bold text-sm tracking-tight">iCooking</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Compact Metadata Strip */}
-                <div className="flex gap-6 mb-4 border-b border-gray-200 pb-2 text-xs">
+                <div className="flex gap-4 mb-4 border-b border-gray-200 pb-2 text-xs">
                     <div className="flex items-center gap-2">
                         <Clock className="h-3 w-3 text-gray-400" />
                         <div>
@@ -159,7 +161,7 @@ export const PrintRecipeModal: React.FC<{ recipe: Recipe; onClose: () => void }>
                 </div>
 
                 {/* Main Content: Dense Grid */}
-                <div className="flex flex-col md:flex-row gap-6 print:gap-4 items-start">
+                <div className="flex flex-col md:flex-row gap-4 print:gap-4 items-start">
                     
                     {/* Left Column: Ingredients (Narrower) */}
                     <div className="w-full md:w-[35%] print:w-[35%] flex-shrink-0">
@@ -235,7 +237,7 @@ export const PrintRecipeModal: React.FC<{ recipe: Recipe; onClose: () => void }>
                 </div>
                 
                 <div className="mt-auto pt-2 border-t border-gray-200 text-right text-[8px] text-gray-400 uppercase tracking-widest print:absolute print:bottom-2 print:right-2">
-                    <p>iKITCHEN &bull; {new Date().toLocaleDateString()}</p>
+                    <p>iCooking &bull; {new Date().toLocaleDateString()}</p>
                 </div>
             </div>
         </div>

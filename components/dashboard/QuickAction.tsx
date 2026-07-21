@@ -15,7 +15,7 @@ const QuickAction: React.FC<QuickActionProps> = ({ icon: Icon, label, to, primar
   <Link
     to={to}
     className={cn(
-      'flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-xl border p-3 text-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 active:scale-[0.97]',
+      'flex min-h-[60px] flex-col items-center justify-center gap-2 rounded-md border p-2.5 text-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 active:scale-[0.97]',
       primary
         ? 'border-transparent bg-app-primary text-primary-foreground shadow-md shadow-app-primary/20 hover:brightness-105'
         : 'border-app-border bg-app-card text-app-text hover:border-app-primary/40 hover:bg-white/[0.03]'

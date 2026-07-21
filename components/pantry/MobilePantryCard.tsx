@@ -45,7 +45,7 @@ const MobilePantryCard: React.FC<{
         <div 
             onClick={() => isSelectionMode ? onToggleSelect(item.id) : onEdit(item)}
             className={cn(
-                "bg-app-card border border-app-border p-3 rounded-2xl flex items-center gap-3 transition-all active:scale-[0.98] shadow-soft",
+                "bg-app-card border border-app-border p-3 rounded-lg flex items-center gap-3 transition-all active:scale-[0.98] shadow-soft",
                 isSelected ? "border-app-primary bg-app-primary/10" : ""
             )}
         >
@@ -63,7 +63,7 @@ const MobilePantryCard: React.FC<{
             )}
 
             <div className={cn(
-                "h-12 w-12 rounded-xl flex items-center justify-center shrink-0 border text-xl relative overflow-hidden",
+                "h-12 w-12 rounded-md flex items-center justify-center shrink-0 border text-xl relative overflow-hidden",
                 item.packagesInStock <= 2
                     ? "bg-app-danger/15 border-app-danger/30 text-app-danger"
                     : "bg-app-elevated border-app-border"
@@ -84,7 +84,7 @@ const MobilePantryCard: React.FC<{
             <div className="flex-grow min-w-0">
                 <div className="flex justify-between items-start mb-1">
                     <h4 className="font-semibold text-sm text-app-text truncate pr-2">{item.name}</h4>
-                    <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full border", expiryStatus.color)}>
+                    <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-md border", expiryStatus.color)}>
                         {daysRemaining < 999 ? `${daysRemaining}d` : 'N/A'}
                     </span>
                 </div>

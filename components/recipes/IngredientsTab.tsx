@@ -77,21 +77,21 @@ export const IngredientsTab: React.FC<{
     };
 
     return (
-        <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-app-elevated border border-app-border p-2 rounded-2xl shadow-soft">
-                <div className="flex items-center gap-6 pl-4">
+        <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-app-elevated border border-app-border p-2 rounded-lg shadow-soft">
+                <div className="flex items-center gap-4 pl-4">
                     <div className="flex items-center gap-3">
                         <Boxes className="h-4 w-4 text-app-primary" />
                         <span className="text-sm font-medium text-app-muted">{recipe.ingredientSections.length} sections</span>
                     </div>
                 </div>
-                <div className="flex bg-app-card p-1 rounded-full border border-app-border w-full sm:w-auto">
+                <div className="flex bg-app-card p-1 rounded-md border border-app-border w-full sm:w-auto">
                     {(['original', 'metric', 'imperial'] as const).map((sys) => (
                         <button
                             key={sys}
                             onClick={() => handleBatchConvert(sys)}
                             className={cn(
-                                "flex-1 sm:flex-none px-6 py-2 text-sm font-semibold capitalize rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60",
+                                "flex-1 sm:flex-none px-6 py-2 text-sm font-semibold capitalize rounded-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60",
                                 activeSystem === sys
                                     ? "text-primary-foreground bg-app-primary shadow-soft"
                                     : "text-app-muted hover:text-app-text"
@@ -104,7 +104,7 @@ export const IngredientsTab: React.FC<{
             </div>
 
             {unlinkedCount > 0 && (
-                <div className="bg-app-warning/10 border border-app-warning/20 rounded-2xl p-4 flex gap-4 items-center">
+                <div className="bg-app-warning/10 border border-app-warning/20 rounded-lg p-4 flex gap-4 items-center">
                     <AlertTriangle className="h-5 w-5 text-app-warning shrink-0" />
                     <p className="text-sm text-app-text font-medium">
                         {unlinkedCount} ingredients need linking for accurate costing.
@@ -112,15 +112,15 @@ export const IngredientsTab: React.FC<{
                 </div>
             )}
 
-            <div className="space-y-12">
+            <div className="space-y-3">
                 {recipe.ingredientSections?.map((section, idx) => (
                     <div key={section.id} className="relative">
-                        <div className="flex items-center gap-4 mb-4 px-2">
+                        <div className="flex items-center gap-3 mb-2 px-1">
                             <h3 className="font-semibold text-base tracking-tight text-app-text">{section.name}</h3>
                             <div className="h-px flex-1 bg-app-border"></div>
                         </div>
 
-                        <div className="bg-app-elevated rounded-2xl border border-app-border overflow-hidden divide-y divide-app-border">
+                        <div className="bg-app-elevated rounded-lg border border-app-border overflow-hidden divide-y divide-app-border">
                             {section.ingredients?.map((ing, index) => {
                                 // Fix: Change 'ri' to 'ing' as 'ri' is not defined in this scope
                                 const pantryItem = pantryIngredients.find(pi => pi.id === ing.ingredientId);

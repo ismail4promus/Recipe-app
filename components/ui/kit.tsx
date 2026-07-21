@@ -3,11 +3,10 @@ import { Link } from 'react-router-dom';
 import { LucideIcon, ChevronLeft } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-/* Reference-style UI kit: pill buttons, segmented toggles, chips, circular
-   icon buttons and a centered page header. Dark-first, orange primary,
+/* Shared UI kit: compact, subtly-rounded controls. Dark-first, orange primary,
    fully theme-token driven (works in light + dark). */
 
-// ---- Button (pill) ----
+// ---- Button ----
 type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 const BTN: Record<BtnVariant, string> = {
   primary: 'bg-app-primary text-primary-foreground hover:brightness-105 shadow-soft',
@@ -24,7 +23,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button: React.FC<ButtonProps> = ({ variant = 'primary', icon: Icon, full, className, children, ...props }) => (
   <button
     className={cn(
-      'inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-all active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 disabled:opacity-50',
+      'inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 disabled:opacity-50',
       BTN[variant], full && 'w-full', className
     )}
     {...props}
@@ -43,7 +42,7 @@ interface SegmentedProps<T extends string> {
 }
 export function Segmented<T extends string>({ options, value, onChange, className }: SegmentedProps<T>) {
   return (
-    <div className={cn('inline-flex rounded-full bg-app-elevated p-1', className)} role="tablist">
+    <div className={cn('inline-flex rounded-md bg-app-elevated p-0.5', className)} role="tablist">
       {options.map(o => (
         <button
           key={o.value}
@@ -51,7 +50,7 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
           className={cn(
-            'min-h-[40px] rounded-full px-5 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+            'h-8 rounded-[5px] px-4 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
             value === o.value ? 'bg-app-primary text-primary-foreground shadow-soft' : 'text-app-muted hover:text-app-text'
           )}
         >
@@ -62,12 +61,12 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
   );
 }
 
-// ---- Chip (filter pill) ----
+// ---- Chip (filter) ----
 export const Chip: React.FC<{ active?: boolean; onClick?: () => void; children: React.ReactNode; className?: string }> = ({ active, onClick, children, className }) => (
   <button
     onClick={onClick}
     className={cn(
-      'whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+      'whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
       active ? 'bg-app-primary text-primary-foreground' : 'bg-app-elevated text-app-muted hover:text-app-text',
       className
     )}
@@ -76,7 +75,7 @@ export const Chip: React.FC<{ active?: boolean; onClick?: () => void; children: 
   </button>
 );
 
-// ---- Circular icon button ----
+// ---- Compact icon button (square, subtly rounded) ----
 export const IconButton: React.FC<
   React.ButtonHTMLAttributes<HTMLButtonElement> & { icon: LucideIcon; label: string }
 > = ({ icon: Icon, label, className, ...props }) => (
@@ -84,16 +83,16 @@ export const IconButton: React.FC<
     aria-label={label}
     title={label}
     className={cn(
-      'flex h-11 w-11 items-center justify-center rounded-full bg-app-elevated text-app-text transition-colors hover:bg-app-muted/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+      'flex h-9 w-9 items-center justify-center rounded-md bg-app-elevated text-app-text transition-colors hover:bg-app-muted/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
       className
     )}
     {...props}
   >
-    <Icon className="h-5 w-5" />
+    <Icon className="h-[18px] w-[18px]" />
   </button>
 );
 
-// ---- Centered page header (optional back + action) ----
+// ---- Page header (optional back + action) ----
 export const PageHeader: React.FC<{
   title: string;
   subtitle?: string;
@@ -102,19 +101,19 @@ export const PageHeader: React.FC<{
   action?: React.ReactNode;
   className?: string;
 }> = ({ title, subtitle, backTo, onBack, action, className }) => (
-  <div className={cn('mb-5 flex items-center gap-3', className)}>
+  <div className={cn('mb-4 flex items-center gap-3', className)}>
     {(backTo || onBack) &&
       (backTo ? (
-        <Link to={backTo} aria-label="Back" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-app-elevated text-app-text hover:bg-app-muted/15">
+        <Link to={backTo} aria-label="Back" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-app-elevated text-app-text hover:bg-app-muted/15">
           <ChevronLeft className="h-5 w-5" />
         </Link>
       ) : (
-        <button onClick={onBack} aria-label="Back" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-app-elevated text-app-text hover:bg-app-muted/15">
+        <button onClick={onBack} aria-label="Back" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-app-elevated text-app-text hover:bg-app-muted/15">
           <ChevronLeft className="h-5 w-5" />
         </button>
       ))}
     <div className="min-w-0 flex-1">
-      <h1 className="truncate text-xl font-bold tracking-tight text-app-text">{title}</h1>
+      <h1 className="truncate text-xl font-bold tracking-tight text-app-text md:text-2xl">{title}</h1>
       {subtitle && <p className="truncate text-sm text-app-muted">{subtitle}</p>}
     </div>
     {action && <div className="shrink-0">{action}</div>}

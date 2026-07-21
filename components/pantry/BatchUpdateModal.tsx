@@ -27,7 +27,7 @@ export const BatchUpdateModal: React.FC<{
         >
             <motion.div
                 initial={{ scale: 0.98, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.98, opacity: 0, y: 10 }}
-                className="bg-app-card rounded-2xl shadow-soft w-full max-w-sm overflow-hidden border border-app-border relative"
+                className="bg-app-card rounded-lg shadow-soft w-full max-w-sm overflow-hidden border border-app-border relative"
                 onClick={e => e.stopPropagation()}
             >
                 <div className="bg-app-elevated p-6 border-b border-app-border flex justify-between items-center relative z-10">
@@ -42,7 +42,7 @@ export const BatchUpdateModal: React.FC<{
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-8 space-y-8 relative z-10">
+                <form onSubmit={handleSubmit} className="p-5 space-y-5 relative z-10">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <Settings2 className="h-4 w-4 text-app-primary" />
@@ -73,11 +73,11 @@ export const BatchUpdateModal: React.FC<{
                         <div className="relative group">
                             <input
                                 type="number" step="any" min="0" autoFocus required value={value} onChange={e => setValue(e.target.value)}
-                                className="w-full h-16 px-6 rounded-2xl bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-2xl font-bold text-app-text tabular-nums tracking-tight"
+                                className="w-full h-16 px-6 rounded-lg bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-2xl font-bold text-app-text tabular-nums tracking-tight"
                                 placeholder="0"
                             />
                             <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
-                                <span className="text-xs font-medium text-app-primary bg-app-primary/10 px-3 py-1.5 rounded-full border border-app-primary/20">
+                                <span className="text-xs font-medium text-app-primary bg-app-primary/10 px-3 py-1.5 rounded-md border border-app-primary/20">
                                     Units
                                 </span>
                             </div>

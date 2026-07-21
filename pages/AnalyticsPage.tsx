@@ -14,7 +14,7 @@ import { formatCurrency, cn, ANIMATION_VARIANTS } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Segmented } from '../components/ui/kit';
 
-const COLORS = ['#F26B21', '#4ADE80', '#60A5FA', '#FBBF24', '#F472B6', '#A78BFA'];
+const COLORS = ['#28A3CC', '#20B883', '#8EC1D6', '#F39A23', '#D85D68', '#64747D'];
 
 // Shared chart styling tokens
 const AXIS_STROKE = 'rgba(148,148,148,0.25)';
@@ -28,10 +28,10 @@ const MetricCard: React.FC<{
     color: string;
     description: string;
 }> = React.memo(({ title, value, trend, icon: Icon, color, description }) => (
-    <div className="bg-app-card border border-app-border p-4 rounded-2xl relative overflow-hidden group hover:border-app-primary/40 transition-all shadow-soft">
+    <div className="bg-app-card border border-app-border p-4 rounded-lg relative overflow-hidden group hover:border-app-primary/40 transition-all shadow-soft">
         <div className="relative z-10 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-                <div className={cn("h-9 w-9 rounded-xl flex items-center justify-center border border-app-border bg-app-muted/10 shrink-0", color)}>
+                <div className={cn("h-9 w-9 rounded-md flex items-center justify-center border border-app-border bg-app-muted/10 shrink-0", color)}>
                     <Icon className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
@@ -41,7 +41,7 @@ const MetricCard: React.FC<{
             </div>
             {trend !== undefined && (
                 <div className={cn(
-                    "flex items-center gap-0.5 text-[11px] font-semibold px-2 py-1 rounded-full shrink-0",
+                    "flex items-center gap-0.5 text-[11px] font-semibold px-2 py-1 rounded-md shrink-0",
                     trend >= 0 ? "bg-app-success/10 text-app-success" : "bg-app-danger/10 text-app-danger"
                 )}>
                     {trend >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
@@ -134,11 +134,11 @@ const AnalyticsPage: React.FC = () => {
     }, [ingredients]);
 
     return (
-        <motion.div initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container} className="space-y-4 pb-24 max-w-6xl mx-auto font-sans px-4 md:px-0">
+        <motion.div initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container} className="space-y-4 pb-20 max-w-6xl mx-auto font-sans px-4 md:px-0">
             {/* Header */}
             <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-app-border pb-4">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-app-primary/10 rounded-xl flex items-center justify-center border border-app-primary/20">
+                    <div className="h-10 w-10 bg-app-primary/10 rounded-md flex items-center justify-center border border-app-primary/20">
                         <BarChart3 className="h-5 w-5 text-app-primary" />
                     </div>
                     <div>
@@ -172,7 +172,7 @@ const AnalyticsPage: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 {/* Financial chart */}
                 <motion.div variants={ANIMATION_VARIANTS.item} className="lg:col-span-8">
-                    <Card className="rounded-2xl border-app-border bg-app-card overflow-hidden shadow-soft">
+                    <Card className="rounded-lg border-app-border bg-app-card overflow-hidden shadow-soft">
                         <CardHeader className="p-4 border-b border-app-border">
                             <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2 text-app-text">
                                 <TrendingUp className="h-4 w-4 text-app-info" /> Sales over time
@@ -189,9 +189,9 @@ const AnalyticsPage: React.FC = () => {
                                             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 28px -12px rgba(0,0,0,0.45)', fontSize: '12px', fontWeight: 600 }}
                                             formatter={(v: number) => formatCurrency(v)}
                                         />
-                                        <Bar dataKey="revenue" fill="#60A5FA" fillOpacity={0.18} radius={[4, 4, 0, 0]} barSize={30} />
-                                        <Line type="monotone" dataKey="profit" stroke="#4ADE80" strokeWidth={2.5} dot={{ r: 3, fill: '#4ADE80' }} />
-                                        <Line type="monotone" dataKey="cogs" stroke="#F26B21" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
+                                        <Bar dataKey="revenue" fill="#8EC1D6" fillOpacity={0.18} radius={[4, 4, 0, 0]} barSize={30} />
+                                        <Line type="monotone" dataKey="profit" stroke="#20B883" strokeWidth={2.5} dot={{ r: 3, fill: '#20B883' }} />
+                                        <Line type="monotone" dataKey="cogs" stroke="#F39A23" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
                                     </ComposedChart>
                                 </ResponsiveContainer>
                             </div>
@@ -201,7 +201,7 @@ const AnalyticsPage: React.FC = () => {
 
                 {/* Pie */}
                 <motion.div variants={ANIMATION_VARIANTS.item} className="lg:col-span-4">
-                    <Card className="rounded-2xl border-app-border bg-app-card h-full overflow-hidden shadow-soft">
+                    <Card className="rounded-lg border-app-border bg-app-card h-full overflow-hidden shadow-soft">
                          <CardHeader className="p-4 border-b border-app-border">
                             <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2 text-app-text">
                                 <PieIcon className="h-4 w-4 text-app-primary" /> Where your stock value sits
@@ -232,7 +232,7 @@ const AnalyticsPage: React.FC = () => {
                             </div>
                             <div className="mt-3 space-y-1.5 max-h-[100px] overflow-y-auto scrollbar-hide">
                                 {inventoryData.slice(0, 4).map((i, idx) => (
-                                    <div key={i.name} className="flex items-center justify-between p-2 rounded-xl bg-app-muted/10 border border-app-border">
+                                    <div key={i.name} className="flex items-center justify-between p-2 rounded-md bg-app-muted/10 border border-app-border">
                                         <div className="flex items-center gap-2">
                                             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
                                             <span className="text-xs font-medium truncate max-w-[100px] text-app-muted">{i.name}</span>
@@ -248,7 +248,7 @@ const AnalyticsPage: React.FC = () => {
 
             {/* Menu Matrix */}
             <motion.div variants={ANIMATION_VARIANTS.item}>
-                <Card className="rounded-2xl border-app-border bg-app-card overflow-hidden shadow-soft">
+                <Card className="rounded-lg border-app-border bg-app-card overflow-hidden shadow-soft">
                     <CardHeader className="p-4 border-b border-app-border flex flex-row items-center justify-between">
                         <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2 text-app-text">
                             <Star className="h-4 w-4 text-app-warning" /> Menu performance
@@ -272,7 +272,7 @@ const AnalyticsPage: React.FC = () => {
                                 { id: 'puzzles', label: 'Hidden gems', items: menuMatrix.puzzles, icon: Puzzle, color: 'bg-app-warning/10 text-app-warning border-app-border', desc: 'Market' },
                                 { id: 'dogs', label: 'Slow movers', items: menuMatrix.dogs, icon: Skull, color: 'bg-app-danger/10 text-app-danger border-app-border', desc: 'Remove' }
                             ].map(quad => (
-                                <div key={quad.id} className={cn("p-3 rounded-xl border transition-all flex flex-col min-h-[140px]", quad.color)}>
+                                <div key={quad.id} className={cn("p-3 rounded-md border transition-all flex flex-col min-h-[140px]", quad.color)}>
                                     <div className="flex justify-between items-center mb-2">
                                         <div className="flex items-center gap-1.5">
                                             <quad.icon className="h-4 w-4" />
@@ -284,7 +284,7 @@ const AnalyticsPage: React.FC = () => {
                                         {quad.items.length > 0 ? quad.items.slice(0, 5).map(item => (
                                             <div key={item.name} className="flex justify-between items-center text-xs font-medium border-b border-app-border pb-1 group cursor-default">
                                                 <span className="truncate pr-2 leading-none">{item.name}</span>
-                                                <span className="font-mono bg-app-muted/10 px-1.5 rounded-full">{item.qty}</span>
+                                                <span className="font-mono bg-app-muted/10 px-1.5 rounded-md">{item.qty}</span>
                                             </div>
                                         )) : (
                                             <div className="h-full flex items-center justify-center opacity-40 text-xs">No dishes yet</div>
@@ -302,7 +302,7 @@ const AnalyticsPage: React.FC = () => {
 
             {/* Insight Grid */}
             <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-app-elevated text-app-text p-5 rounded-2xl border border-app-border relative overflow-hidden group shadow-soft">
+                <div className="bg-app-elevated text-app-text p-5 rounded-lg border border-app-border relative overflow-hidden group shadow-soft">
                     <Zap className="absolute -bottom-2 -right-2 h-16 w-16 text-app-primary/10 group-hover:scale-110 transition-transform" />
                     <div className="flex items-center gap-2 mb-2">
                         <div className="h-7 w-7 bg-app-primary/20 rounded-lg flex items-center justify-center">
@@ -316,7 +316,7 @@ const AnalyticsPage: React.FC = () => {
                     </p>
                 </div>
 
-                <div className="bg-app-card border border-app-border p-5 rounded-2xl relative overflow-hidden group shadow-soft">
+                <div className="bg-app-card border border-app-border p-5 rounded-lg relative overflow-hidden group shadow-soft">
                     <AlertTriangle className="absolute -bottom-2 -right-2 h-16 w-16 text-app-warning/10 group-hover:scale-110 transition-transform" />
                     <div className="flex items-center gap-2 mb-2">
                          <div className="h-7 w-7 bg-app-warning/10 rounded-lg flex items-center justify-center">

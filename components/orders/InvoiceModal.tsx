@@ -19,7 +19,7 @@ export const InvoiceModal: React.FC<{ order: Order; onClose: () => void }> = ({ 
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-            <div className="w-full max-w-2xl bg-white text-black rounded-2xl shadow-card overflow-hidden relative">
+            <div className="w-full max-w-2xl bg-white text-black rounded-lg shadow-card overflow-hidden relative">
                 <div className="absolute top-4 right-4 flex gap-2 print:hidden">
                     <button onClick={handlePrint} aria-label="Print" className="flex h-11 w-11 items-center justify-center rounded-full bg-app-elevated text-app-text hover:bg-app-muted/15 transition-colors">
                         <Printer className="h-5 w-5" />
@@ -29,7 +29,7 @@ export const InvoiceModal: React.FC<{ order: Order; onClose: () => void }> = ({ 
                     </button>
                 </div>
                 
-                <div ref={printRef} className="p-10 space-y-8 print:p-0 print:m-0">
+                <div ref={printRef} className="p-10 space-y-5 print:p-0 print:m-0">
                     <div className="flex justify-between items-start border-b pb-8">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">INVOICE</h1>
@@ -38,7 +38,7 @@ export const InvoiceModal: React.FC<{ order: Order; onClose: () => void }> = ({ 
                         <div className="text-right">
                             <div className="flex items-center justify-end gap-2 mb-2">
                                 <ChefHat className="h-6 w-6 text-black" />
-                                <span className="font-bold text-xl">iKITCHEN</span>
+                                <span className="font-bold text-xl">iCooking</span>
                             </div>
                             <p className="text-sm text-gray-500">123 Culinary Ave.</p>
                             <p className="text-sm text-gray-500">Food City, FC 90210</p>

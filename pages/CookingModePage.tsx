@@ -29,12 +29,30 @@ const playTimerStartSound = () => {
     } catch (e) {}
 };
 
-const CompactTimer: React.FC<{ timeLeft: number; totalTime: number; isRunning: boolean; onToggle: () => void; onReset: () => void; }> = ({ timeLeft, totalTime, isRunning, onToggle, onReset }) => {
+const playAlarm = () => {
+    try {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        [0, 0.4, 0.8].forEach(t => {
+            const osc = ctx.createOscillator();
+            const g = ctx.createGain();
+            osc.connect(g); g.connect(ctx.destination);
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(880, ctx.currentTime + t);
+            g.gain.setValueAtTime(0.0001, ctx.currentTime + t);
+            g.gain.exponentialRampToValueAtTime(0.16, ctx.currentTime + t + 0.02);
+            g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + t + 0.3);
+            osc.start(ctx.currentTime + t);
+            osc.stop(ctx.currentTime + t + 0.32);
+        });
+    } catch (e) {}
+};
+
+const CompactTimer: React.FC<{ timeLeft: number; totalTime: number; isRunning: boolean; ended: boolean; onToggle: () => void; onReset: () => void; }> = ({ timeLeft, totalTime, isRunning, ended, onToggle, onReset }) => {
     const progress = totalTime > 0 ? timeLeft / totalTime : 0;
     const formatTime = (s: number) => `${Math.floor(s / 60)}:${((s % 60) || 0).toString().padStart(2, '0')}`;
-    
+
     return (
-        <div className="flex flex-col items-center bg-app-card border border-app-border p-6 rounded-2xl shadow-soft w-full relative overflow-hidden">
+        <div className={cn("flex flex-col items-center bg-app-card border p-6 rounded-lg shadow-soft w-full relative overflow-hidden transition-colors", ended ? "border-app-danger" : "border-app-border")}>
              <div className="relative h-32 w-32 md:h-40 md:w-40 flex items-center justify-center mb-6">
                  <svg className="absolute inset-0 transform -rotate-90 w-full h-full">
                     <circle cx="50%" cy="50%" r="44%" fill="transparent" stroke="currentColor" strokeWidth="3" className="text-app-muted/15" />
@@ -44,36 +62,41 @@ const CompactTimer: React.FC<{ timeLeft: number; totalTime: number; isRunning: b
                         animate={{ strokeDashoffset: 400 - (400 * progress) }}
                         transition={{ duration: 0.5, ease: "linear" }}
                         style={{ strokeDasharray: 400 }}
-                        className="text-app-primary"
+                        className={ended ? "text-app-danger" : "text-app-primary"}
                     />
                 </svg>
                 <div className="flex flex-col items-center relative z-10">
-                    <span className="text-3xl md:text-5xl font-bold tabular-nums tracking-tight text-app-text leading-none">{formatTime(timeLeft)}</span>
-                    <span className="text-xs text-app-muted font-medium mt-2">Timer</span>
+                    <span className={cn("text-3xl md:text-5xl font-bold tabular-nums tracking-tight leading-none", ended ? "text-app-danger" : "text-app-text")}>{formatTime(timeLeft)}</span>
+                    <span className={cn("text-xs font-medium mt-2", ended ? "text-app-danger" : "text-app-muted")}>
+                        {ended ? "Time's up!" : "Timer"}
+                    </span>
                 </div>
              </div>
              <div className="flex gap-2 w-full max-w-[280px] relative z-10">
                 <button
                     aria-label="Reset timer"
                     onClick={onReset}
-                    className="h-12 w-12 rounded-full bg-app-elevated border border-app-border text-app-muted hover:text-app-primary transition-all active:scale-90"
+                    className="h-12 w-12 rounded-md bg-app-elevated border border-app-border text-app-muted hover:text-app-primary transition-all active:scale-90"
                 >
                     <RotateCcw className="h-5 w-5 mx-auto"/>
                 </button>
                 <button
                     onClick={() => {
+                        if (ended) { onReset(); return; }
                         if (!isRunning) playTimerStartSound();
                         onToggle();
                     }}
                     className={cn(
-                        "flex-1 min-h-[44px] rounded-full font-semibold text-sm flex items-center justify-center gap-3 transition-all shadow-soft",
-                        isRunning
-                            ? "bg-app-danger/10 text-app-danger border border-app-danger/30"
-                            : "bg-app-primary text-primary-foreground"
+                        "flex-1 min-h-[44px] rounded-md font-semibold text-sm flex items-center justify-center gap-3 transition-all shadow-soft",
+                        ended
+                            ? "bg-app-danger text-white"
+                            : isRunning
+                                ? "bg-app-danger/10 text-app-danger border border-app-danger/30"
+                                : "bg-app-primary text-primary-foreground"
                     )}
                 >
-                    {isRunning ? <Pause className="h-4 w-4"/> : <Play className="h-4 w-4 fill-current"/>}
-                    <span>{isRunning ? 'Pause' : 'Start Timer'}</span>
+                    {ended ? <RotateCcw className="h-4 w-4"/> : isRunning ? <Pause className="h-4 w-4"/> : <Play className="h-4 w-4 fill-current"/>}
+                    <span>{ended ? 'Restart' : isRunning ? 'Pause' : 'Start Timer'}</span>
                 </button>
              </div>
         </div>
@@ -95,6 +118,7 @@ export default function CookingModePage() {
     const [isFinished, setIsFinished] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
+    const [timerEnded, setTimerEnded] = useState(false);
     const [completedIngs, setCompletedIngs] = useState<Set<string>>(new Set());
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -212,15 +236,42 @@ export default function CookingModePage() {
         if (steps[currentStepIndex]?.duration) setTimeLeft(steps[currentStepIndex].duration! * 60);
         else setTimeLeft(0);
         setIsTimerRunning(false);
+        setTimerEnded(false);
         activeStepRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, [currentStepIndex, steps]);
 
+    // Countdown — alarm + vibrate when it reaches zero while running.
     useEffect(() => {
-        let interval: any;
-        if (isTimerRunning && timeLeft > 0) interval = setInterval(() => setTimeLeft(p => p - 1), 1000);
-        else if (timeLeft === 0) setIsTimerRunning(false);
+        if (!isTimerRunning) return;
+        const interval = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    setIsTimerRunning(false);
+                    setTimerEnded(true);
+                    playAlarm();
+                    try { (navigator as any).vibrate?.([200, 100, 200, 100, 400]); } catch (e) {}
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
         return () => clearInterval(interval);
-    }, [isTimerRunning, timeLeft]);
+    }, [isTimerRunning]);
+
+    // Keep the screen awake while cooking.
+    useEffect(() => {
+        let lock: any = null;
+        const request = async () => {
+            try { lock = await (navigator as any).wakeLock?.request('screen'); } catch (e) {}
+        };
+        request();
+        const onVis = () => { if (document.visibilityState === 'visible') request(); };
+        document.addEventListener('visibilitychange', onVis);
+        return () => {
+            document.removeEventListener('visibilitychange', onVis);
+            try { lock?.release?.(); } catch (e) {}
+        };
+    }, []);
 
     const toggleIngredient = (id: string) => {
         setCompletedIngs(prev => {
@@ -241,7 +292,7 @@ export default function CookingModePage() {
     if (isFinished) {
         return (
             <div className="fixed inset-0 bg-app-bg z-[200] flex items-center justify-center p-4">
-                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full bg-app-card p-10 rounded-2xl border border-app-border shadow-soft text-center relative overflow-hidden">
+                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full bg-app-card p-10 rounded-lg border border-app-border shadow-soft text-center relative overflow-hidden">
                     <div className="h-20 w-20 bg-app-success/10 text-app-success rounded-full border border-app-success/20 flex items-center justify-center mx-auto mb-8">
                         <PartyPopper className="h-10 w-10" />
                     </div>
@@ -259,7 +310,7 @@ export default function CookingModePage() {
         <div className="fixed inset-0 bg-app-bg z-[150] flex flex-col font-sans overflow-hidden text-app-text">
             {/* Header */}
             <div className="bg-app-card border-b border-app-border h-16 flex items-center justify-between px-6 shadow-soft z-30">
-                <div className="flex items-center gap-6 min-w-0">
+                <div className="flex items-center gap-4 min-w-0">
                     <button aria-label="Back" onClick={() => setShowSaveNamingModal(true)} className="h-10 w-10 flex items-center justify-center bg-app-elevated border border-app-border rounded-full text-app-muted hover:text-app-primary transition-all">
                         <ArrowLeft className="h-5 w-5"/>
                     </button>
@@ -290,7 +341,7 @@ export default function CookingModePage() {
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
                 {/* Steps Timeline */}
                 <div className="w-full md:w-3/5 overflow-y-auto p-6 md:p-10 md:border-r border-app-border bg-app-bg scrollbar-hide">
-                    <div className="max-w-3xl mx-auto space-y-8 pb-32">
+                    <div className="max-w-3xl mx-auto space-y-5 pb-20">
                         <div className="flex items-center gap-3 px-2">
                             <ListChecks className="h-5 w-5 text-app-primary" />
                             <h3 className="text-xs text-app-muted font-medium">Steps</h3>
@@ -308,9 +359,9 @@ export default function CookingModePage() {
                                         <motion.div
                                             key={step.id} ref={isActive ? activeStepRef : null}
                                             initial={isActive ? { scale: 0.98, opacity: 0 } : false} animate={{ scale: 1, opacity: 1 }}
-                                            className={cn("p-8 rounded-2xl border transition-all relative overflow-hidden", isActive ? "bg-app-card border-app-primary shadow-soft z-10" : "bg-app-muted/10 border-app-border opacity-50")}
+                                            className={cn("p-5 rounded-lg border transition-all relative overflow-hidden", isActive ? "bg-app-card border-app-primary shadow-soft z-10" : "bg-app-muted/10 border-app-border opacity-50")}
                                         >
-                                            <div className="flex gap-6 items-start relative z-10">
+                                            <div className="flex gap-4 items-start relative z-10">
                                                 <div className={cn("h-10 w-10 rounded-full border-2 flex items-center justify-center shrink-0 transition-all shadow-soft", isActive ? "bg-app-primary border-app-primary text-primary-foreground scale-110" : "bg-app-bg border-app-border text-app-muted")}>
                                                     {isDone ? <Check className="h-6 w-6" strokeWidth={4} /> : <span className="text-sm font-semibold">{idx + 1}</span>}
                                                 </div>
@@ -349,9 +400,16 @@ export default function CookingModePage() {
                                 <h3 className="text-xs text-app-muted font-medium">Timer</h3>
                             </div>
                             {steps[currentStepIndex]?.duration ? (
-                                <CompactTimer timeLeft={timeLeft} totalTime={steps[currentStepIndex].duration! * 60} isRunning={isTimerRunning} onToggle={() => setIsTimerRunning(!isTimerRunning)} onReset={() => setTimeLeft(steps[currentStepIndex].duration! * 60)} />
+                                <CompactTimer
+                                    timeLeft={timeLeft}
+                                    totalTime={steps[currentStepIndex].duration! * 60}
+                                    isRunning={isTimerRunning}
+                                    ended={timerEnded}
+                                    onToggle={() => { setTimerEnded(false); setIsTimerRunning(r => !r); }}
+                                    onReset={() => { setTimerEnded(false); setIsTimerRunning(false); setTimeLeft(steps[currentStepIndex].duration! * 60); }}
+                                />
                             ) : (
-                                <div className="bg-app-bg border border-dashed border-app-border p-12 rounded-2xl w-full flex flex-col items-center justify-center opacity-60 text-app-muted">
+                                <div className="bg-app-bg border border-dashed border-app-border p-12 rounded-lg w-full flex flex-col items-center justify-center opacity-60 text-app-muted">
                                     <Zap className="h-10 w-10 mb-4" />
                                     <span className="text-sm font-medium">No timer for this step</span>
                                 </div>
@@ -365,7 +423,7 @@ export default function CookingModePage() {
                                     <Utensils className="h-4 w-4 text-app-primary" />
                                     <h3 className="text-xs text-app-muted font-medium">Ingredients</h3>
                                 </div>
-                                <span className={cn("text-xs font-semibold px-3 py-1 rounded-full border", isCurrentStepTasksCompleted ? "bg-app-success/10 text-app-success border-app-success/20" : "bg-app-primary/10 text-app-primary border-app-primary/20")}>
+                                <span className={cn("text-xs font-semibold px-3 py-1 rounded-md border", isCurrentStepTasksCompleted ? "bg-app-success/10 text-app-success border-app-success/20" : "bg-app-primary/10 text-app-primary border-app-primary/20")}>
                                     {completedIngs.size}/{currentStepIngredients.length} ready
                                 </span>
                             </div>
@@ -375,7 +433,7 @@ export default function CookingModePage() {
                                     currentStepIngredients.map((ing, idx) => {
                                         const isDone = completedIngs.has(ing.id);
                                         return (
-                                            <div key={ing.id} onClick={() => toggleIngredient(ing.id)} className={cn("p-4 rounded-xl border transition-all cursor-pointer select-none group relative overflow-hidden", isDone ? "bg-app-success/10 border-app-success/30" : "bg-app-bg border-app-border hover:border-app-primary/40")}>
+                                            <div key={ing.id} onClick={() => toggleIngredient(ing.id)} className={cn("p-4 rounded-md border transition-all cursor-pointer select-none group relative overflow-hidden", isDone ? "bg-app-success/10 border-app-success/30" : "bg-app-bg border-app-border hover:border-app-primary/40")}>
                                                 <div className="flex items-center gap-4 relative z-10">
                                                     <div className={cn("h-9 w-9 rounded-full border flex items-center justify-center shrink-0 transition-all", isDone ? "bg-app-success border-app-success text-white" : "bg-app-card border-app-border text-app-muted")}>
                                                         {isDone ? <Check className="h-5 w-5 stroke-[4]" /> : <span className="text-xs font-semibold">{idx + 1}</span>}
@@ -389,7 +447,7 @@ export default function CookingModePage() {
                                         );
                                     })
                                 ) : (
-                                    <div className="py-12 text-center text-app-muted flex flex-col items-center gap-4 border border-dashed border-app-border rounded-2xl opacity-60">
+                                    <div className="py-12 text-center text-app-muted flex flex-col items-center gap-4 border border-dashed border-app-border rounded-lg opacity-60">
                                         <Utensils className="h-10 w-10" />
                                         <p className="text-sm font-medium">No ingredients for this step</p>
                                     </div>
@@ -406,8 +464,8 @@ export default function CookingModePage() {
                     <motion.div initial={{ width: 0 }} animate={{ width: `${progressPercent}%` }} className="h-full bg-app-primary" />
                  </div>
 
-                <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-8">
-                    <button disabled={currentStepIndex === 0} onClick={() => setCurrentStepIndex(c => c - 1)} className="min-h-[44px] px-8 rounded-full border border-app-border flex items-center gap-3 text-app-muted hover:text-app-text hover:bg-app-muted/10 disabled:opacity-30 transition-all">
+                <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-4">
+                    <button disabled={currentStepIndex === 0} onClick={() => setCurrentStepIndex(c => c - 1)} className="min-h-[44px] px-8 rounded-md border border-app-border flex items-center gap-3 text-app-muted hover:text-app-text hover:bg-app-muted/10 disabled:opacity-30 transition-all">
                         <ArrowLeft className="h-4 w-4" />
                         <span className="text-sm font-semibold">Back</span>
                     </button>
@@ -425,7 +483,7 @@ export default function CookingModePage() {
                         disabled={!isCurrentStepTasksCompleted}
                         onClick={() => currentStepIndex === steps.length - 1 ? handleFinish() : setCurrentStepIndex(c => c + 1)}
                         className={cn(
-                            "min-h-[44px] px-12 rounded-full font-semibold text-sm flex items-center gap-3 transition-all shadow-soft disabled:opacity-40",
+                            "min-h-[44px] px-12 rounded-md font-semibold text-sm flex items-center gap-3 transition-all shadow-soft disabled:opacity-40",
                             currentStepIndex === steps.length - 1
                                 ? "bg-app-success text-white"
                                 : "bg-app-primary text-primary-foreground"

@@ -49,7 +49,7 @@ export const AddIngredientModal: React.FC<{
         >
             <motion.div
                 initial={{ scale: 0.98, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.98, opacity: 0, y: 10 }}
-                className="bg-app-card rounded-2xl shadow-soft w-full max-w-lg overflow-hidden border border-app-border relative"
+                className="bg-app-card rounded-lg shadow-soft w-full max-w-lg overflow-hidden border border-app-border relative"
                 onClick={e => e.stopPropagation()}
             >
                 <div className="bg-app-elevated p-6 border-b border-app-border flex justify-between items-center relative z-10">
@@ -64,7 +64,7 @@ export const AddIngredientModal: React.FC<{
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-8 space-y-8 max-h-[80vh] overflow-y-auto scrollbar-hide relative z-10">
+                <form onSubmit={handleSubmit} className="p-5 space-y-5 max-h-[80vh] overflow-y-auto scrollbar-hide relative z-10">
                     
                     {/* Identification Section */}
                     <div className="space-y-4">
@@ -78,14 +78,14 @@ export const AddIngredientModal: React.FC<{
                                 <input
                                     required autoFocus value={formData.name} onChange={e => handleChange('name', e.target.value)}
                                     placeholder="Item name…"
-                                    className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text placeholder:text-app-muted"
+                                    className="w-full min-h-[44px] px-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text placeholder:text-app-muted"
                                 />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-xs text-app-muted font-medium block ml-1">Category</label>
                                 <select
                                     value={formData.category} onChange={e => handleChange('category', e.target.value)}
-                                    className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text appearance-none cursor-pointer"
+                                    className="w-full min-h-[44px] px-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text appearance-none cursor-pointer"
                                 >
                                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                                 </select>
@@ -95,7 +95,7 @@ export const AddIngredientModal: React.FC<{
                                 <input
                                     value={formData.supplier} onChange={e => handleChange('supplier', e.target.value)}
                                     placeholder="Supplier…"
-                                    className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text placeholder:text-app-muted"
+                                    className="w-full min-h-[44px] px-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text placeholder:text-app-muted"
                                 />
                             </div>
                         </div>
@@ -114,7 +114,7 @@ export const AddIngredientModal: React.FC<{
                                 <label className="text-xs text-app-muted font-medium block ml-1">Base unit</label>
                                 <select
                                     value={formData.baseUnit} onChange={e => handleChange('baseUnit', e.target.value)}
-                                    className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text appearance-none"
+                                    className="w-full min-h-[44px] px-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text appearance-none"
                                 >
                                     {AVAILABLE_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
                                 </select>
@@ -124,10 +124,10 @@ export const AddIngredientModal: React.FC<{
                                 <div className="relative">
                                     <input
                                         type="number" step="any" min="0.01" required value={formData.packageSize} onChange={e => handleChange('packageSize', parseFloat(e.target.value))}
-                                        className="w-full min-h-[44px] pl-4 pr-16 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
+                                        className="w-full min-h-[44px] pl-4 pr-16 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
                                     />
                                     <div className="absolute right-3 top-0 bottom-0 flex items-center pointer-events-none">
-                                        <span className="text-xs font-medium text-app-primary bg-app-primary/10 px-2 py-1 rounded-full">
+                                        <span className="text-xs font-medium text-app-primary bg-app-primary/10 px-2 py-1 rounded-md">
                                             {formData.baseUnit}
                                         </span>
                                     </div>
@@ -135,7 +135,7 @@ export const AddIngredientModal: React.FC<{
                             </div>
                         </div>
 
-                        <div className="bg-app-elevated p-5 rounded-xl border border-app-border flex items-center justify-between group">
+                        <div className="bg-app-elevated p-5 rounded-md border border-app-border flex items-center justify-between group">
                             <div className="space-y-1.5 flex-1">
                                 <label className="text-xs font-medium text-app-primary block">Quantity in stock</label>
                                 <input
@@ -155,7 +155,7 @@ export const AddIngredientModal: React.FC<{
 
                     {/* Financial Readout Section */}
                     <div className="space-y-4 pt-4 border-t border-app-border">
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     <DollarSign className="h-4 w-4 text-app-primary" />
@@ -167,13 +167,13 @@ export const AddIngredientModal: React.FC<{
                                         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-app-muted">$</span>
                                         <input
                                             type="number" step="0.01" min="0" required value={formData.costPerPackage} onChange={e => handleChange('costPerPackage', parseFloat(e.target.value))}
-                                            className="w-full min-h-[44px] pl-8 pr-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
+                                            className="w-full min-h-[44px] pl-8 pr-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-app-primary/10 rounded-xl p-5 border border-app-primary/20 flex flex-col justify-center">
+                            <div className="bg-app-primary/10 rounded-md p-5 border border-app-primary/20 flex flex-col justify-center">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Scale className="h-4 w-4 text-app-primary" />
                                     <span className="text-xs font-medium text-app-primary">Unit cost</span>
@@ -191,18 +191,18 @@ export const AddIngredientModal: React.FC<{
                             <label className="text-xs text-app-muted font-medium block flex items-center gap-2"><Calendar className="h-3 w-3"/> Shelf life (days)</label>
                              <input
                                 type="number" min="1" value={formData.shelf_life_days} onChange={e => handleChange('shelf_life_days', parseFloat(e.target.value))}
-                                className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
+                                className="w-full min-h-[44px] px-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
                             />
                         </div>
                     </div>
 
                     <div className="pt-4 flex justify-end gap-4">
-                        <button type="button" onClick={onClose} className="min-h-[44px] px-8 rounded-full text-sm font-semibold text-app-muted hover:text-app-text transition-colors">
+                        <button type="button" onClick={onClose} className="min-h-[44px] px-8 rounded-md text-sm font-semibold text-app-muted hover:text-app-text transition-colors">
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="min-h-[44px] px-10 rounded-full bg-app-primary text-primary-foreground text-sm font-semibold shadow-soft hover:brightness-105 active:scale-[0.97] transition-all flex items-center gap-3"
+                            className="min-h-[44px] px-10 rounded-md bg-app-primary text-primary-foreground text-sm font-semibold shadow-soft hover:brightness-105 active:scale-[0.97] transition-all flex items-center gap-3"
                         >
                             <Save className="h-4 w-4" /> Save Item
                         </button>

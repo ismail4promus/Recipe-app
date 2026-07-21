@@ -39,7 +39,7 @@ const SettingsPage: React.FC = () => {
   const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
-    setKitchenName(localStorage.getItem('chef_kitchen_name') || 'iKITCHEN');
+    setKitchenName(localStorage.getItem('chef_kitchen_name') || 'iCooking');
     setChefName(localStorage.getItem('chef_name') || 'Head Chef');
   }, []);
 
@@ -108,10 +108,10 @@ const SettingsPage: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-4 pb-24 font-sans px-2">
+    <div className="max-w-5xl mx-auto space-y-4 pb-20 font-sans px-2">
       <div className="flex items-center justify-between border-b border-app-border pb-4 pt-2">
         <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-app-primary/10 rounded-xl flex items-center justify-center border border-app-primary/20">
+            <div className="h-10 w-10 bg-app-primary/10 rounded-md flex items-center justify-center border border-app-primary/20">
                 <Settings className="h-5 w-5 text-app-primary" />
             </div>
             <div>
@@ -121,7 +121,7 @@ const SettingsPage: React.FC = () => {
                 </p>
             </div>
         </div>
-        <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-app-card border border-app-border rounded-full shadow-soft">
+        <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-app-card border border-app-border rounded-md shadow-soft">
             <div className="flex items-center gap-1.5 border-r border-app-border pr-3">
                 <span className="h-2 w-2 rounded-full bg-app-success"></span>
                 <span className="text-xs font-medium text-app-muted">v2.5.0</span>
@@ -132,14 +132,14 @@ const SettingsPage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           <div className="lg:col-span-3 space-y-3">
-              <div className="bg-app-card border border-app-border rounded-2xl p-1.5 shadow-soft">
+              <div className="bg-app-card border border-app-border rounded-lg p-1.5 shadow-soft">
                 <div className="flex lg:flex-col gap-1 overflow-x-auto scrollbar-hide">
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={cn(
-                                "flex-1 flex items-center gap-3 px-4 min-h-[44px] rounded-full transition-all duration-200 group relative whitespace-nowrap",
+                                "flex-1 flex items-center gap-3 px-4 min-h-[44px] rounded-md transition-all duration-200 group relative whitespace-nowrap",
                                 activeTab === tab.id
                                     ? "bg-app-primary text-primary-foreground shadow-soft"
                                     : "hover:bg-app-muted/10 text-app-muted hover:text-app-text"
@@ -152,7 +152,7 @@ const SettingsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="hidden lg:block bg-app-card border border-app-border rounded-2xl p-5 shadow-soft">
+              <div className="hidden lg:block bg-app-card border border-app-border rounded-lg p-5 shadow-soft">
                     <div className="flex items-center gap-2 mb-3">
                         <ShieldCheck className="h-4 w-4 text-app-success" />
                         <span className="text-xs font-medium text-app-muted">Kitchen summary</span>
@@ -177,7 +177,7 @@ const SettingsPage: React.FC = () => {
                         key="profile" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                         className="space-y-4"
                     >
-                        <Card className="rounded-2xl border-app-border bg-app-card shadow-soft overflow-hidden">
+                        <Card className="rounded-lg border-app-border bg-app-card shadow-soft overflow-hidden">
                             <CardHeader className="border-b border-app-border p-5">
                                 <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
                                     <Building className="h-4 w-4 text-app-primary" /> Kitchen details
@@ -192,7 +192,7 @@ const SettingsPage: React.FC = () => {
                                             <input
                                                 value={kitchenName}
                                                 onChange={(e) => setKitchenName(e.target.value)}
-                                                className="w-full min-h-[44px] pl-10 pr-4 rounded-full bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary text-sm font-medium text-app-text transition-all"
+                                                className="w-full min-h-[44px] pl-10 pr-4 rounded-md bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary text-sm font-medium text-app-text transition-all"
                                                 placeholder="Kitchen name..."
                                             />
                                         </div>
@@ -204,7 +204,7 @@ const SettingsPage: React.FC = () => {
                                             <input
                                                 value={chefName}
                                                 onChange={(e) => setChefName(e.target.value)}
-                                                className="w-full min-h-[44px] pl-10 pr-4 rounded-full bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary text-sm font-medium text-app-text transition-all"
+                                                className="w-full min-h-[44px] pl-10 pr-4 rounded-md bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary text-sm font-medium text-app-text transition-all"
                                                 placeholder="Your name..."
                                             />
                                         </div>
@@ -219,7 +219,7 @@ const SettingsPage: React.FC = () => {
                                             <select
                                                 value={currency}
                                                 onChange={(e) => setCurrency(e.target.value)}
-                                                className="w-full min-h-[44px] pl-10 pr-10 rounded-full bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 text-sm font-medium text-app-text appearance-none cursor-pointer"
+                                                className="w-full min-h-[44px] pl-10 pr-10 rounded-md bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 text-sm font-medium text-app-text appearance-none cursor-pointer"
                                             >
                                                 {currencies.map(c => (
                                                     <option key={c.code} value={c.code}>{c.label} ({c.symbol})</option>
@@ -229,7 +229,7 @@ const SettingsPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="p-4 bg-app-warning/10 border border-app-border rounded-xl flex items-start gap-3">
+                                    <div className="p-4 bg-app-warning/10 border border-app-border rounded-md flex items-start gap-3">
                                         <Info className="h-4 w-4 text-app-warning mt-0.5 shrink-0" />
                                         <p className="text-xs text-app-muted font-medium leading-normal">
                                             Changing your currency refreshes the app to update past totals.
@@ -256,7 +256,7 @@ const SettingsPage: React.FC = () => {
                         key="appearance" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                         className="space-y-4"
                     >
-                         <Card className="rounded-2xl border-app-border bg-app-card shadow-soft overflow-hidden">
+                         <Card className="rounded-lg border-app-border bg-app-card shadow-soft overflow-hidden">
                             <CardHeader className="border-b border-app-border p-5">
                                 <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
                                     <Monitor className="h-4 w-4 text-app-primary" /> Theme
@@ -270,13 +270,13 @@ const SettingsPage: React.FC = () => {
                                             onClick={() => setTheme('light')}
                                             aria-pressed={theme === 'light'}
                                             className={cn(
-                                                "flex items-center gap-3 p-4 rounded-2xl border transition-all min-h-[64px]",
+                                                "flex items-center gap-3 p-4 rounded-lg border transition-all min-h-[64px]",
                                                 theme === 'light'
                                                     ? "border-app-primary ring-2 ring-app-primary bg-app-primary/10"
                                                     : "border-app-border bg-app-elevated hover:bg-app-muted/10"
                                             )}
                                         >
-                                            <div className="h-10 w-10 rounded-xl bg-app-primary/15 text-app-primary flex items-center justify-center shrink-0">
+                                            <div className="h-10 w-10 rounded-md bg-app-primary/15 text-app-primary flex items-center justify-center shrink-0">
                                                 <Sun className="h-5 w-5" />
                                             </div>
                                             <div className="text-left">
@@ -289,13 +289,13 @@ const SettingsPage: React.FC = () => {
                                             onClick={() => setTheme('dark')}
                                             aria-pressed={theme === 'dark'}
                                             className={cn(
-                                                "flex items-center gap-3 p-4 rounded-2xl border transition-all min-h-[64px]",
+                                                "flex items-center gap-3 p-4 rounded-lg border transition-all min-h-[64px]",
                                                 theme === 'dark'
                                                     ? "border-app-primary ring-2 ring-app-primary bg-app-primary/10"
                                                     : "border-app-border bg-app-elevated hover:bg-app-muted/10"
                                             )}
                                         >
-                                            <div className="h-10 w-10 rounded-xl bg-app-primary/15 text-app-primary flex items-center justify-center shrink-0">
+                                            <div className="h-10 w-10 rounded-md bg-app-primary/15 text-app-primary flex items-center justify-center shrink-0">
                                                 <Moon className="h-5 w-5" />
                                             </div>
                                             <div className="text-left">
@@ -316,16 +316,16 @@ const SettingsPage: React.FC = () => {
                         key="data" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                         className="space-y-4"
                     >
-                        <Card className="rounded-2xl border-app-border bg-app-card shadow-soft overflow-hidden">
+                        <Card className="rounded-lg border-app-border bg-app-card shadow-soft overflow-hidden">
                             <CardHeader className="border-b border-app-border p-5">
                                 <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
                                     <HardDrive className="h-4 w-4 text-app-primary" /> Your data
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-5 space-y-3">
-                                <div className="flex items-center justify-between p-4 border border-app-border rounded-2xl bg-app-elevated hover:border-app-primary/40 transition-all gap-4 group">
+                                <div className="flex items-center justify-between p-4 border border-app-border rounded-lg bg-app-elevated hover:border-app-primary/40 transition-all gap-4 group">
                                     <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-xl bg-app-info/10 text-app-info flex items-center justify-center shrink-0 border border-app-border">
+                                        <div className="h-10 w-10 rounded-md bg-app-info/10 text-app-info flex items-center justify-center shrink-0 border border-app-border">
                                             <Download className="h-5 w-5" />
                                         </div>
                                         <div>
@@ -343,19 +343,19 @@ const SettingsPage: React.FC = () => {
                                     </Button>
                                 </div>
 
-                                <div className="p-4 rounded-2xl bg-app-muted/10 border border-app-border flex items-start gap-4">
+                                <div className="p-4 rounded-lg bg-app-muted/10 border border-app-border flex items-start gap-4">
                                     <Shield className="h-4 w-4 text-app-primary shrink-0 mt-0.5" />
                                     <p className="text-xs text-app-muted font-medium leading-relaxed">
-                                        iKITCHEN keeps your data <span className="text-app-primary">on this device only</span>. Nothing is stored on our servers.
+                                        iCooking keeps your data <span className="text-app-primary">on this device only</span>. Nothing is stored on our servers.
                                     </p>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        <div className="bg-app-card rounded-2xl border border-app-border p-5 shadow-soft">
+                        <div className="bg-app-card rounded-lg border border-app-border p-5 shadow-soft">
                              <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 rounded-xl bg-app-info/10 text-app-info flex items-center justify-center border border-app-border">
+                                    <div className="h-10 w-10 rounded-md bg-app-info/10 text-app-info flex items-center justify-center border border-app-border">
                                         <RefreshCw className="h-5 w-5" />
                                     </div>
                                     <div>
@@ -373,10 +373,10 @@ const SettingsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-app-card rounded-2xl border border-app-border p-5 shadow-soft">
+                        <div className="bg-app-card rounded-lg border border-app-border p-5 shadow-soft">
                              <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 rounded-xl bg-app-danger/10 text-app-danger flex items-center justify-center border border-app-border">
+                                    <div className="h-10 w-10 rounded-md bg-app-danger/10 text-app-danger flex items-center justify-center border border-app-border">
                                         <Trash2 className="h-5 w-5" />
                                     </div>
                                     <div>
@@ -388,7 +388,7 @@ const SettingsPage: React.FC = () => {
                                     onClick={handleSeed}
                                     disabled={seeding}
                                     className={cn(
-                                        "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold text-white shadow-soft transition-all active:scale-[0.97]",
+                                        "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md px-5 text-sm font-semibold text-white shadow-soft transition-all active:scale-[0.97]",
                                         seeded
                                             ? "bg-app-success"
                                             : "bg-app-danger hover:brightness-105"

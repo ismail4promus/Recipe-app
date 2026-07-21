@@ -32,7 +32,7 @@ const MobileDrawer: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-app-primary text-primary-foreground">
                   <ChefHat className="h-5 w-5" />
                 </div>
-                <span className="text-lg font-bold tracking-tight text-app-text">iKitchen</span>
+                <span className="text-lg font-bold tracking-tight text-app-text">iCooking</span>
               </div>
               <button onClick={onClose} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text">
                 <X className="h-5 w-5" />

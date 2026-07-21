@@ -37,7 +37,7 @@ export const orderStatusLabel = (status: OrderStatus) => ORDER_MAP[status]?.labe
 const Badge: React.FC<{ label: string; tone: Tone; className?: string; dot?: boolean }> = ({ label, tone, className, dot }) => (
   <span
     className={cn(
-      'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap',
+      'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap',
       TONE_STYLES[tone],
       className
     )}

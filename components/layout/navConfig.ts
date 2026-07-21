@@ -10,9 +10,9 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', icon: Home, label: 'Home' },
   { to: '/recipes', icon: UtensilsCrossed, label: 'Recipes' },
+  { to: '/cooking', icon: ChefHat, label: 'Cooking' },
   { to: '/pantry', icon: Warehouse, label: 'Inventory' },
   { to: '/orders', icon: ClipboardList, label: 'Orders' },
-  { to: '/cooking', icon: ChefHat, label: 'Cooking' },
   { to: '/analytics', icon: BarChart3, label: 'Insights' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
@@ -20,8 +20,8 @@ export const NAV_ITEMS: NavItem[] = [
 // Most-used sections for the mobile bottom bar (5 max).
 export const BOTTOM_NAV_ITEMS: NavItem[] = [
   { to: '/dashboard', icon: Home, label: 'Home' },
-  { to: '/orders', icon: ClipboardList, label: 'Orders' },
+  { to: '/recipes', icon: UtensilsCrossed, label: 'Recipes' },
   { to: '/cooking', icon: ChefHat, label: 'Cooking' },
   { to: '/pantry', icon: Warehouse, label: 'Inventory' },
-  { to: '/recipes', icon: UtensilsCrossed, label: 'Recipes' },
+  { to: '/orders', icon: ClipboardList, label: 'Orders' },
 ];
