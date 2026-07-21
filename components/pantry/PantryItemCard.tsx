@@ -49,31 +49,31 @@ export const PantryItemCard: React.FC<{
             <div 
                 onClick={() => isSelectionMode ? onToggleSelect(item.id) : onEdit(item)}
                 className={cn(
-                    "group relative flex items-center gap-4 p-3 bg-app-card border rounded-sm hover:border-app-primary/40 transition-all select-none shadow-sm overflow-hidden",
-                    isSelected ? "border-app-primary bg-white/5" : "border-app-border",
+                    "group relative flex items-center gap-4 p-3 bg-app-card border rounded-xl hover:border-app-primary/40 transition-all select-none shadow-soft overflow-hidden",
+                    isSelected ? "border-app-primary bg-app-primary/10" : "border-app-border",
                     isLowStock && "border-l-4 border-l-app-warning"
                 )}
             >
-                <div className="h-10 w-10 rounded-sm bg-app-bg flex items-center justify-center text-lg shadow-inner shrink-0 border border-white/5">
+                <div className="h-10 w-10 rounded-xl bg-app-elevated flex items-center justify-center text-lg shrink-0 border border-app-border">
                     {getCategoryIcon(item.category)}
                 </div>
 
                 <div className="flex-1 min-w-0 flex items-center justify-between gap-6">
                     <div className="min-w-0 flex-1">
-                        <h4 className="font-black text-xs text-app-text truncate uppercase tracking-tight leading-none mb-1.5">{item.name}</h4>
+                        <h4 className="font-semibold text-sm text-app-text truncate tracking-tight leading-none mb-1.5">{item.name}</h4>
                         <div className="flex items-center gap-3">
-                            <span className="text-[8px] font-black text-app-muted uppercase tracking-[0.2em]">{item.category}</span>
-                            <span className="text-[8px] font-bold text-app-primary uppercase tabular-nums tracking-widest">{formatCurrency(item.costPerUnit)} / UNIT</span>
+                            <span className="text-xs text-app-muted">{item.category}</span>
+                            <span className="text-xs font-medium text-app-primary tabular-nums">{formatCurrency(item.costPerUnit)} / unit</span>
                         </div>
                     </div>
 
-                    <div className="hidden sm:block shrink-0 px-4 border-x border-white/5">
+                    <div className="hidden sm:block shrink-0 px-4 border-x border-app-border">
                         <div className={cn(
-                            "flex items-center gap-1.5 text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-sm border",
-                            isExpired ? "text-red-500 border-red-500/30 bg-red-500/5" : isExpiringSoon ? "text-app-warning border-app-warning/30 bg-app-warning/5" : "text-app-success border-app-success/30 bg-app-success/5"
+                            "flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full border",
+                            isExpired ? "text-app-danger border-app-danger/30 bg-app-danger/10" : isExpiringSoon ? "text-app-warning border-app-warning/30 bg-app-warning/10" : "text-app-success border-app-success/30 bg-app-success/10"
                         )}>
                             <Clock className="h-3 w-3" />
-                            {daysRemaining < 0 ? 'PURGE_REQ' : `VERIFY_${daysRemaining}D`}
+                            {daysRemaining < 0 ? 'Expired' : `${daysRemaining}d left`}
                         </div>
                     </div>
 
@@ -81,8 +81,8 @@ export const PantryItemCard: React.FC<{
                         <QuickStockControl item={item} onUpdate={onUpdate} className="h-10 min-w-[100px]" />
                         {isSelectionMode && (
                              <div className={cn(
-                                 "h-10 w-10 rounded-sm flex items-center justify-center transition-colors border",
-                                 isSelected ? "bg-app-primary border-app-primary text-white" : "bg-transparent border-white/10"
+                                 "h-10 w-10 rounded-full flex items-center justify-center transition-colors border",
+                                 isSelected ? "bg-app-primary border-app-primary text-primary-foreground" : "bg-transparent border-app-border"
                              )}>
                                 {isSelected && <CheckSquare className="h-4 w-4" />}
                              </div>
@@ -97,56 +97,55 @@ export const PantryItemCard: React.FC<{
         <div 
             onClick={() => isSelectionMode ? onToggleSelect(item.id) : onEdit(item)}
             className={cn(
-                "group relative bg-app-card rounded-sm transition-all duration-200 border select-none overflow-hidden h-full flex flex-col shadow-md",
-                isSelected ? "border-app-primary bg-white/5" : "border-app-border hover:border-app-primary/30",
+                "group relative bg-app-card rounded-2xl transition-all duration-200 border select-none overflow-hidden h-full flex flex-col shadow-soft",
+                isSelected ? "border-app-primary bg-app-primary/10" : "border-app-border hover:border-app-primary/30",
                 isLowStock && "border-t-2 border-t-app-warning"
             )}
         >
-            <Shield className="absolute -bottom-4 -right-4 h-16 w-16 text-white/[0.02] pointer-events-none group-hover:scale-110 transition-transform" />
-            
             <div className="p-4 flex flex-col h-full gap-4 relative z-10">
                 <div className="flex items-start gap-3">
-                    <div className="h-10 w-10 rounded-sm bg-app-bg flex items-center justify-center text-xl shrink-0 border border-white/5 shadow-inner">
+                    <div className="h-10 w-10 rounded-xl bg-app-elevated flex items-center justify-center text-xl shrink-0 border border-app-border">
                         {getCategoryIcon(item.category)}
                     </div>
-                    
+
                     <div className="min-w-0 flex-1">
-                        <h4 className="font-black text-[11px] text-app-text leading-tight uppercase tracking-tight truncate mb-1.5" title={item.name}>{item.name}</h4>
+                        <h4 className="font-semibold text-sm text-app-text leading-tight tracking-tight truncate mb-1.5" title={item.name}>{item.name}</h4>
                         <div className={cn(
-                            "inline-flex items-center gap-1 text-[7px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-sm border bg-app-bg",
-                            isExpired ? "text-red-500 border-red-500/30" : isExpiringSoon ? "text-app-warning border-app-warning/30" : "text-app-success border-app-success/30"
+                            "inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full border",
+                            isExpired ? "text-app-danger border-app-danger/30 bg-app-danger/10" : isExpiringSoon ? "text-app-warning border-app-warning/30 bg-app-warning/10" : "text-app-success border-app-success/30 bg-app-success/10"
                         )}>
-                            <Clock className="h-2.5 w-2.5" /> {daysRemaining < 0 ? 'EXPIRED' : `${daysRemaining}D VULN.`}
+                            <Clock className="h-2.5 w-2.5" /> {daysRemaining < 0 ? 'Expired' : `${daysRemaining}d left`}
                         </div>
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-3 mt-auto">
-                    <div className="flex justify-between items-center border-t border-white/5 pt-3">
+                    <div className="flex justify-between items-center border-t border-app-border pt-3">
                         <div className="flex flex-col">
-                            <span className="text-[7px] font-black text-app-muted uppercase tracking-[0.2em] leading-none mb-1">Fiscal_Val</span>
-                            <span className="text-[10px] font-black text-app-text tabular-nums leading-none tracking-tight">{formatCurrency(item.costPerUnit)}</span>
+                            <span className="text-[10px] text-app-muted font-medium leading-none mb-1">Unit cost</span>
+                            <span className="text-xs font-semibold text-app-text tabular-nums leading-none tracking-tight">{formatCurrency(item.costPerUnit)}</span>
                         </div>
                         <div className="text-right">
-                            <span className="text-[7px] font-black text-app-muted uppercase tracking-[0.2em] leading-none mb-1">Sector</span>
-                            <p className="text-[8px] font-black uppercase text-app-primary tracking-widest">{item.category.slice(0,3)}</p>
+                            <span className="text-[10px] text-app-muted font-medium leading-none mb-1 block">Category</span>
+                            <p className="text-xs font-medium text-app-primary">{item.category}</p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
-                        <QuickStockControl item={item} onUpdate={onUpdate} className="flex-1 h-8 bg-app-bg" />
+                        <QuickStockControl item={item} onUpdate={onUpdate} className="flex-1 h-9 bg-app-elevated" />
                         {!isSelectionMode && (
-                             <button 
+                             <button
                                 onClick={(e) => { e.stopPropagation(); onEdit(item); }}
-                                className="h-8 w-8 rounded-sm bg-app-bg text-app-muted flex items-center justify-center hover:text-app-primary transition-all border border-app-border"
+                                aria-label="Edit item"
+                                className="h-9 w-9 rounded-full bg-app-elevated text-app-muted flex items-center justify-center hover:text-app-primary transition-all border border-app-border"
                             >
                                 <Edit className="h-3.5 w-3.5" />
                             </button>
                         )}
                         {isSelectionMode && (
                             <div className={cn(
-                                "h-8 w-8 rounded-sm flex items-center justify-center transition-colors border shadow-inner",
-                                isSelected ? "bg-app-primary border-app-primary text-white" : "bg-app-bg border-white/10"
+                                "h-9 w-9 rounded-full flex items-center justify-center transition-colors border",
+                                isSelected ? "bg-app-primary border-app-primary text-primary-foreground" : "bg-app-elevated border-app-border"
                             )}>
                                {isSelected && <CheckSquare className="h-3.5 w-3.5" />}
                             </div>

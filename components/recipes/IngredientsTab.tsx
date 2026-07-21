@@ -78,22 +78,22 @@ export const IngredientsTab: React.FC<{
 
     return (
         <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-app-bg border border-app-border p-2 rounded-sm shadow-sm">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-app-elevated border border-app-border p-2 rounded-2xl shadow-soft">
                 <div className="flex items-center gap-6 pl-4">
                     <div className="flex items-center gap-3">
                         <Boxes className="h-4 w-4 text-app-primary" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-app-muted">{recipe.ingredientSections.length} Phases Active</span>
+                        <span className="text-sm font-medium text-app-muted">{recipe.ingredientSections.length} sections</span>
                     </div>
                 </div>
-                <div className="flex bg-app-card p-1 rounded-sm border border-white/5 w-full sm:w-auto">
+                <div className="flex bg-app-card p-1 rounded-full border border-app-border w-full sm:w-auto">
                     {(['original', 'metric', 'imperial'] as const).map((sys) => (
-                        <button 
+                        <button
                             key={sys}
                             onClick={() => handleBatchConvert(sys)}
                             className={cn(
-                                "flex-1 sm:flex-none px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
-                                activeSystem === sys 
-                                    ? "text-white bg-app-primary rounded-sm shadow-lg" 
+                                "flex-1 sm:flex-none px-6 py-2 text-sm font-semibold capitalize rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60",
+                                activeSystem === sys
+                                    ? "text-primary-foreground bg-app-primary shadow-soft"
                                     : "text-app-muted hover:text-app-text"
                             )}
                         >
@@ -104,10 +104,10 @@ export const IngredientsTab: React.FC<{
             </div>
 
             {unlinkedCount > 0 && (
-                <div className="bg-app-warning/10 border border-app-warning/20 rounded-sm p-4 flex gap-4 items-center">
+                <div className="bg-app-warning/10 border border-app-warning/20 rounded-2xl p-4 flex gap-4 items-center">
                     <AlertTriangle className="h-5 w-5 text-app-warning shrink-0" />
-                    <p className="text-[10px] text-app-text font-black uppercase tracking-[0.2em]">
-                        Warning: {unlinkedCount} Assets require linking for precise fiscal audit
+                    <p className="text-sm text-app-text font-medium">
+                        {unlinkedCount} ingredients need linking for accurate costing.
                     </p>
                 </div>
             )}
@@ -116,11 +116,11 @@ export const IngredientsTab: React.FC<{
                 {recipe.ingredientSections?.map((section, idx) => (
                     <div key={section.id} className="relative">
                         <div className="flex items-center gap-4 mb-4 px-2">
-                            <h3 className="font-black text-xs uppercase tracking-[0.4em] text-app-text">Phase {idx + 1}: {section.name}</h3>
+                            <h3 className="font-semibold text-base tracking-tight text-app-text">{section.name}</h3>
                             <div className="h-px flex-1 bg-app-border"></div>
                         </div>
 
-                        <div className="bg-app-bg rounded-sm border border-app-border overflow-hidden divide-y divide-white/5">
+                        <div className="bg-app-elevated rounded-2xl border border-app-border overflow-hidden divide-y divide-app-border">
                             {section.ingredients?.map((ing, index) => {
                                 // Fix: Change 'ri' to 'ing' as 'ri' is not defined in this scope
                                 const pantryItem = pantryIngredients.find(pi => pi.id === ing.ingredientId);

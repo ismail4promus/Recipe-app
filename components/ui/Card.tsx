@@ -19,7 +19,7 @@ const Card: React.FC<CardProps> = ({ className, children, isPrimary, ...props })
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        'rounded-md border border-app-border bg-app-card/80 backdrop-blur-md text-app-text shadow-sm overflow-hidden',
+        'rounded-xl border border-app-border bg-app-card text-app-text shadow-soft overflow-hidden',
         isPrimary && 'border-t-2 border-t-app-primary',
         className
       )}
@@ -37,13 +37,13 @@ const CardHeader: React.FC<CardDivProps> = ({ className, children, ...props }) =
 );
 
 const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ className, children, ...props }) => (
-  <h3 className={cn('text-[12px] font-black tracking-[0.3em] uppercase text-app-text', className)} {...props}>
+  <h3 className={cn('text-base font-bold tracking-tight text-app-text', className)} {...props}>
     {children}
   </h3>
 );
 
 const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({ className, children, ...props }) => (
-  <p className={cn('text-[10px] font-bold uppercase tracking-[0.4em] text-app-muted', className)} {...props}>
+  <p className={cn('text-sm text-app-muted', className)} {...props}>
     {children}
   </p>
 );

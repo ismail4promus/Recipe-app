@@ -19,12 +19,12 @@ export const InvoiceModal: React.FC<{ order: Order; onClose: () => void }> = ({ 
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-            <div className="w-full max-w-2xl bg-white text-black rounded-lg shadow-2xl overflow-hidden relative">
+            <div className="w-full max-w-2xl bg-white text-black rounded-2xl shadow-card overflow-hidden relative">
                 <div className="absolute top-4 right-4 flex gap-2 print:hidden">
-                    <button onClick={handlePrint} className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700">
+                    <button onClick={handlePrint} aria-label="Print" className="flex h-11 w-11 items-center justify-center rounded-full bg-app-elevated text-app-text hover:bg-app-muted/15 transition-colors">
                         <Printer className="h-5 w-5" />
                     </button>
-                    <button onClick={onClose} className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700">
+                    <button onClick={onClose} aria-label="Close" className="flex h-11 w-11 items-center justify-center rounded-full bg-app-elevated text-app-text hover:bg-app-muted/15 transition-colors">
                         <X className="h-5 w-5" />
                     </button>
                 </div>

@@ -18,6 +18,7 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const CustomerOrderFormPage = lazy(() => import('./pages/CustomerOrderFormPage'));
 const CookingModePage = lazy(() => import('./pages/CookingModePage'));
 const CookingLogsPage = lazy(() => import('./pages/CookingLogsPage'));
+const CookingPage = lazy(() => import('./pages/CookingPage'));
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -46,6 +47,7 @@ const App: React.FC = () => {
                 <Route path="recipes/:recipeId" element={<RecipeDetailPage />} />
                 <Route path="recipes/:recipeId/logs" element={<CookingLogsPage />} />
                 <Route path="pantry" element={<PantryPage />} />
+                <Route path="cooking" element={<CookingPage />} />
                 <Route path="orders" element={<OrdersPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="settings" element={<SettingsPage />} />

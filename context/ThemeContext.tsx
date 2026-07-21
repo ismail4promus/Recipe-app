@@ -1,38 +1,39 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { Theme } from '../types';
+import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
+
+type Mode = 'light' | 'dark';
 
 interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
+  theme: Mode;
+  setTheme: (theme: Mode) => void;
+  toggleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const getInitial = (): Mode => {
+  try {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'light' || stored === 'dark') return stored;
+  } catch { /* ignore */ }
+  return 'dark'; // dark is the default look (matches the reference design)
+};
+
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    const storedTheme = localStorage.getItem('theme');
-    return (storedTheme as Theme) || 'dark';
-  });
+  const [theme, setThemeState] = useState<Mode>(getInitial);
 
   useEffect(() => {
-    localStorage.setItem('theme', theme);
     const root = window.document.documentElement;
-    // We keep 'dark' class permanently for the tactical UI
-    root.classList.add('dark');
-    
-    // Manage optional secondary color accents if needed, but primary mode is dark
-    root.classList.remove('light', 'ocean', 'sunset', 'rose', 'forest');
-    if (theme !== 'dark') {
-        root.classList.add(theme);
-    }
+    // :root defaults to dark; adding `light` switches the palette.
+    root.classList.toggle('light', theme === 'light');
+    root.classList.remove('ocean', 'sunset', 'rose', 'forest');
+    try { localStorage.setItem('theme', theme); } catch { /* ignore */ }
   }, [theme]);
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-  };
+  const setTheme = useCallback((t: Mode) => setThemeState(t === 'light' ? 'light' : 'dark'), []);
+  const toggleTheme = useCallback(() => setThemeState(t => (t === 'dark' ? 'light' : 'dark')), []);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -44,4 +45,4 @@ export const useTheme = () => {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;
-}
+};

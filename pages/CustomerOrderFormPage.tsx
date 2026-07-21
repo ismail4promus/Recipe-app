@@ -67,17 +67,17 @@ const CustomerOrderFormPage: React.FC = () => {
 
     if (submitted) {
         return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md text-center">
+            <div className="min-h-screen bg-app-bg flex items-center justify-center p-4">
+                <Card className="w-full max-w-md text-center rounded-2xl bg-app-card border border-app-border shadow-soft">
                     <CardHeader>
-                        <div className="mx-auto bg-green-100 rounded-full p-3 w-fit">
-                            <PartyPopper className="h-10 w-10 text-green-600" />
+                        <div className="mx-auto bg-app-success/10 rounded-full p-3 w-fit">
+                            <PartyPopper className="h-10 w-10 text-app-success" />
                         </div>
-                        <CardTitle className="text-2xl">Order Submitted!</CardTitle>
-                        <CardDescription>Thank you for your order. We will process it shortly.</CardDescription>
+                        <CardTitle className="text-2xl tracking-tight">Order Submitted!</CardTitle>
+                        <CardDescription className="text-app-muted">Thank you for your order. We will process it shortly.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p>Your order will be reviewed and you'll be notified upon approval.</p>
+                        <p className="text-app-text">Your order will be reviewed and you'll be notified upon approval.</p>
                     </CardContent>
                 </Card>
             </div>
@@ -85,26 +85,26 @@ const CustomerOrderFormPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 flex justify-center p-4">
+        <div className="min-h-screen bg-app-bg flex justify-center p-4">
             <div className="w-full max-w-4xl space-y-6">
-                <h1 className="text-4xl font-bold text-center">Place Your Order</h1>
+                <h1 className="text-4xl font-bold tracking-tight text-center text-app-text">Place Your Order</h1>
                 <div className="grid md:grid-cols-3 gap-6">
                     <div className="md:col-span-2 space-y-4">
                         {recipes.map(recipe => (
-                            <Card key={recipe.id} className="flex items-center overflow-hidden">
-                                <div className="w-24 h-24 bg-gray-200 shrink-0">
+                            <Card key={recipe.id} className="flex items-center overflow-hidden rounded-2xl bg-app-card border border-app-border shadow-soft">
+                                <div className="w-24 h-24 bg-app-elevated shrink-0">
                                     <img src={recipe.imageUrl} alt={recipe.name} className="w-full h-full object-cover" />
                                 </div>
                                 <CardContent className="p-4 flex-grow">
-                                    <h3 className="font-semibold">{recipe.name}</h3>
-                                    <p className="text-sm text-muted-foreground">{recipe.cuisine}</p>
-                                    <p className="font-bold text-primary mt-1">{formatCurrency(getSalePrice(recipe.id))}</p>
+                                    <h3 className="font-semibold text-app-text">{recipe.name}</h3>
+                                    <p className="text-sm text-app-muted">{recipe.cuisine}</p>
+                                    <p className="font-bold text-app-primary mt-1">{formatCurrency(getSalePrice(recipe.id))}</p>
                                 </CardContent>
                                 <CardFooter className="p-4">
                                     <div className="flex items-center gap-2">
-                                        <button onClick={() => handleQuantityChange(recipe.id, -1)}><MinusCircle className="h-6 w-6 text-destructive" /></button>
-                                        <span className="w-8 text-center font-bold">{cart[recipe.id] || 0}</span>
-                                        <button onClick={() => handleQuantityChange(recipe.id, 1)}><PlusCircle className="h-6 w-6 text-green-500" /></button>
+                                        <button aria-label="Remove one" onClick={() => handleQuantityChange(recipe.id, -1)}><MinusCircle className="h-6 w-6 text-app-danger" /></button>
+                                        <span className="w-8 text-center font-bold text-app-text">{cart[recipe.id] || 0}</span>
+                                        <button aria-label="Add one" onClick={() => handleQuantityChange(recipe.id, 1)}><PlusCircle className="h-6 w-6 text-app-success" /></button>
                                     </div>
                                 </CardFooter>
                             </Card>
@@ -112,27 +112,27 @@ const CustomerOrderFormPage: React.FC = () => {
                     </div>
 
                     <div className="md:col-span-1">
-                        <Card className="sticky top-4">
+                        <Card className="sticky top-4 rounded-2xl bg-app-card border border-app-border shadow-soft">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><ShoppingCart /> Your Cart</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-app-text"><ShoppingCart /> Your Cart</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 {cartItems.length > 0 ? (
                                     <div className="space-y-2">
                                         {cartItems.map(item => (
-                                            <div key={item.id} className="flex justify-between text-sm">
+                                            <div key={item.id} className="flex justify-between text-sm text-app-text">
                                                 <span>{item.quantity} x {item.name}</span>
                                                 <span>{formatCurrency(item.quantity * item.unitPrice)}</span>
                                             </div>
                                         ))}
-                                        <hr className="my-2" />
-                                        <div className="flex justify-between font-bold">
+                                        <hr className="my-2 border-app-border" />
+                                        <div className="flex justify-between font-bold text-app-text">
                                             <span>Total</span>
                                             <span>{formatCurrency(totalAmount)}</span>
                                         </div>
                                     </div>
                                 ) : (
-                                    <p className="text-sm text-muted-foreground">Your cart is empty.</p>
+                                    <p className="text-sm text-app-muted">Your cart is empty.</p>
                                 )}
                             </CardContent>
                             <CardFooter>
@@ -143,16 +143,16 @@ const CustomerOrderFormPage: React.FC = () => {
                                         value={customerName}
                                         onChange={e => setCustomerName(e.target.value)}
                                         required
-                                        className="w-full p-2 border rounded-lg"
+                                        className="w-full p-3 bg-app-bg text-app-text border border-app-border rounded-full outline-none focus:ring-2 focus:ring-app-primary placeholder:text-app-muted"
                                     />
                                     <input
                                         type="tel"
                                         placeholder="Phone Number"
                                         value={customerPhone}
                                         onChange={e => setCustomerPhone(e.target.value)}
-                                        className="w-full p-2 border rounded-lg"
+                                        className="w-full p-3 bg-app-bg text-app-text border border-app-border rounded-full outline-none focus:ring-2 focus:ring-app-primary placeholder:text-app-muted"
                                     />
-                                    <button type="submit" className="w-full bg-primary text-primary-foreground py-2 rounded-lg hover:bg-primary/90" disabled={cartItems.length === 0 || !customerName}>
+                                    <button type="submit" className="w-full min-h-[44px] bg-app-primary text-primary-foreground rounded-full font-semibold hover:brightness-105 transition-all disabled:opacity-50" disabled={cartItems.length === 0 || !customerName}>
                                         Place Order
                                     </button>
                                 </form>

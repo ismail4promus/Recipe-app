@@ -4,21 +4,14 @@ import { useData } from '../context/DataContext';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../components/ui/Card';
 import { Theme } from '../types';
 import { cn, setGlobalCurrency, getGlobalCurrency } from '../lib/utils';
-import { 
-    Database, Check, Loader2, User, Building, Globe, 
+import {
+    Database, Check, Loader2, User, Building, Globe,
     Download, Save, Palette, Zap, Trash2, ChevronRight,
     ShieldCheck, Info, RefreshCw, Layers, Monitor, HardDrive, Settings,
-    Cpu, Activity, Shield
+    Cpu, Activity, Shield, Sun, Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const themes: { name: Theme; color: string; label: string; secondary: string }[] = [
-  { name: 'dark', color: 'bg-zinc-800', secondary: 'bg-zinc-800', label: 'Duty' },
-  { name: 'ocean', color: 'bg-blue-600', secondary: 'bg-blue-100', label: 'Blue' },
-  { name: 'sunset', color: 'bg-orange-500', secondary: 'bg-orange-100', label: 'Amber' },
-  { name: 'rose', color: 'bg-pink-500', secondary: 'bg-pink-100', label: 'Rose' },
-  { name: 'forest', color: 'bg-emerald-600', secondary: 'bg-emerald-100', label: 'Emerald' },
-];
+import { Button } from '../components/ui/kit';
 
 const currencies = [
     { code: 'USD', symbol: '$', label: 'US Dollar' },
@@ -54,12 +47,12 @@ const SettingsPage: React.FC = () => {
     setIsSavingProfile(true);
     localStorage.setItem('chef_kitchen_name', kitchenName);
     localStorage.setItem('chef_name', chefName);
-    
+
     if (currency !== getGlobalCurrency()) {
         setGlobalCurrency(currency);
         window.dispatchEvent(new Event('profile-update'));
         setTimeout(() => {
-             window.location.reload(); 
+             window.location.reload();
         }, 800);
     } else {
         window.dispatchEvent(new Event('profile-update'));
@@ -109,69 +102,69 @@ const SettingsPage: React.FC = () => {
   };
 
   const tabs = [
-      { id: 'profile', label: 'Identity', icon: User },
-      { id: 'appearance', label: 'Visuals', icon: Palette },
-      { id: 'data', label: 'System', icon: Cpu },
+      { id: 'profile', label: 'Profile', icon: User },
+      { id: 'appearance', label: 'Appearance', icon: Palette },
+      { id: 'data', label: 'Data', icon: Cpu },
   ];
 
   return (
     <div className="max-w-5xl mx-auto space-y-4 pb-24 font-sans px-2">
-      <div className="flex items-center justify-between border-b border-border/40 pb-4 pt-2">
+      <div className="flex items-center justify-between border-b border-app-border pb-4 pt-2">
         <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-                <Settings className="h-5 w-5 text-primary" />
+            <div className="h-10 w-10 bg-app-primary/10 rounded-xl flex items-center justify-center border border-app-primary/20">
+                <Settings className="h-5 w-5 text-app-primary" />
             </div>
             <div>
-                <h1 className="text-xl font-black tracking-tight text-foreground uppercase leading-none">Configuration</h1>
-                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-1.5 flex items-center gap-2">
-                    <Activity className="h-2.5 w-2.5 text-emerald-500 animate-pulse" /> Core Parameters Active
+                <h1 className="text-2xl font-bold tracking-tight text-app-text leading-none">Settings</h1>
+                <p className="text-xs font-medium text-app-muted mt-1.5 flex items-center gap-2">
+                    <Activity className="h-3 w-3 text-app-success" /> Manage your kitchen
                 </p>
             </div>
         </div>
-        <div className="hidden sm:flex items-center gap-3 px-3 py-1.5 bg-card border border-border/60 rounded-lg shadow-sm">
-            <div className="flex items-center gap-1.5 border-r border-border/40 pr-3">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                <span className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">v2.5.0-STABLE</span>
+        <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-app-card border border-app-border rounded-full shadow-soft">
+            <div className="flex items-center gap-1.5 border-r border-app-border pr-3">
+                <span className="h-2 w-2 rounded-full bg-app-success"></span>
+                <span className="text-xs font-medium text-app-muted">v2.5.0</span>
             </div>
-            <span className="text-[8px] font-black uppercase text-primary tracking-widest">Encryption: AES-256</span>
+            <span className="text-xs font-medium text-app-primary">Saved locally</span>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           <div className="lg:col-span-3 space-y-3">
-              <div className="bg-card border border-border/60 rounded-xl p-1 shadow-sm">
+              <div className="bg-app-card border border-app-border rounded-2xl p-1.5 shadow-soft">
                 <div className="flex lg:flex-col gap-1 overflow-x-auto scrollbar-hide">
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={cn(
-                                "flex-1 flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group relative whitespace-nowrap",
-                                activeTab === tab.id 
-                                    ? "bg-primary text-primary-foreground shadow-md scale-[1.02]" 
-                                    : "hover:bg-muted/60 text-muted-foreground hover:text-foreground"
+                                "flex-1 flex items-center gap-3 px-4 min-h-[44px] rounded-full transition-all duration-200 group relative whitespace-nowrap",
+                                activeTab === tab.id
+                                    ? "bg-app-primary text-primary-foreground shadow-soft"
+                                    : "hover:bg-app-muted/10 text-app-muted hover:text-app-text"
                             )}
                         >
-                            <tab.icon className={cn("h-4 w-4 shrink-0", activeTab === tab.id ? "text-white" : "text-muted-foreground/60 group-hover:text-foreground")} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
+                            <tab.icon className={cn("h-4 w-4 shrink-0", activeTab === tab.id ? "text-primary-foreground" : "text-app-muted group-hover:text-app-text")} />
+                            <span className="text-sm font-semibold">{tab.label}</span>
                         </button>
                     ))}
                 </div>
               </div>
 
-              <div className="hidden lg:block bg-muted/20 border border-dashed border-border/60 rounded-xl p-4">
+              <div className="hidden lg:block bg-app-card border border-app-border rounded-2xl p-5 shadow-soft">
                     <div className="flex items-center gap-2 mb-3">
-                        <ShieldCheck className="h-3 w-3 text-emerald-500" />
-                        <span className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground">Logistics Audit</span>
+                        <ShieldCheck className="h-4 w-4 text-app-success" />
+                        <span className="text-xs font-medium text-app-muted">Kitchen summary</span>
                     </div>
-                    <div className="space-y-2">
-                        <div className="flex justify-between text-[9px] font-bold uppercase">
-                            <span className="text-muted-foreground/60">Recipes</span>
-                            <span className="text-foreground">{recipes.length} Units</span>
+                    <div className="space-y-2.5">
+                        <div className="flex justify-between text-sm font-medium">
+                            <span className="text-app-muted">Recipes</span>
+                            <span className="text-app-text">{recipes.length}</span>
                         </div>
-                        <div className="flex justify-between text-[9px] font-bold uppercase">
-                            <span className="text-muted-foreground/60">Inventory</span>
-                            <span className="text-foreground">{ingredients.length} SKU</span>
+                        <div className="flex justify-between text-sm font-medium">
+                            <span className="text-app-muted">Pantry items</span>
+                            <span className="text-app-text">{ingredients.length}</span>
                         </div>
                     </div>
               </div>
@@ -180,39 +173,39 @@ const SettingsPage: React.FC = () => {
           <div className="lg:col-span-9 min-w-0">
             <AnimatePresence mode="wait">
                 {activeTab === 'profile' && (
-                    <motion.div 
+                    <motion.div
                         key="profile" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                         className="space-y-4"
                     >
-                        <Card className="rounded-2xl border-border/60 shadow-sm overflow-hidden">
-                            <CardHeader className="bg-muted/10 border-b border-border/40 p-5">
-                                <CardTitle className="text-xs uppercase tracking-widest font-black text-foreground flex items-center gap-2">
-                                    <Building className="h-4 w-4 text-primary" /> Establishment Identity
+                        <Card className="rounded-2xl border-app-border bg-app-card shadow-soft overflow-hidden">
+                            <CardHeader className="border-b border-app-border p-5">
+                                <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
+                                    <Building className="h-4 w-4 text-app-primary" /> Kitchen details
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-5 space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase text-muted-foreground tracking-widest ml-1">Callsign (Name)</label>
+                                        <label className="text-xs font-medium text-app-muted ml-1">Kitchen name</label>
                                         <div className="relative">
-                                            <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40" />
-                                            <input 
+                                            <Building className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
+                                            <input
                                                 value={kitchenName}
                                                 onChange={(e) => setKitchenName(e.target.value)}
-                                                className="w-full h-11 pl-10 pr-4 rounded-xl bg-muted/30 border border-border focus:ring-2 focus:ring-primary/10 focus:border-primary text-xs font-black uppercase tracking-tight transition-all"
-                                                placeholder="KITCHEN..."
+                                                className="w-full min-h-[44px] pl-10 pr-4 rounded-full bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary text-sm font-medium text-app-text transition-all"
+                                                placeholder="Kitchen name..."
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase text-muted-foreground tracking-widest ml-1">Commander (Chef)</label>
+                                        <label className="text-xs font-medium text-app-muted ml-1">Chef name</label>
                                         <div className="relative">
-                                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40" />
-                                            <input 
+                                            <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
+                                            <input
                                                 value={chefName}
                                                 onChange={(e) => setChefName(e.target.value)}
-                                                className="w-full h-11 pl-10 pr-4 rounded-xl bg-muted/30 border border-border focus:ring-2 focus:ring-primary/10 focus:border-primary text-xs font-black uppercase tracking-tight transition-all"
-                                                placeholder="NAME..."
+                                                className="w-full min-h-[44px] pl-10 pr-4 rounded-full bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary text-sm font-medium text-app-text transition-all"
+                                                placeholder="Your name..."
                                             />
                                         </div>
                                     </div>
@@ -220,87 +213,97 @@ const SettingsPage: React.FC = () => {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start pt-2">
                                     <div className="space-y-2">
-                                        <label className="text-[9px] font-black uppercase text-muted-foreground tracking-widest ml-1">Fiscal Localization</label>
+                                        <label className="text-xs font-medium text-app-muted ml-1">Currency</label>
                                         <div className="relative">
-                                            <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40" />
-                                            <select 
+                                            <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
+                                            <select
                                                 value={currency}
                                                 onChange={(e) => setCurrency(e.target.value)}
-                                                className="w-full h-11 pl-10 pr-10 rounded-xl bg-muted/30 border border-border focus:ring-2 focus:ring-primary/10 text-xs font-black uppercase appearance-none cursor-pointer"
+                                                className="w-full min-h-[44px] pl-10 pr-10 rounded-full bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary/40 text-sm font-medium text-app-text appearance-none cursor-pointer"
                                             >
                                                 {currencies.map(c => (
                                                     <option key={c.code} value={c.code}>{c.label} ({c.symbol})</option>
                                                 ))}
                                             </select>
-                                            <ChevronRight className="absolute right-3.5 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground rotate-90" />
+                                            <ChevronRight className="absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted rotate-90" />
                                         </div>
                                     </div>
-                                    
-                                    <div className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 rounded-xl flex items-start gap-3">
-                                        <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5" />
-                                        <p className="text-[8px] text-amber-700/80 dark:text-amber-400/60 font-black uppercase tracking-tight leading-normal">
-                                            Currency changes require a system refresh to recalibrate historical ledgers.
+
+                                    <div className="p-4 bg-app-warning/10 border border-app-border rounded-xl flex items-start gap-3">
+                                        <Info className="h-4 w-4 text-app-warning mt-0.5 shrink-0" />
+                                        <p className="text-xs text-app-muted font-medium leading-normal">
+                                            Changing your currency refreshes the app to update past totals.
                                         </p>
                                     </div>
                                 </div>
                             </CardContent>
-                            <CardFooter className="border-t border-border/40 bg-muted/5 p-4 flex justify-end">
-                                <button 
+                            <CardFooter className="border-t border-app-border p-4 flex justify-end">
+                                <Button
                                     onClick={handleSaveProfile}
                                     disabled={isSavingProfile}
-                                    className="h-10 px-6 rounded-lg bg-primary text-primary-foreground font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
+                                    icon={isSavingProfile ? undefined : Save}
                                 >
-                                    {isSavingProfile ? <Loader2 className="h-3.5 w-3.5 animate-spin"/> : <Save className="h-3.5 w-3.5"/>}
-                                    {isSavingProfile ? "Syncing..." : "Apply Changes"}
-                                </button>
+                                    {isSavingProfile ? <Loader2 className="h-4 w-4 animate-spin"/> : null}
+                                    {isSavingProfile ? "Saving..." : "Save changes"}
+                                </Button>
                             </CardFooter>
                         </Card>
                     </motion.div>
                 )}
 
                 {activeTab === 'appearance' && (
-                    <motion.div 
+                    <motion.div
                         key="appearance" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                         className="space-y-4"
                     >
-                         <Card className="rounded-2xl border-border/60 shadow-sm overflow-hidden">
-                            <CardHeader className="bg-muted/10 border-b border-border/40 p-5">
-                                <CardTitle className="text-xs uppercase tracking-widest font-black text-foreground flex items-center gap-2">
-                                    <Monitor className="h-4 w-4 text-primary" /> Visual Protocol
+                         <Card className="rounded-2xl border-app-border bg-app-card shadow-soft overflow-hidden">
+                            <CardHeader className="border-b border-app-border p-5">
+                                <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
+                                    <Monitor className="h-4 w-4 text-app-primary" /> Theme
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-5 space-y-8">
-                                <div className="p-4 rounded-xl border-2 border-primary bg-primary/5 shadow-inner flex items-center gap-4 group relative overflow-hidden">
-                                    <div className="h-10 w-10 rounded-lg bg-primary text-white flex items-center justify-center">
-                                        <Monitor className="h-5 w-5" />
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-foreground leading-none">Midnight Tactical</p>
-                                        <p className="text-[8px] font-bold text-muted-foreground uppercase mt-1">Permanent Active Duty Interface</p>
-                                    </div>
-                                </div>
-
-                                <div className="pt-6 border-t border-border/40">
-                                    <div className="flex items-center gap-2 mb-4">
-                                        <Palette className="h-3.5 w-3.5 text-muted-foreground" />
-                                        <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">Chrome Modifiers (Accents)</h4>
-                                    </div>
-                                    <div className="grid grid-cols-5 gap-2">
-                                        {themes.map(t => (
-                                            <button
-                                                key={t.name}
-                                                onClick={() => setTheme(t.name)}
-                                                className={cn(
-                                                    "h-12 rounded-lg border-2 transition-all flex flex-col items-center justify-center gap-1",
-                                                    theme === t.name 
-                                                        ? "border-primary bg-primary/5 shadow-sm" 
-                                                        : "border-transparent bg-muted/40 hover:bg-muted/80"
-                                                )}
-                                            >
-                                                <div className={cn('h-3.5 w-3.5 rounded-full ring-offset-1', t.color, theme === t.name ? 'ring-1 ring-primary' : '')} />
-                                                <span className="text-[7px] font-black uppercase tracking-widest opacity-60">{t.label}</span>
-                                            </button>
-                                        ))}
+                            <CardContent className="p-5 space-y-6">
+                                <div>
+                                    <p className="text-sm font-medium text-app-muted mb-4">Pick how the app looks.</p>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <button
+                                            onClick={() => setTheme('light')}
+                                            aria-pressed={theme === 'light'}
+                                            className={cn(
+                                                "flex items-center gap-3 p-4 rounded-2xl border transition-all min-h-[64px]",
+                                                theme === 'light'
+                                                    ? "border-app-primary ring-2 ring-app-primary bg-app-primary/10"
+                                                    : "border-app-border bg-app-elevated hover:bg-app-muted/10"
+                                            )}
+                                        >
+                                            <div className="h-10 w-10 rounded-xl bg-app-primary/15 text-app-primary flex items-center justify-center shrink-0">
+                                                <Sun className="h-5 w-5" />
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-sm font-bold tracking-tight text-app-text leading-none">Light</p>
+                                                <p className="text-xs font-medium text-app-muted mt-1">Bright and warm</p>
+                                            </div>
+                                            {theme === 'light' && <Check className="h-4 w-4 text-app-primary ml-auto shrink-0" />}
+                                        </button>
+                                        <button
+                                            onClick={() => setTheme('dark')}
+                                            aria-pressed={theme === 'dark'}
+                                            className={cn(
+                                                "flex items-center gap-3 p-4 rounded-2xl border transition-all min-h-[64px]",
+                                                theme === 'dark'
+                                                    ? "border-app-primary ring-2 ring-app-primary bg-app-primary/10"
+                                                    : "border-app-border bg-app-elevated hover:bg-app-muted/10"
+                                            )}
+                                        >
+                                            <div className="h-10 w-10 rounded-xl bg-app-primary/15 text-app-primary flex items-center justify-center shrink-0">
+                                                <Moon className="h-5 w-5" />
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-sm font-bold tracking-tight text-app-text leading-none">Dark</p>
+                                                <p className="text-xs font-medium text-app-muted mt-1">Easy on the eyes</p>
+                                            </div>
+                                            {theme === 'dark' && <Check className="h-4 w-4 text-app-primary ml-auto shrink-0" />}
+                                        </button>
                                     </div>
                                 </div>
                             </CardContent>
@@ -309,90 +312,90 @@ const SettingsPage: React.FC = () => {
                 )}
 
                 {activeTab === 'data' && (
-                    <motion.div 
+                    <motion.div
                         key="data" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
                         className="space-y-4"
                     >
-                        <Card className="rounded-2xl border-border/60 shadow-sm overflow-hidden">
-                            <CardHeader className="bg-muted/10 border-b border-border/40 p-5">
-                                <CardTitle className="text-xs uppercase tracking-widest font-black text-foreground flex items-center gap-2">
-                                    <HardDrive className="h-4 w-4 text-primary" /> System Persistence
+                        <Card className="rounded-2xl border-app-border bg-app-card shadow-soft overflow-hidden">
+                            <CardHeader className="border-b border-app-border p-5">
+                                <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
+                                    <HardDrive className="h-4 w-4 text-app-primary" /> Your data
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-5 space-y-3">
-                                <div className="flex items-center justify-between p-4 border border-border/60 rounded-xl bg-card hover:border-primary/40 transition-all gap-4 group">
+                                <div className="flex items-center justify-between p-4 border border-app-border rounded-2xl bg-app-elevated hover:border-app-primary/40 transition-all gap-4 group">
                                     <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900/30">
+                                        <div className="h-10 w-10 rounded-xl bg-app-info/10 text-app-info flex items-center justify-center shrink-0 border border-app-border">
                                             <Download className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-foreground leading-none mb-1">Encapsulated Export</h4>
-                                            <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-tight">Full manifest JSON backup</p>
+                                            <h4 className="text-sm font-bold tracking-tight text-app-text leading-none mb-1.5">Export backup</h4>
+                                            <p className="text-xs font-medium text-app-muted">Download everything as a JSON file</p>
                                         </div>
                                     </div>
-                                    <button 
+                                    <Button
                                         onClick={handleExportData}
                                         disabled={exporting}
-                                        className="h-9 px-4 rounded-lg bg-blue-600 text-white font-black text-[9px] uppercase tracking-widest shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
+                                        icon={exporting ? undefined : Layers}
                                     >
-                                        {exporting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Layers className="h-3 w-3" />}
-                                        Run Export
-                                    </button>
+                                        {exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                                        Export
+                                    </Button>
                                 </div>
 
-                                <div className="p-4 rounded-xl bg-muted/20 border border-border/60 flex items-start gap-4">
-                                    <Shield className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                                    <p className="text-[9px] text-muted-foreground font-black uppercase tracking-tight leading-relaxed">
-                                        iKITCHEN operates a <span className="text-primary">Tier-1 Local Persistence</span> model. Data is stored in your secure browser sandbox.
+                                <div className="p-4 rounded-2xl bg-app-muted/10 border border-app-border flex items-start gap-4">
+                                    <Shield className="h-4 w-4 text-app-primary shrink-0 mt-0.5" />
+                                    <p className="text-xs text-app-muted font-medium leading-relaxed">
+                                        iKITCHEN keeps your data <span className="text-app-primary">on this device only</span>. Nothing is stored on our servers.
                                     </p>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        <div className="bg-blue-500/5 rounded-2xl border border-blue-200/50 dark:border-blue-900/20 p-4">
+                        <div className="bg-app-card rounded-2xl border border-app-border p-5 shadow-soft">
                              <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 flex items-center justify-center border border-blue-200 dark:border-blue-900/50">
+                                    <div className="h-10 w-10 rounded-xl bg-app-info/10 text-app-info flex items-center justify-center border border-app-border">
                                         <RefreshCw className="h-5 w-5" />
                                     </div>
                                     <div>
-                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-foreground leading-none mb-1">System Synchronization</h4>
-                                        <p className="text-[8px] font-bold text-blue-600/60 uppercase tracking-tight">Inject missing protocols (Recipes/Inventory)</p>
+                                        <h4 className="text-sm font-bold tracking-tight text-app-text leading-none mb-1.5">Restore starter content</h4>
+                                        <p className="text-xs font-medium text-app-muted">Add back any missing sample recipes and pantry items</p>
                                     </div>
                                 </div>
-                                <button 
+                                <Button
+                                    variant="secondary"
                                     onClick={() => syncMissingData()}
-                                    className="h-9 px-5 rounded-lg bg-blue-600 text-white font-black text-[9px] uppercase tracking-widest shadow-md shadow-blue-600/20 hover:brightness-110 active:scale-95 transition-all flex items-center gap-2"
+                                    icon={RefreshCw}
                                 >
-                                    <RefreshCw className="h-3 w-3" />
-                                    Sync Data
-                                </button>
+                                    Sync
+                                </Button>
                             </div>
                         </div>
 
-                        <div className="bg-red-500/5 rounded-2xl border border-red-200/50 dark:border-red-900/20 p-4">
+                        <div className="bg-app-card rounded-2xl border border-app-border p-5 shadow-soft">
                              <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="h-10 w-10 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 flex items-center justify-center border border-red-200 dark:border-red-900/50">
+                                    <div className="h-10 w-10 rounded-xl bg-app-danger/10 text-app-danger flex items-center justify-center border border-app-border">
                                         <Trash2 className="h-5 w-5" />
                                     </div>
                                     <div>
-                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-foreground leading-none mb-1">Critical Purge</h4>
-                                        <p className="text-[8px] font-bold text-red-600/60 uppercase tracking-tight">Destructive system reset</p>
+                                        <h4 className="text-sm font-bold tracking-tight text-app-text leading-none mb-1.5">Reset all data</h4>
+                                        <p className="text-xs font-medium text-app-muted">Replace everything with fresh sample data</p>
                                     </div>
                                 </div>
-                                <button 
+                                <button
                                     onClick={handleSeed}
                                     disabled={seeding}
                                     className={cn(
-                                        "h-9 px-5 rounded-lg font-black text-[9px] uppercase tracking-widest shadow-md transition-all flex items-center gap-2",
-                                        seeded 
-                                            ? "bg-emerald-600 text-white shadow-emerald-600/20" 
-                                            : "bg-red-600 text-white shadow-red-600/20 hover:brightness-110 active:scale-95"
+                                        "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold text-white shadow-soft transition-all active:scale-[0.97]",
+                                        seeded
+                                            ? "bg-app-success"
+                                            : "bg-app-danger hover:brightness-105"
                                     )}
                                 >
-                                    {seeding ? <Loader2 className="h-3 w-3 animate-spin"/> : seeded ? <Check className="h-3 w-3" /> : <RefreshCw className="h-3 w-3" />}
-                                    {seeded ? "Purged" : "Run Purge"}
+                                    {seeding ? <Loader2 className="h-4 w-4 animate-spin"/> : seeded ? <Check className="h-4 w-4" /> : <RefreshCw className="h-4 w-4" />}
+                                    {seeded ? "Done" : "Reset"}
                                 </button>
                             </div>
                         </div>

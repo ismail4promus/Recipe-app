@@ -1,48 +1,76 @@
-import React from 'react';
-import { Search, Bell, Activity, Wifi } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import React, { useState } from 'react';
+import { Menu, Bell, User, CloudOff, Search } from 'lucide-react';
+import { useData } from '../../context/DataContext';
+import GlobalSearch from './GlobalSearch';
+import MobileDrawer from './MobileDrawer';
 
 const Header: React.FC = () => {
-  return (
-    <header className="flex h-[70px] items-center justify-between border-b border-app-border px-6 z-20 sticky top-0 bg-app-bg/80 backdrop-blur-md">
-      <div className="flex items-center gap-6">
-        <div className="hidden md:flex items-center gap-4 border-r border-app-border pr-6 h-10">
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-app-success animate-pulse shadow-[0_0_8px_rgba(28,187,140,0.5)]"></div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-app-text">Operational</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Wifi className="h-3 w-3 text-app-primary" />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-app-muted">Synced</span>
-          </div>
-        </div>
-        
-        {/* Search Bar */}
-        <div className="hidden md:flex items-center bg-app-bg rounded-sm px-4 h-10 w-80 border border-white/10 focus-within:border-app-primary transition-all">
-            <Search className="h-3.5 w-3.5 text-app-muted mr-3" />
-            <input 
-                type="text" 
-                placeholder="SEARCH DATABASE..." 
-                className="bg-transparent border-none outline-none text-[10px] font-bold uppercase tracking-widest w-full placeholder:text-app-muted/30"
-            />
-        </div>
-      </div>
+  const { isDemoMode } = useData();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mobileSearch, setMobileSearch] = useState(false);
 
-      <div className="flex items-center gap-4">
-        {/* Notifications */}
-        <button className="h-10 w-10 flex items-center justify-center rounded-sm bg-app-card border border-app-border text-app-muted hover:text-app-text transition-all relative group">
-             <Bell className="h-4 w-4 group-hover:scale-110 transition-transform" />
-             <span className="absolute top-2 right-2 h-1.5 w-1.5 bg-app-warning rounded-full shadow-[0_0_5px_#fcb92c]"></span>
+  return (
+    <>
+      <header className="sticky top-0 z-40 flex h-[68px] items-center gap-3 border-b border-app-border bg-app-bg/85 px-3 backdrop-blur-md md:px-6">
+        {/* Mobile menu */}
+        <button
+          onClick={() => setDrawerOpen(true)}
+          aria-label="Open menu"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text md:hidden"
+        >
+          <Menu className="h-5 w-5" />
         </button>
-        
-        <div className="h-10 w-px bg-app-border mx-2"></div>
-        
-        <div className="flex flex-col items-end">
-            <span className="text-[10px] font-black text-app-text tracking-widest leading-none">v1.2.0</span>
-            <span className="text-[8px] font-bold text-app-muted uppercase tracking-tighter mt-1">LATEST STABLE</span>
+
+        {/* Desktop / tablet search */}
+        <div className="hidden flex-1 md:block md:max-w-md">
+          <GlobalSearch />
         </div>
-      </div>
-    </header>
+
+        <div className="flex-1 md:hidden" />
+
+        <div className="flex shrink-0 items-center gap-1.5">
+          {/* Connection problem indicator — only when there's a real issue */}
+          {isDemoMode && (
+            <span className="hidden items-center gap-1.5 rounded-lg border border-app-warning/25 bg-app-warning/10 px-2.5 py-1.5 text-xs font-semibold text-app-warning sm:inline-flex" title="Working offline with local data">
+              <CloudOff className="h-3.5 w-3.5" /> Offline
+            </span>
+          )}
+
+          {/* Mobile search toggle */}
+          <button
+            onClick={() => setMobileSearch(s => !s)}
+            aria-label="Search"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text md:hidden"
+          >
+            <Search className="h-5 w-5" />
+          </button>
+
+          <button
+            aria-label="Notifications"
+            className="relative flex h-10 w-10 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-app-primary" />
+          </button>
+
+          <button
+            aria-label="Profile"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-app-border bg-app-card text-app-muted hover:text-app-text"
+          >
+            <User className="h-4 w-4" />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile expandable search row */}
+      {mobileSearch && (
+        <div className="border-b border-app-border bg-app-bg p-3 md:hidden">
+          <GlobalSearch autoFocus onNavigate={() => setMobileSearch(false)} />
+        </div>
+      )}
+
+      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+    </>
   );
 };
 

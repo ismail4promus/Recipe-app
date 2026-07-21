@@ -24,10 +24,10 @@ const getDaysRemaining = (item: Ingredient) => {
 };
 
 const getExpiryStatus = (days: number) => {
-    if (days < 0) return { label: 'Expired', color: 'text-red-600 bg-red-100 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' };
-    if (days <= 3) return { label: 'Critical', color: 'text-orange-600 bg-orange-100 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800' };
-    if (days <= 7) return { label: 'Expiring', color: 'text-yellow-600 bg-yellow-100 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800' };
-    return { label: 'Good', color: 'text-green-600 bg-green-100 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' };
+    if (days < 0) return { label: 'Expired', color: 'text-app-danger bg-app-danger/15 border-app-danger/30' };
+    if (days <= 3) return { label: 'Critical', color: 'text-app-danger bg-app-danger/15 border-app-danger/30' };
+    if (days <= 7) return { label: 'Expiring', color: 'text-app-warning bg-app-warning/15 border-app-warning/30' };
+    return { label: 'Good', color: 'text-app-success bg-app-success/15 border-app-success/30' };
 };
 
 const MobilePantryCard: React.FC<{
@@ -45,28 +45,28 @@ const MobilePantryCard: React.FC<{
         <div 
             onClick={() => isSelectionMode ? onToggleSelect(item.id) : onEdit(item)}
             className={cn(
-                "neu-card p-3 rounded-xl flex items-center gap-3 transition-all active:scale-[0.98]",
-                isSelected ? "border-primary bg-primary/5" : ""
+                "bg-app-card border border-app-border p-3 rounded-2xl flex items-center gap-3 transition-all active:scale-[0.98] shadow-soft",
+                isSelected ? "border-app-primary bg-app-primary/10" : ""
             )}
         >
             {/* Selection Indicator for Mobile */}
             {isSelectionMode && (
                  <div className="shrink-0">
                     {isSelected ? (
-                        <div className="h-5 w-5 bg-primary rounded text-primary-foreground flex items-center justify-center">
+                        <div className="h-5 w-5 bg-app-primary rounded-full text-primary-foreground flex items-center justify-center">
                             <CheckSquare className="h-3.5 w-3.5" />
                         </div>
                     ) : (
-                        <div className="h-5 w-5 border-2 border-muted-foreground/30 rounded"></div>
+                        <div className="h-5 w-5 border-2 border-app-muted/30 rounded-full"></div>
                     )}
                 </div>
             )}
 
             <div className={cn(
-                "h-12 w-12 rounded-lg flex items-center justify-center shrink-0 border shadow-sm text-xl relative overflow-hidden",
-                item.packagesInStock <= 2 
-                    ? "bg-red-50 border-red-100 text-red-500 dark:bg-red-900/20 dark:border-red-800" 
-                    : "bg-muted/30 border-border"
+                "h-12 w-12 rounded-xl flex items-center justify-center shrink-0 border text-xl relative overflow-hidden",
+                item.packagesInStock <= 2
+                    ? "bg-app-danger/15 border-app-danger/30 text-app-danger"
+                    : "bg-app-elevated border-app-border"
             )}>
                  {/* Category Icon Mapping */}
                  {item.category === 'Dairy' && '🥛'}
@@ -83,13 +83,13 @@ const MobilePantryCard: React.FC<{
             </div>
             <div className="flex-grow min-w-0">
                 <div className="flex justify-between items-start mb-1">
-                    <h4 className="font-bold text-sm text-foreground truncate pr-2">{item.name}</h4>
-                    <span className={cn("text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase", expiryStatus.color)}>
+                    <h4 className="font-semibold text-sm text-app-text truncate pr-2">{item.name}</h4>
+                    <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full border", expiryStatus.color)}>
                         {daysRemaining < 999 ? `${daysRemaining}d` : 'N/A'}
                     </span>
                 </div>
                 <div className="flex justify-between items-center">
-                     <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                     <p className="text-[11px] text-app-muted flex items-center gap-1">
                         {item.quantityInStock.toLocaleString()} {item.baseUnit} &bull; {formatCurrency(item.costPerUnit)}/{item.baseUnit}
                      </p>
                      <div onClick={e => e.stopPropagation()}>

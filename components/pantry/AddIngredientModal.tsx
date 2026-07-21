@@ -44,24 +44,22 @@ export const AddIngredientModal: React.FC<{
     return (
         <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4 backdrop-blur-md"
+            className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-md"
             onClick={onClose}
         >
             <motion.div
                 initial={{ scale: 0.98, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.98, opacity: 0, y: 10 }}
-                className="bg-app-card rounded-sm shadow-2xl w-full max-w-lg overflow-hidden border border-app-border relative"
+                className="bg-app-card rounded-2xl shadow-soft w-full max-w-lg overflow-hidden border border-app-border relative"
                 onClick={e => e.stopPropagation()}
             >
-                <Crosshair className="absolute top-4 right-4 h-16 w-16 text-white/[0.02] pointer-events-none" />
-                
-                <div className="bg-white/[0.02] p-6 border-b border-app-border flex justify-between items-center relative z-10">
+                <div className="bg-app-elevated p-6 border-b border-app-border flex justify-between items-center relative z-10">
                     <div>
-                        <h2 className="text-xl font-black text-app-text uppercase tracking-tighter flex items-center gap-3 leading-none">
-                            <PlusCircle className="h-5 w-5 text-app-primary" /> Initialize Asset
+                        <h2 className="text-xl font-bold text-app-text tracking-tight flex items-center gap-3 leading-none">
+                            <PlusCircle className="h-5 w-5 text-app-primary" /> Add Inventory Item
                         </h2>
-                        <p className="text-[10px] font-bold text-app-muted uppercase tracking-[0.3em] mt-1.5">Module Specification Entry</p>
+                        <p className="text-xs text-app-muted font-medium mt-1.5">Enter item details</p>
                     </div>
-                    <button onClick={onClose} className="h-10 w-10 flex items-center justify-center hover:bg-white/5 rounded-sm transition-colors text-app-muted">
+                    <button onClick={onClose} aria-label="Close" className="h-11 w-11 flex items-center justify-center hover:bg-app-muted/10 rounded-full transition-colors text-app-muted">
                         <X className="h-5 w-5" />
                     </button>
                 </div>
@@ -72,141 +70,141 @@ export const AddIngredientModal: React.FC<{
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <Tag className="h-4 w-4 text-app-primary" />
-                            <h3 className="text-[10px] font-black uppercase text-app-muted tracking-[0.4em]">Asset Identification</h3>
+                            <h3 className="text-xs text-app-muted font-medium">Item details</h3>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="col-span-2 space-y-2">
-                                <label className="text-[9px] font-black uppercase text-app-muted tracking-widest block ml-1">Asset Name</label>
-                                <input 
+                                <label className="text-xs text-app-muted font-medium block ml-1">Name</label>
+                                <input
                                     required autoFocus value={formData.name} onChange={e => handleChange('name', e.target.value)}
-                                    placeholder="MODULE_LABEL..."
-                                    className="w-full h-12 px-4 rounded-sm bg-app-bg border border-app-border focus:border-app-primary transition-all text-xs font-black uppercase tracking-widest placeholder:text-white/5"
+                                    placeholder="Item name…"
+                                    className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text placeholder:text-app-muted"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase text-app-muted tracking-widest block ml-1">Sector Class</label>
-                                <select 
+                                <label className="text-xs text-app-muted font-medium block ml-1">Category</label>
+                                <select
                                     value={formData.category} onChange={e => handleChange('category', e.target.value)}
-                                    className="w-full h-12 px-4 rounded-sm bg-app-bg border border-app-border focus:border-app-primary transition-all text-xs font-black uppercase tracking-widest appearance-none cursor-pointer"
+                                    className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text appearance-none cursor-pointer"
                                 >
                                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase text-app-muted tracking-widest block ml-1">Source Vendor</label>
-                                <input 
+                                <label className="text-xs text-app-muted font-medium block ml-1">Supplier</label>
+                                <input
                                     value={formData.supplier} onChange={e => handleChange('supplier', e.target.value)}
-                                    placeholder="SUPPLIER_ID..."
-                                    className="w-full h-12 px-4 rounded-sm bg-app-bg border border-app-border focus:border-app-primary transition-all text-xs font-black uppercase tracking-widest placeholder:text-white/5"
+                                    placeholder="Supplier…"
+                                    className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text placeholder:text-app-muted"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="h-px bg-white/5"></div>
+                    <div className="h-px bg-app-border"></div>
 
                     {/* Logistics Section */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <Package className="h-4 w-4 text-app-primary" />
-                            <h3 className="text-[10px] font-black uppercase text-app-muted tracking-[0.4em]">Logistics Data</h3>
+                            <h3 className="text-xs text-app-muted font-medium">Packaging</h3>
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase text-app-muted tracking-widest block ml-1">Base_UOM</label>
-                                <select 
+                                <label className="text-xs text-app-muted font-medium block ml-1">Base unit</label>
+                                <select
                                     value={formData.baseUnit} onChange={e => handleChange('baseUnit', e.target.value)}
-                                    className="w-full h-12 px-4 rounded-sm bg-app-bg border border-app-border focus:border-app-primary transition-all text-xs font-black uppercase tracking-widest appearance-none"
+                                    className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text appearance-none"
                                 >
                                     {AVAILABLE_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
                                 </select>
                             </div>
                             <div className="col-span-2 space-y-2">
-                                <label className="text-[9px] font-black uppercase text-app-muted tracking-widest block ml-1">Container Size</label>
+                                <label className="text-xs text-app-muted font-medium block ml-1">Package size</label>
                                 <div className="relative">
-                                    <input 
+                                    <input
                                         type="number" step="any" min="0.01" required value={formData.packageSize} onChange={e => handleChange('packageSize', parseFloat(e.target.value))}
-                                        className="w-full h-12 pl-4 pr-16 rounded-sm bg-app-bg border border-app-border focus:border-app-primary text-sm font-black tabular-nums"
+                                        className="w-full min-h-[44px] pl-4 pr-16 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
                                     />
                                     <div className="absolute right-3 top-0 bottom-0 flex items-center pointer-events-none">
-                                        <span className="text-[9px] font-black uppercase text-app-primary bg-app-primary/10 px-2 py-1 rounded-sm">
+                                        <span className="text-xs font-medium text-app-primary bg-app-primary/10 px-2 py-1 rounded-full">
                                             {formData.baseUnit}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div className="bg-app-bg p-5 rounded-sm border border-app-border flex items-center justify-between group shadow-inner">
+
+                        <div className="bg-app-elevated p-5 rounded-xl border border-app-border flex items-center justify-between group">
                             <div className="space-y-1.5 flex-1">
-                                <label className="text-[9px] font-black text-app-primary uppercase tracking-[0.2em] block">Vault_Entry_Qty</label>
-                                <input 
+                                <label className="text-xs font-medium text-app-primary block">Quantity in stock</label>
+                                <input
                                     type="number" min="0" required value={formData.packagesInStock} onChange={e => handleChange('packagesInStock', parseFloat(e.target.value))}
-                                    className="bg-transparent border-none outline-none text-2xl font-black text-app-text tabular-nums w-full"
+                                    className="bg-transparent border-none outline-none text-2xl font-bold text-app-text tabular-nums w-full"
                                     placeholder="0"
                                 />
                             </div>
-                            <div className="text-right border-l border-white/5 pl-6 min-w-[120px]">
-                                <span className="text-[8px] uppercase font-black text-app-muted tracking-widest block mb-1">Total_Yield</span>
-                                <span className="text-lg font-black text-app-success tabular-nums">
-                                    {totalQty} <span className="text-[10px] uppercase font-bold">{formData.baseUnit}</span>
+                            <div className="text-right border-l border-app-border pl-6 min-w-[120px]">
+                                <span className="text-xs font-medium text-app-muted block mb-1">Total quantity</span>
+                                <span className="text-lg font-bold text-app-success tabular-nums">
+                                    {totalQty} <span className="text-xs font-medium">{formData.baseUnit}</span>
                                 </span>
                             </div>
                         </div>
                     </div>
 
                     {/* Financial Readout Section */}
-                    <div className="space-y-4 pt-4 border-t border-white/5">
+                    <div className="space-y-4 pt-4 border-t border-app-border">
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     <DollarSign className="h-4 w-4 text-app-primary" />
-                                    <h3 className="text-[10px] font-black uppercase text-app-muted tracking-[0.4em]">Fiscal Basis</h3>
+                                    <h3 className="text-xs text-app-muted font-medium">Cost</h3>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-[9px] font-black uppercase text-app-muted tracking-widest block ml-1">Price / Pack</label>
+                                    <label className="text-xs text-app-muted font-medium block ml-1">Price / pack</label>
                                     <div className="relative">
-                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-app-muted">$</span>
-                                        <input 
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-medium text-app-muted">$</span>
+                                        <input
                                             type="number" step="0.01" min="0" required value={formData.costPerPackage} onChange={e => handleChange('costPerPackage', parseFloat(e.target.value))}
-                                            className="w-full h-12 pl-8 pr-4 rounded-sm bg-app-bg border border-app-border focus:border-app-primary text-sm font-black tabular-nums"
+                                            className="w-full min-h-[44px] pl-8 pr-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
                                         />
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div className="bg-app-primary/5 rounded-sm p-5 border border-app-primary/20 flex flex-col justify-center">
+
+                            <div className="bg-app-primary/10 rounded-xl p-5 border border-app-primary/20 flex flex-col justify-center">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Scale className="h-4 w-4 text-app-primary" />
-                                    <span className="text-[9px] uppercase font-black text-app-primary tracking-[0.2em]">CALC_UNIT_VAL</span>
+                                    <span className="text-xs font-medium text-app-primary">Unit cost</span>
                                 </div>
-                                <div className="text-2xl font-black text-app-text tabular-nums tracking-tighter">
+                                <div className="text-2xl font-bold text-app-text tabular-nums tracking-tight">
                                     {formatCurrency(costPerUnit)}
-                                    <span className="text-[10px] font-bold uppercase text-app-muted ml-2">/ {formData.baseUnit}</span>
+                                    <span className="text-xs font-medium text-app-muted ml-2">/ {formData.baseUnit}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="pt-6 border-t border-white/5 flex gap-4">
+                    <div className="pt-6 border-t border-app-border flex gap-4">
                         <div className="flex-1 space-y-2">
-                            <label className="text-[9px] font-black text-app-muted uppercase tracking-[0.2em] block flex items-center gap-2"><Calendar className="h-3 w-3"/> Chrono_Limit (Days)</label>
-                             <input 
+                            <label className="text-xs text-app-muted font-medium block flex items-center gap-2"><Calendar className="h-3 w-3"/> Shelf life (days)</label>
+                             <input
                                 type="number" min="1" value={formData.shelf_life_days} onChange={e => handleChange('shelf_life_days', parseFloat(e.target.value))}
-                                className="w-full h-12 px-4 rounded-sm bg-app-bg border border-app-border focus:border-app-primary text-sm font-black tabular-nums"
+                                className="w-full min-h-[44px] px-4 rounded-full bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums"
                             />
                         </div>
                     </div>
 
                     <div className="pt-4 flex justify-end gap-4">
-                        <button type="button" onClick={onClose} className="h-12 px-8 rounded-sm text-[10px] font-black uppercase tracking-[0.2em] text-app-muted hover:text-app-text transition-colors">
-                            Abort
+                        <button type="button" onClick={onClose} className="min-h-[44px] px-8 rounded-full text-sm font-semibold text-app-muted hover:text-app-text transition-colors">
+                            Cancel
                         </button>
-                        <button 
-                            type="submit" 
-                            className="h-12 px-10 rounded-sm bg-app-primary text-white text-[10px] font-black uppercase tracking-[0.2em] shadow-xl hover:brightness-110 active:scale-95 transition-all flex items-center gap-3"
+                        <button
+                            type="submit"
+                            className="min-h-[44px] px-10 rounded-full bg-app-primary text-primary-foreground text-sm font-semibold shadow-soft hover:brightness-105 active:scale-[0.97] transition-all flex items-center gap-3"
                         >
-                            <Save className="h-4 w-4" /> Commit Asset
+                            <Save className="h-4 w-4" /> Save Item
                         </button>
                     </div>
                 </form>

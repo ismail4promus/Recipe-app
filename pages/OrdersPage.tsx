@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { 
-    Search, DollarSign, Utensils, Plus, 
-    LayoutDashboard, Clock, CheckCircle2, Terminal,
-    Activity, ShoppingBag, Target, Box, Crosshair, Cpu
+import {
+    Search, DollarSign, Utensils, Plus,
+    LayoutDashboard, Clock, CheckCircle2,
+    ShoppingBag, Box
 } from 'lucide-react';
 import { formatCurrency, cn, ANIMATION_VARIANTS } from '../lib/utils';
 import { Order, OrderStatus } from '../types';
@@ -12,12 +13,26 @@ import { KitchenTicketModal } from '../components/orders/KitchenTicketModal';
 import { InvoiceModal } from '../components/orders/InvoiceModal';
 import { OrderFormModal } from '../components/orders/OrderFormModal';
 import OrderCard from '../components/orders/OrderCard';
+import { Button, Chip } from '../components/ui/kit';
 
 const OrdersPage: React.FC = () => {
     const { orders, updateOrderStatus, addOrder, updateOrder, deleteOrder, recipes } = useData();
-    const [searchQuery, setSearchQuery] = useState("");
-    const [statusFilter, setStatusFilter] = useState<'all' | OrderStatus>('all');
-    const [showOrderForm, setShowOrderForm] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || "");
+    const [statusFilter, setStatusFilter] = useState<'all' | OrderStatus>(() => {
+        const s = searchParams.get('status');
+        const valid: OrderStatus[] = ['pending_approval', 'approved', 'processing', 'completed', 'cancelled'];
+        return s && (valid as string[]).includes(s) ? (s as OrderStatus) : 'all';
+    });
+    const [showOrderForm, setShowOrderForm] = useState(() => searchParams.get('new') === '1');
+
+    // Consume deep-link params once so refreshes/back behave normally.
+    useEffect(() => {
+        if (searchParams.has('q') || searchParams.has('status') || searchParams.has('new')) {
+            setSearchParams({}, { replace: true });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
     const [ticketOrder, setTicketOrder] = useState<Order | null>(null);
     const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -63,91 +78,70 @@ const OrdersPage: React.FC = () => {
             initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
             className="space-y-8 pb-32 max-w-7xl mx-auto font-sans"
         >
-            {/* Mission Directive Header - Dashboard Style */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 border-b border-app-border pb-8">
-                <div>
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="h-12 w-12 bg-app-primary/10 border border-app-primary/20 rounded-sm flex items-center justify-center">
-                            <ShoppingBag className="h-7 w-7 text-app-primary emerald-glow" />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-black tracking-[0.05em] text-white uppercase italic leading-none">Directive Terminal</h1>
-                            <div className="flex items-center gap-4 mt-3">
-                                <div className="flex items-center gap-2">
-                                    <span className="status-pulse bg-app-success shadow-[0_0_12px_#10b981]"></span>
-                                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-app-success">Sync_Active</span>
-                                </div>
-                                <div className="h-4 w-px bg-white/5"></div>
-                                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-app-muted flex items-center gap-2">
-                                    <Cpu className="h-3 w-3" /> Grid_Encryption: AES_256
-                                </span>
-                            </div>
-                        </div>
+            {/* Header */}
+            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 border-b border-app-border pb-8">
+                <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 bg-app-primary/10 rounded-2xl flex items-center justify-center">
+                        <ShoppingBag className="h-6 w-6 text-app-primary" />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-app-text leading-none">Orders</h1>
+                        <p className="text-sm text-app-muted mt-1.5">Manage and track your kitchen orders</p>
                     </div>
                 </div>
 
-                <button 
-                    onClick={() => setShowOrderForm(true)}
-                    className="h-14 px-10 bg-app-primary text-white rounded-sm font-black text-[11px] uppercase tracking-[0.4em] flex items-center gap-4 shadow-2xl hover:brightness-110 active:scale-95 transition-all group"
-                >
-                    <Plus className="h-5 w-5 stroke-[3px] group-hover:rotate-90 transition-transform" /> Initialize Manifest
-                </button>
+                <Button onClick={() => setShowOrderForm(true)} icon={Plus} className="shrink-0">
+                    Create Order
+                </Button>
             </motion.div>
 
-            {/* Mission Telemetry Grid */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Metrics */}
+            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
-                    { label: 'Pending_Queue', val: metrics.pending, icon: Clock, color: 'text-app-warning', sub: 'STBY_READY' },
-                    { label: 'Operational_Firing', val: metrics.active, icon: Utensils, color: 'text-app-primary', sub: 'IN_EXECUTION' },
-                    { label: 'Yield_Realized', val: formatCurrency(metrics.revenue).split('.')[0], icon: DollarSign, color: 'text-white', sub: 'GROSS_AUDIT' }
+                    { label: 'Pending', val: metrics.pending, icon: Clock, color: 'text-app-warning', tint: 'bg-app-warning/15' },
+                    { label: 'In Progress', val: metrics.active, icon: Utensils, color: 'text-app-primary', tint: 'bg-app-primary/10' },
+                    { label: 'Revenue', val: formatCurrency(metrics.revenue).split('.')[0], icon: DollarSign, color: 'text-app-success', tint: 'bg-app-success/15' }
                 ].map((m) => (
-                    <div key={m.label} className="bg-app-card border border-app-border p-6 rounded-sm relative overflow-hidden group shadow-xl">
-                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-app-primary/20 to-transparent"></div>
-                        <m.icon className="absolute -bottom-4 -right-4 h-16 w-16 text-white/[0.02] group-hover:scale-110 transition-transform" />
-                        <div className="flex justify-between items-start mb-4 relative z-10">
-                            <div>
-                                <p className="tactical-label !text-[9px] mb-1">{m.label}</p>
-                                <p className="text-[8px] font-black text-app-muted tracking-[0.25em] uppercase">{m.sub}</p>
-                            </div>
-                            <div className={cn("h-2 w-2 rounded-full", m.color.replace('text-', 'bg-'))}></div>
+                    <div key={m.label} className="bg-app-card border border-app-border p-5 rounded-2xl shadow-soft flex items-center gap-4">
+                        <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center shrink-0", m.tint)}>
+                            <m.icon className={cn("h-6 w-6", m.color)} />
                         </div>
-                        <span className={cn("text-3xl font-black tabular-nums tracking-tighter italic leading-none relative z-10", m.color)}>{m.val}</span>
+                        <div className="min-w-0">
+                            <p className="text-xs text-app-muted font-medium mb-1">{m.label}</p>
+                            <span className="text-2xl font-bold tabular-nums text-app-text leading-none">{m.val}</span>
+                        </div>
                     </div>
                 ))}
             </motion.div>
 
-            {/* Control HUD Section */}
+            {/* Controls */}
             <motion.div variants={ANIMATION_VARIANTS.item} className="sticky top-14 md:top-16 z-30 py-2">
-                <div className="bg-app-sidebar/80 backdrop-blur-xl border border-app-border p-2 rounded-sm flex flex-col lg:flex-row gap-3 shadow-2xl">
+                <div className="bg-app-card/80 backdrop-blur-xl border border-app-border p-3 rounded-2xl flex flex-col lg:flex-row gap-3 shadow-soft">
                     <div className="relative flex-grow">
-                        <Terminal className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted/50" />
-                        <input 
-                            placeholder="EXECUTE_MANIFEST_QUERY..." 
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
+                        <input
+                            placeholder="Search orders…"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full h-12 pl-12 pr-4 rounded-sm bg-app-bg border border-app-border focus:ring-1 focus:ring-app-primary/40 text-[11px] font-black uppercase tracking-[0.2em] transition-all placeholder:text-app-muted/20"
+                            className="w-full min-h-[44px] pl-11 pr-4 rounded-full bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary text-sm text-app-text transition-all placeholder:text-app-muted"
                         />
                     </div>
-                    
+
                     <div className="flex gap-2 overflow-x-auto scrollbar-hide px-1">
                         {[
                             { id: 'all', label: 'All', icon: LayoutDashboard },
-                            { id: 'pending_approval', label: 'Queued', icon: Clock },
-                            { id: 'processing', label: 'Firing', icon: Utensils },
-                            { id: 'completed', label: 'Deployed', icon: CheckCircle2 }
+                            { id: 'pending_approval', label: 'Pending', icon: Clock },
+                            { id: 'processing', label: 'In Progress', icon: Utensils },
+                            { id: 'completed', label: 'Completed', icon: CheckCircle2 }
                         ].map(tab => (
-                            <button
+                            <Chip
                                 key={tab.id}
+                                active={statusFilter === tab.id}
                                 onClick={() => setStatusFilter(tab.id as any)}
-                                className={cn(
-                                    "flex items-center gap-3 px-6 py-2 rounded-sm text-[9px] font-black uppercase tracking-[0.3em] whitespace-nowrap transition-all border",
-                                    statusFilter === tab.id 
-                                        ? "bg-app-primary text-white border-app-primary shadow-lg shadow-app-primary/20" 
-                                        : "bg-app-bg border-app-border text-app-muted hover:text-app-text hover:bg-white/5"
-                                )}
+                                className="flex items-center gap-2"
                             >
-                                <tab.icon className="h-3.5 w-3.5" /> {tab.label}
-                            </button>
+                                <tab.icon className="h-4 w-4" /> {tab.label}
+                            </Chip>
                         ))}
                     </div>
                 </div>
@@ -173,11 +167,11 @@ const OrdersPage: React.FC = () => {
                         <motion.div
                             key="empty"
                             variants={ANIMATION_VARIANTS.item}
-                            className="flex flex-col items-center justify-center py-40 bg-app-card/10 border border-dashed border-app-border rounded-sm backdrop-blur-sm"
+                            className="flex flex-col items-center justify-center py-32 bg-app-card border border-dashed border-app-border rounded-2xl"
                         >
-                            <Box className="h-16 w-16 text-app-muted/10 mb-6 stroke-1" />
-                            <p className="tactical-label !text-[10px] opacity-40">System_Static: No Active Manifests Detected</p>
-                            <button onClick={() => {setSearchQuery(""); setStatusFilter("all");}} className="mt-6 text-[9px] font-black text-app-primary uppercase tracking-[0.3em] hover:underline">Reset Core Query</button>
+                            <Box className="h-14 w-14 text-app-muted mb-5 stroke-1" />
+                            <p className="text-sm text-app-muted font-medium">No orders yet</p>
+                            <button onClick={() => {setSearchQuery(""); setStatusFilter("all");}} className="mt-5 text-sm font-semibold text-app-primary hover:underline">Reset filters</button>
                         </motion.div>
                     )}
                 </AnimatePresence>

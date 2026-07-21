@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>iKITCHEN | COMMAND</title>
+  <title>iKitchen</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -11,30 +11,44 @@
       theme: {
         extend: {
           colors: {
+            // Theme-aware tokens driven by CSS variables. :root = dark (the
+            // reference look); .light overrides to a warm light variant.
+            // Channel form enables opacity modifiers (bg-app-primary/10).
             app: {
-              bg: '#12161d',      // Surface-0
-              sidebar: '#1c222b', // Surface-1
-              card: '#222e3c',    // Surface-2
-              primary: '#3b7ddd', // Accent Blue
-              success: '#1cbb8c', // Alert Success
-              warning: '#fcb92c', // Alert Warning
-              danger: '#f43f5e',  // Alert Danger
-              muted: '#7e8998',
-              text: '#e9ecef',
-              border: 'rgba(255, 255, 255, 0.05)',
+              bg: 'rgb(var(--c-bg) / <alpha-value>)',
+              sidebar: 'rgb(var(--c-sidebar) / <alpha-value>)',
+              card: 'rgb(var(--c-card) / <alpha-value>)',
+              elevated: 'rgb(var(--c-elevated) / <alpha-value>)',
+              primary: 'rgb(var(--c-primary) / <alpha-value>)',
+              info: 'rgb(var(--c-info) / <alpha-value>)',
+              success: 'rgb(var(--c-success) / <alpha-value>)',
+              warning: 'rgb(var(--c-warning) / <alpha-value>)',
+              danger: 'rgb(var(--c-danger) / <alpha-value>)',
+              muted: 'rgb(var(--c-muted) / <alpha-value>)',
+              text: 'rgb(var(--c-text) / <alpha-value>)',
+              border: 'var(--c-border)',
             },
-            border: "rgba(255, 255, 255, 0.05)",
-            background: "#12161d",
-            foreground: "#e9ecef",
+            border: 'var(--c-border)',
+            background: 'rgb(var(--c-bg) / <alpha-value>)',
+            foreground: 'rgb(var(--c-text) / <alpha-value>)',
+            card: 'rgb(var(--c-card) / <alpha-value>)',
+            'muted-foreground': 'rgb(var(--c-muted) / <alpha-value>)',
             primary: {
-              DEFAULT: "#3b7ddd",
-              foreground: "#ffffff",
+              DEFAULT: 'rgb(var(--c-primary) / <alpha-value>)',
+              foreground: 'rgb(var(--c-primary-fg) / <alpha-value>)',
             }
           },
           borderRadius: {
-            'sm': '0.125rem',
-            'md': '0.25rem',
-            'lg': '0.5rem',
+            'sm': '0.5rem',
+            'md': '0.75rem',
+            'lg': '1rem',
+            'xl': '1.25rem',
+            '2xl': '1.5rem',
+          },
+          boxShadow: {
+            soft: '0 2px 8px rgba(0,0,0,0.20)',
+            card: '0 8px 28px -12px rgba(0,0,0,0.45)',
+            float: '0 10px 30px -6px rgba(242,107,33,0.45)',
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
@@ -49,45 +63,75 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
   <style>
+    /* ---- Dark theme (default, matches reference) ---- */
     :root {
-      --background: #12161d;
-      --foreground: #e9ecef;
-      --card: #222e3c;
-      --primary: #3b7ddd;
-      --border: rgba(255, 255, 255, 0.05);
+      --c-bg: 16 16 16;           /* #101010 near-black */
+      --c-sidebar: 22 22 22;      /* #161616 */
+      --c-card: 28 28 28;         /* #1C1C1C */
+      --c-elevated: 38 38 38;     /* #262626 list rows */
+      --c-primary: 242 107 33;    /* #F26B21 vibrant orange */
+      --c-primary-fg: 255 255 255;
+      --c-info: 96 165 250;       /* #60A5FA */
+      --c-success: 74 222 128;    /* #4ADE80 */
+      --c-warning: 251 191 36;    /* #FBBF24 */
+      --c-danger: 248 113 113;    /* #F87171 */
+      --c-muted: 156 156 156;     /* #9C9C9C */
+      --c-text: 245 245 245;      /* #F5F5F5 */
+      --c-border: rgba(255, 255, 255, 0.08);
+      --c-scrollbar: rgba(255, 255, 255, 0.16);
+      color-scheme: dark;
     }
-    
+
+    /* ---- Light theme (toggle) ---- */
+    .light {
+      --c-bg: 250 247 242;        /* warm cream #FAF7F2 */
+      --c-sidebar: 255 255 255;
+      --c-card: 255 255 255;
+      --c-elevated: 245 241 235;
+      --c-primary: 242 107 33;    /* same orange */
+      --c-primary-fg: 255 255 255;
+      --c-info: 37 99 235;
+      --c-success: 22 163 74;
+      --c-warning: 180 83 9;
+      --c-danger: 220 38 38;
+      --c-muted: 120 116 110;
+      --c-text: 26 24 22;         /* #1A1816 */
+      --c-border: rgba(26, 24, 22, 0.10);
+      --c-scrollbar: rgba(26, 24, 22, 0.20);
+      color-scheme: light;
+    }
+
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #12161d;
-      color: #e9ecef;
+      background-color: rgb(var(--c-bg));
+      color: rgb(var(--c-text));
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     h1, h2, h3, h4, h5, h6 {
-      letter-spacing: -0.04em;
-      font-weight: 800;
+      letter-spacing: -0.02em;
+      font-weight: 700;
     }
 
+    /* Softened from the old all-caps "tactical" style */
     .tactical-label {
       text-transform: uppercase;
-      letter-spacing: 0.3em;
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: #7e8998;
+      letter-spacing: 0.06em;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: rgb(var(--c-muted));
     }
 
     .glass-panel {
-      background: rgba(34, 46, 60, 0.7);
+      background: rgb(var(--c-card) / 0.72);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--c-border);
     }
 
     .status-pulse {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
+      width: 6px; height: 6px; border-radius: 50%;
       display: inline-block;
       animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
@@ -97,24 +141,18 @@
       50% { opacity: .4; transform: scale(1.2); }
     }
 
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #12161d;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #3b7ddd;
-    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--c-scrollbar); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgb(var(--c-primary)); }
 
     .tabular-nums {
         font-variant-numeric: tabular-nums;
         font-family: 'JetBrains Mono', monospace;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
     }
   </style>
   <script type="importmap">

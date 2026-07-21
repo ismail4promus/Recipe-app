@@ -21,20 +21,22 @@ export const QuickStockControl: React.FC<{
     };
 
     return (
-        <div className={cn("flex items-center bg-muted/20 rounded-md border border-border/60 p-0.5 shadow-inner", className)} onClick={e => e.stopPropagation()}>
-            <button 
+        <div className={cn("flex items-center bg-app-elevated rounded-full border border-app-border p-0.5", className)} onClick={e => e.stopPropagation()}>
+            <button
                 onClick={(e) => handleAdjust(e, -1)}
-                className="w-6 h-6 flex items-center justify-center rounded-[4px] hover:bg-white dark:hover:bg-zinc-800 text-muted-foreground hover:text-red-500 transition-all active:scale-90"
+                aria-label="Decrease stock"
+                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-app-muted/10 text-app-muted hover:text-app-danger transition-all active:scale-90"
             >
                 <Minus className="h-2.5 w-2.5" strokeWidth={4} />
             </button>
             <div className="flex-1 text-center flex items-baseline justify-center gap-0.5 px-1 min-w-[32px]">
-                <span className="font-black text-[10px] tabular-nums text-foreground">{item.packagesInStock}</span>
-                <span className="text-[6px] text-muted-foreground font-black uppercase tracking-tighter opacity-60">{item.packageUnit.slice(0,2)}</span>
+                <span className="font-semibold text-xs tabular-nums text-app-text">{item.packagesInStock}</span>
+                <span className="text-[8px] text-app-muted font-medium tracking-tight opacity-70">{item.packageUnit.slice(0,2)}</span>
             </div>
-            <button 
+            <button
                 onClick={(e) => handleAdjust(e, 1)}
-                className="w-6 h-6 flex items-center justify-center rounded-[4px] hover:bg-white dark:hover:bg-zinc-800 text-muted-foreground hover:text-emerald-500 transition-all active:scale-90"
+                aria-label="Increase stock"
+                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-app-muted/10 text-app-muted hover:text-app-success transition-all active:scale-90"
             >
                 <Plus className="h-2.5 w-2.5" strokeWidth={4} />
             </button>

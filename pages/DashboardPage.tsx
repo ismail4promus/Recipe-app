@@ -1,207 +1,408 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useData } from '../context/DataContext';
-import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
-import { 
-  Warehouse, ClipboardList, DollarSign, ChevronRight, 
-  Activity, Zap, Target, ChefHat, Rocket, Crosshair, Shield, Box
-} from 'lucide-react';
-import { formatCurrency, cn, ANIMATION_VARIANTS } from '../lib/utils';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import {
+  Plus, ClipboardPlus, PackagePlus, ChefHat, RefreshCw,
+  ShoppingBag, Flame, PackageMinus, DollarSign,
+  AlertTriangle, CalendarClock, Boxes, TrendingUp,
+  PackageX, Clock3, PartyPopper, CheckCircle2, ArrowRight,
+} from 'lucide-react';
+import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import { useData } from '../context/DataContext';
+import { Recipe, Ingredient, Order } from '../types';
+import { formatCurrency, ANIMATION_VARIANTS } from '../lib/utils';
 
-const MetricTactical: React.FC<{ icon: any, label: string, value: string | number, color: string, trend?: string }> = React.memo(({ icon: Icon, label, value, color, trend }) => (
-    <Card className="relative overflow-hidden group">
-        <Icon className="absolute -bottom-4 -right-4 h-24 w-24 text-white/[0.03] group-hover:scale-110 transition-transform duration-500" />
-        <div className="relative z-10 p-5">
-            <div className="flex flex-col gap-1 mb-4">
-                <span className="tactical-label">{label}</span>
-                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden mt-1">
-                    <div className={cn("h-full w-2/3", color.replace('text-', 'bg-'))}></div>
-                </div>
-            </div>
-            <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-black tracking-tighter text-app-text tabular-nums leading-none">{value}</span>
-                {trend && <span className="text-[10px] font-black text-app-success">+{trend}</span>}
-            </div>
-        </div>
-    </Card>
-));
+import SummaryCard from '../components/dashboard/SummaryCard';
+import QuickAction from '../components/dashboard/QuickAction';
+import AlertItem, { AlertSeverity } from '../components/dashboard/AlertItem';
+import TaskRow, { CookingTask } from '../components/dashboard/TaskRow';
+import OrderRow from '../components/dashboard/OrderRow';
+import EmptyState from '../components/dashboard/EmptyState';
+import Section from '../components/dashboard/Section';
+import DashboardSkeleton from '../components/dashboard/Skeletons';
+import { CookingStatus } from '../components/dashboard/StatusBadge';
+
+// --- date helpers ---
+const startOfDay = (d: Date) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+const isSameDay = (a?: Date, b?: Date) => !!a && !!b && startOfDay(new Date(a)).getTime() === startOfDay(new Date(b)).getTime();
+const daysBetween = (from: Date, to: Date) => Math.ceil((startOfDay(to).getTime() - startOfDay(from).getTime()) / 86400000);
+const expiryDate = (i: Ingredient) => { const e = new Date(i.last_verified || new Date()); e.setDate(e.getDate() + (i.shelf_life_days || 365)); return e; };
+const timeLabel = (d?: Date) => {
+  if (!d) return undefined;
+  const dt = new Date(d);
+  return isNaN(dt.getTime()) ? undefined : new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(dt);
+};
+
+const getGreeting = (h: number) => (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening');
+const getUserName = () => {
+  try { return localStorage.getItem('chef_name') || 'Chef'; } catch { return 'Chef'; }
+};
+
+// Estimated raw ingredient cost of one batch of a recipe, using real ingredient costs.
+const estimateRecipeCost = (recipe: Recipe, getIng: (id: string) => Ingredient | undefined) => {
+  let total = 0;
+  recipe.ingredientSections?.forEach(sec => sec.ingredients?.forEach(ri => {
+    const unitCost = ri.manualCostPerUnit ?? getIng(ri.ingredientId)?.costPerUnit ?? 0;
+    total += (ri.quantity || 0) * unitCost;
+  }));
+  return total;
+};
 
 const DashboardPage: React.FC = () => {
-    const { recipes, ingredients, orders } = useData();
-    const [loading, setLoading] = useState(true);
-    
-    useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 400);
-        return () => clearTimeout(timer);
-    }, []);
+  const { recipes, ingredients, orders, cookingSessions, loading, getRecipeById, getIngredientById } = useData();
 
-    const totalRevenue = useMemo(() => orders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.totalAmount, 0), [orders]);
-    
-    const { criticalStock, warningStock } = useMemo(() => {
-        const critical = ingredients.filter(i => i.packagesInStock === 0);
-        const warning = ingredients.filter(i => i.packagesInStock > 0 && i.packagesInStock <= 2);
-        return { criticalStock: critical, warningStock: warning };
-    }, [ingredients]);
+  const now = new Date();
+  const greeting = `${getGreeting(now.getHours())}, ${getUserName()}`;
+  const dateLabel = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(now);
 
-    const activePrepItems = useMemo(() => {
-        const counts: Record<string, { count: number, id: string }> = {};
-        orders.filter(o => o.status === 'approved' || o.status === 'processing').forEach(order => {
-            order.items.forEach(item => {
-                if (!counts[item.recipeName]) {
-                    counts[item.recipeName] = { count: 0, id: item.recipeId };
-                }
-                counts[item.recipeName].count += item.quantity;
-            });
+  const model = useMemo(() => {
+    const activeStatuses: Order['status'][] = ['pending_approval', 'approved', 'processing'];
+    const activeOrders = orders.filter(o => activeStatuses.includes(o.status));
+    const todaysOrders = orders.filter(o => activeStatuses.includes(o.status) && isSameDay(o.dueDate, now));
+
+    const criticalStock = ingredients.filter(i => i.packagesInStock === 0);
+    const lowStock = ingredients.filter(i => i.packagesInStock > 0 && i.packagesInStock <= 2);
+    const expiring = ingredients
+      .map(i => ({ i, days: daysBetween(now, expiryDate(i)) }))
+      .filter(x => x.days <= 7)
+      .sort((a, b) => a.days - b.days);
+
+    const inProgressSessions = cookingSessions.filter(s => s.status === 'in_progress');
+
+    // Revenue
+    const completed = orders.filter(o => o.status === 'completed');
+    const todaysRevenue = completed
+      .filter(o => isSameDay(o.dueDate, now) || (!o.dueDate && isSameDay(o.createdAt, now)))
+      .reduce((s, o) => s + (Number(o.totalAmount) || 0), 0);
+    const weekStart = startOfDay(new Date(now.getTime() - 6 * 86400000));
+    const weekOrders = completed.filter(o => new Date(o.createdAt) >= weekStart);
+    const weekRevenue = weekOrders.reduce((s, o) => s + (Number(o.totalAmount) || 0), 0);
+
+    // Estimated food cost / profit for the week (real ingredient costs)
+    let weekFoodCost = 0;
+    weekOrders.forEach(o => o.items.forEach(it => {
+      const r = getRecipeById(it.recipeId);
+      if (r) {
+        const batchCost = estimateRecipeCost(r, getIngredientById);
+        const perServing = r.servings > 0 ? batchCost / r.servings : batchCost;
+        weekFoodCost += perServing * it.quantity;
+      }
+    }));
+    const weekProfit = weekRevenue - weekFoodCost;
+    const margin = weekRevenue > 0 ? Math.round((weekProfit / weekRevenue) * 100) : 0;
+
+    // 7-day revenue sparkline
+    const spark = Array.from({ length: 7 }).map((_, idx) => {
+      const day = startOfDay(new Date(now.getTime() - (6 - idx) * 86400000));
+      const v = completed
+        .filter(o => isSameDay(o.createdAt, day))
+        .reduce((s, o) => s + (Number(o.totalAmount) || 0), 0);
+      return { v };
+    });
+
+    const inventoryValue = ingredients.reduce((s, i) => s + i.costPerPackage * i.packagesInStock, 0);
+
+    return {
+      activeOrders, todaysOrders, criticalStock, lowStock, expiring, inProgressSessions,
+      completed, todaysRevenue, weekRevenue, weekFoodCost, weekProfit, margin, spark, inventoryValue,
+    };
+  }, [orders, ingredients, cookingSessions, getRecipeById, getIngredientById, now]);
+
+  // --- Attention items (urgent first, capped at 6) ---
+  const alerts = useMemo(() => {
+    const list: (React.ComponentProps<typeof AlertItem> & { sev: number })[] = [];
+    const sevRank: Record<AlertSeverity, number> = { urgent: 0, warning: 1, info: 2 };
+
+    model.criticalStock.forEach(i => list.push({
+      sev: sevRank.urgent, icon: PackageX, severity: 'urgent',
+      title: i.name, message: 'Out of stock — restock to keep cooking.',
+      actionLabel: 'Update Stock', to: '/pantry?filter=low',
+    }));
+    model.lowStock.forEach(i => list.push({
+      sev: sevRank.warning, icon: PackageMinus, severity: 'warning',
+      title: i.name, message: `Running low — ${i.packagesInStock} ${i.packageUnit} left, below minimum.`,
+      actionLabel: 'Update Stock', to: '/pantry?filter=low',
+    }));
+    model.expiring.forEach(({ i, days }) => list.push({
+      sev: days < 0 ? sevRank.urgent : sevRank.warning, icon: Clock3,
+      severity: days < 0 ? 'urgent' : 'warning',
+      title: i.name,
+      message: days < 0 ? 'Expired — check before use.' : days === 0 ? 'Expires today.' : `Expires in ${days} day${days === 1 ? '' : 's'}.`,
+      actionLabel: 'View Ingredient', to: '/pantry?filter=expiring',
+    }));
+    // Overdue / urgent orders
+    orders.forEach(o => {
+      const overdue = o.dueDate && daysBetween(now, new Date(o.dueDate)) < 0 && ['approved', 'processing', 'pending_approval'].includes(o.status);
+      const urgent = o.priority === 'high' && ['approved', 'processing', 'pending_approval'].includes(o.status);
+      if (overdue || urgent) {
+        list.push({
+          sev: sevRank.urgent, icon: AlertTriangle, severity: 'urgent',
+          title: `Order #${o.orderNumber.slice(-5)} — ${o.customerName}`,
+          message: overdue ? 'Past its due date and not completed yet.' : 'Marked high priority — needs attention.',
+          actionLabel: 'View Order', to: `/orders?q=${encodeURIComponent(o.orderNumber)}`,
         });
-        return Object.entries(counts)
-            .map(([name, data]) => ({ name, ...data }))
-            .sort((a, b) => b.count - a.count);
-    }, [orders]);
+      }
+    });
 
-    if (loading) return (
-        <div className="flex flex-col h-[60vh] items-center justify-center gap-6">
-            <div className="relative h-12 w-12">
-                <div className="absolute inset-0 border-4 border-app-primary/20 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-app-primary border-t-transparent rounded-full animate-spin"></div>
-            </div>
-            <p className="tactical-label animate-pulse">Syncing Command Hub...</p>
-        </div>
-    );
+    return list.sort((a, b) => a.sev - b.sev).slice(0, 6);
+  }, [model, orders, now]);
 
-    const targetRevenue = 10000;
-    const progressPercent = Math.min(100, (totalRevenue / targetRevenue) * 100);
+  // --- Today's cooking schedule ---
+  const tasks = useMemo(() => {
+    const out: CookingTask[] = [];
+    const recipeIdsInProgress = new Set(model.inProgressSessions.map(s => s.recipeId));
 
+    model.inProgressSessions.forEach(s => {
+      const r = getRecipeById(s.recipeId);
+      const status: CookingStatus = s.currentStep > 0 ? 'Cooking' : 'Preparing';
+      const end = r ? new Date(new Date(s.startTime).getTime() + ((r.prepTime + r.cookTime) || 0) * 60000) : undefined;
+      out.push({
+        key: `sess-${s.id}`,
+        recipeName: r?.name || s.sessionName || 'Cooking session',
+        quantity: s.servings,
+        startLabel: timeLabel(new Date(s.startTime)),
+        endLabel: timeLabel(end),
+        status,
+        actionLabel: 'Continue',
+        to: `/recipes/${s.recipeId}/cook?sessionId=${s.id}`,
+      });
+    });
+
+    // Upcoming: items from active orders not already cooking
+    model.activeOrders
+      .filter(o => o.status === 'approved' || o.status === 'processing')
+      .forEach(o => o.items.forEach(it => {
+        if (recipeIdsInProgress.has(it.recipeId)) return;
+        const r = getRecipeById(it.recipeId);
+        const servings = (r?.servings || 1) * it.quantity;
+        out.push({
+          key: `ord-${o.id}-${it.recipeId}`,
+          recipeName: it.recipeName,
+          context: `#${o.orderNumber.slice(-5)} · ${o.customerName}`,
+          quantity: it.quantity,
+          status: 'Not Started',
+          actionLabel: 'Start',
+          to: `/recipes/${it.recipeId}/cook?servings=${servings}`,
+        });
+      }));
+
+    return out.slice(0, 5);
+  }, [model, getRecipeById]);
+
+  const recentOrders = useMemo(
+    () => [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5),
+    [orders]
+  );
+
+  const topInventoryAlerts = useMemo(
+    () => [...model.criticalStock, ...model.lowStock].slice(0, 3),
+    [model]
+  );
+
+  if (loading) {
     return (
-        <motion.div initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container} className="space-y-6 pb-24 max-w-7xl mx-auto px-4 md:px-0">
-            {/* Mission Header */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-app-border pb-6">
-                <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <Crosshair className="h-6 w-6 text-app-primary" />
-                        <h1 className="text-3xl font-black tracking-tighter text-app-text uppercase">Operations Center</h1>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                            <span className="status-pulse bg-app-success shadow-[0_0_8px_#1cbb8c]"></span>
-                            <span className="tactical-label">Grid Status: Active</span>
-                        </div>
-                        <div className="h-4 w-px bg-app-border"></div>
-                        <span className="tactical-label text-app-primary flex items-center gap-2">
-                            <Activity className="h-3 w-3" /> Realtime Data Link
-                        </span>
-                    </div>
-                </div>
-
-                <div className="bg-app-card border border-app-border p-4 rounded-md min-w-[320px] shadow-lg relative overflow-hidden group">
-                    <div className="absolute -top-6 -right-6 h-20 w-20 text-white/[0.02] group-hover:rotate-12 transition-transform">
-                        <Target className="h-full w-full" />
-                    </div>
-                    <div className="flex justify-between items-center mb-3">
-                        <span className="tactical-label">Mission Quota: {Math.round(progressPercent)}%</span>
-                        <span className="text-[10px] font-black text-app-primary tabular-nums">EST. $10.0K</span>
-                    </div>
-                    <div className="h-1 w-full bg-app-bg border border-white/5 rounded-full overflow-hidden">
-                        <motion.div 
-                            initial={{ width: 0 }} 
-                            animate={{ width: `${progressPercent}%` }} 
-                            className="h-full bg-app-primary shadow-[0_0_10px_rgba(59,125,221,0.5)]" 
-                        />
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* Top Grid Metrics */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <MetricTactical icon={ChefHat} label="Culinary Modules" value={recipes.length} color="text-app-primary" />
-                <MetricTactical icon={Warehouse} label="Asset Vault" value={ingredients.length} color="text-app-success" />
-                <MetricTactical icon={ClipboardList} label="Directives" value={orders.filter(o=>o.status !== 'completed').length} color="text-app-warning" trend="12%" />
-                <MetricTactical icon={DollarSign} label="Yield Target" value={formatCurrency(totalRevenue).split('.')[0]} color="text-white" trend="18%" />
-            </motion.div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <motion.div variants={ANIMATION_VARIANTS.item} className="lg:col-span-8 space-y-6">
-                    <Card isPrimary className="h-full flex flex-col">
-                        <CardHeader className="flex flex-row items-center justify-between bg-white/[0.02]">
-                            <div className="flex items-center gap-3">
-                                <Zap className="h-4 w-4 text-app-primary" />
-                                <CardTitle>Task Execution Queue</CardTitle>
-                            </div>
-                            <Link to="/orders" className="tactical-label text-app-primary hover:underline">Full Array</Link>
-                        </CardHeader>
-                        <CardContent className="flex-1 p-0 overflow-y-auto max-h-[600px]">
-                            {activePrepItems.length > 0 ? (
-                                <div className="divide-y divide-white/5">
-                                    {activePrepItems.map(item => (
-                                        <div key={item.id} className="flex items-center justify-between p-5 hover:bg-white/[0.03] transition-all group">
-                                            <div className="flex items-center gap-6">
-                                                <div className="h-12 w-12 rounded-sm bg-app-bg border border-app-border flex items-center justify-center font-black text-xl text-app-primary shadow-inner group-hover:border-app-primary transition-colors">
-                                                    {item.count}
-                                                </div>
-                                                <div>
-                                                    <p className="text-sm font-black tracking-tight text-app-text uppercase mb-1">{item.name}</p>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="status-pulse bg-app-warning shadow-[0_0_8px_#fcb92c]"></span>
-                                                        <span className="tactical-label">Awaiting Assignment</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <Link 
-                                                to={`/recipes/${item.id}/cook?servings=${item.count}`}
-                                                className="bg-app-primary text-white h-10 px-6 rounded-md tactical-label shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center gap-2"
-                                            >
-                                                <Rocket className="h-3.5 w-3.5" /> Initialize
-                                            </Link>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="py-32 flex flex-col items-center justify-center opacity-30">
-                                    <Box className="h-12 w-12 mb-4" />
-                                    <p className="tactical-label">Grid Static: Null Data</p>
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
-                </motion.div>
-
-                <motion.div variants={ANIMATION_VARIANTS.item} className="lg:col-span-4 space-y-6">
-                    <Card className="border-t-2 border-t-app-warning">
-                        <CardHeader className="bg-white/[0.02]">
-                            <div className="flex items-center gap-3">
-                                <Shield className="h-4 w-4 text-app-warning" />
-                                <CardTitle>Vault Integrity</CardTitle>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-4 space-y-4">
-                            {[...criticalStock.slice(0, 2), ...warningStock.slice(0, 3)].map(item => {
-                                const isCritical = item.packagesInStock === 0;
-                                return (
-                                    <div key={item.id} className="p-3 bg-app-bg border border-app-border rounded-md group hover:border-app-primary transition-all">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <div className="flex items-center gap-2">
-                                                <div className={cn("status-pulse", isCritical ? "bg-app-danger shadow-[0_0_8px_#f43f5e]" : "bg-app-primary")}></div>
-                                                <p className="text-[11px] font-bold uppercase tracking-tight text-app-text truncate max-w-[140px]">{item.name}</p>
-                                            </div>
-                                            <span className={cn("text-[9px] font-black tabular-nums", isCritical ? "text-app-danger" : "text-app-muted")}>
-                                                {item.packagesInStock} {item.packageUnit.toUpperCase()}
-                                            </span>
-                                        </div>
-                                        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                                            <div 
-                                                className={cn("h-full transition-all duration-1000", isCritical ? "bg-app-danger" : "bg-app-primary")}
-                                                style={{ width: `${Math.min(100, (item.packagesInStock / 10) * 100)}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </CardContent>
-                    </Card>
-                </motion.div>
-            </div>
-        </motion.div>
+      <div className="mx-auto max-w-7xl px-1 pb-24">
+        <DashboardSkeleton />
+      </div>
     );
+  }
+
+  const summaryText = [
+    `${model.activeOrders.length} active order${model.activeOrders.length === 1 ? '' : 's'}`,
+    `${model.lowStock.length + model.criticalStock.length} low-stock item${model.lowStock.length + model.criticalStock.length === 1 ? '' : 's'}`,
+    `${model.inProgressSessions.length} cooking task${model.inProgressSessions.length === 1 ? '' : 's'} in progress`,
+  ].join(', ');
+
+  const attentionCount = alerts.length;
+
+  return (
+    <motion.div
+      initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
+      className="mx-auto max-w-7xl space-y-6 px-1 pb-24"
+    >
+      {/* 1. Welcome + daily summary */}
+      <motion.header variants={ANIMATION_VARIANTS.item}>
+        <h1 className="text-2xl font-bold tracking-tight text-app-text">{greeting}</h1>
+        <p className="mt-1 text-sm text-app-muted">{dateLabel}</p>
+        <p className="mt-2 text-sm text-app-text">
+          {model.activeOrders.length + model.lowStock.length + model.criticalStock.length + model.inProgressSessions.length === 0
+            ? 'All caught up — nothing needs your attention right now.'
+            : <>You have <span className="font-semibold">{summaryText}</span>.</>}
+        </p>
+      </motion.header>
+
+      {/* 2. Quick actions */}
+      <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <QuickAction icon={Plus} label="Add Recipe" to="/recipes/new" primary />
+        <QuickAction icon={ClipboardPlus} label="Create Order" to="/orders?new=1" />
+        <QuickAction icon={PackagePlus} label="Add Inventory Item" to="/pantry?add=1" />
+        <QuickAction icon={ChefHat} label="Start Cooking" to="/recipes" />
+        <QuickAction icon={RefreshCw} label="Update Stock" to="/pantry?filter=low" />
+      </motion.div>
+
+      {/* 3. Today's overview */}
+      <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <SummaryCard
+          icon={ShoppingBag} accent="info" title="Today's Orders"
+          value={model.todaysOrders.length}
+          hint={model.todaysOrders.length ? 'Due for today' : `${model.activeOrders.length} active in total`}
+          to="/orders?status=processing"
+        />
+        <SummaryCard
+          icon={Flame} accent="warning" title="Cooking in Progress"
+          value={model.inProgressSessions.length}
+          hint={model.inProgressSessions.length ? 'On the stove now' : 'Nothing cooking yet'}
+          to="/cooking"
+        />
+        <SummaryCard
+          icon={PackageMinus} accent={model.criticalStock.length ? 'danger' : 'warning'} title="Low-Stock Items"
+          value={model.lowStock.length + model.criticalStock.length}
+          hint={model.criticalStock.length ? `${model.criticalStock.length} out of stock` : 'At or below minimum'}
+          to="/pantry?filter=low"
+        />
+        <SummaryCard
+          icon={DollarSign} accent="success" title="Today's Revenue"
+          value={formatCurrency(model.todaysRevenue)}
+          hint={`${formatCurrency(model.weekRevenue)} this week`}
+          to="/analytics"
+        />
+      </motion.div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Main column */}
+        <div className="space-y-6 lg:col-span-2">
+          {/* 4. Attention required */}
+          <motion.div variants={ANIMATION_VARIANTS.item}>
+            <Section title="Attention Required" icon={AlertTriangle} count={attentionCount} countTone={model.criticalStock.length ? 'danger' : 'warning'}>
+              {alerts.length ? (
+                <div className="space-y-2">
+                  {alerts.map((a, i) => <AlertItem key={i} {...a} />)}
+                </div>
+              ) : (
+                <EmptyState icon={CheckCircle2} title="Nothing needs attention" message="Stock, orders, and cooking are all on track." compact />
+              )}
+            </Section>
+          </motion.div>
+
+          {/* 5. Today's cooking schedule */}
+          <motion.div variants={ANIMATION_VARIANTS.item}>
+            <Section title="Today's Cooking" icon={ChefHat} action={{ label: 'View All', to: '/cooking' }}>
+              {tasks.length ? (
+                <div className="divide-y divide-app-border">
+                  {tasks.map(t => <TaskRow key={t.key} task={t} />)}
+                </div>
+              ) : (
+                <EmptyState icon={ChefHat} title="No cooking scheduled" message="Approve an order or start a recipe to begin." actionLabel="Browse Recipes" to="/recipes" compact />
+              )}
+            </Section>
+          </motion.div>
+
+          {/* 6. Recent orders */}
+          <motion.div variants={ANIMATION_VARIANTS.item}>
+            <Section title="Recent Orders" icon={ShoppingBag} action={{ label: 'View All Orders', to: '/orders' }}>
+              {recentOrders.length ? (
+                <div className="divide-y divide-app-border">
+                  {recentOrders.map(o => <OrderRow key={o.id} order={o} to={`/orders?q=${encodeURIComponent(o.orderNumber)}`} />)}
+                </div>
+              ) : (
+                <EmptyState icon={ShoppingBag} title="No orders yet" message="Create your first order to get started." actionLabel="Create Order" to="/orders?new=1" compact />
+              )}
+            </Section>
+          </motion.div>
+        </div>
+
+        {/* Side column */}
+        <div className="space-y-6">
+          {/* 7. Inventory snapshot */}
+          <motion.div variants={ANIMATION_VARIANTS.item}>
+            <Section title="Inventory" icon={Boxes} action={{ label: 'View Inventory', to: '/pantry' }}>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-lg bg-white/[0.03] p-3">
+                  <p className="text-xs text-app-muted">Total Items</p>
+                  <p className="mt-0.5 text-xl font-bold text-app-text tabular-nums">{ingredients.length}</p>
+                </div>
+                <div className="rounded-lg bg-white/[0.03] p-3">
+                  <p className="text-xs text-app-muted">Est. Value</p>
+                  <p className="mt-0.5 text-xl font-bold text-app-text tabular-nums">{formatCurrency(model.inventoryValue)}</p>
+                </div>
+                <div className="rounded-lg bg-app-warning/10 p-3">
+                  <p className="text-xs text-app-warning">Low Stock</p>
+                  <p className="mt-0.5 text-xl font-bold text-app-warning tabular-nums">{model.lowStock.length + model.criticalStock.length}</p>
+                </div>
+                <div className="rounded-lg bg-app-danger/10 p-3">
+                  <p className="text-xs text-app-danger">Expiring Soon</p>
+                  <p className="mt-0.5 text-xl font-bold text-app-danger tabular-nums">{model.expiring.length}</p>
+                </div>
+              </div>
+              {topInventoryAlerts.length > 0 && (
+                <div className="mt-3 space-y-1.5">
+                  {topInventoryAlerts.map(i => (
+                    <Link key={i.id} to="/pantry?filter=low" className="flex items-center justify-between rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-white/[0.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+                      <span className="truncate text-app-text">{i.name}</span>
+                      <span className={`shrink-0 text-xs font-semibold ${i.packagesInStock === 0 ? 'text-app-danger' : 'text-app-warning'} tabular-nums`}>
+                        {i.packagesInStock} {i.packageUnit}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </Section>
+          </motion.div>
+
+          {/* 8. Business snapshot */}
+          <motion.div variants={ANIMATION_VARIANTS.item}>
+            <Section title="Business" icon={TrendingUp} action={{ label: 'Insights', to: '/analytics' }}>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs text-app-muted">Today's Revenue</p>
+                  <p className="mt-0.5 text-lg font-bold text-app-text tabular-nums">{formatCurrency(model.todaysRevenue)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-app-muted">This Week</p>
+                  <p className="mt-0.5 text-lg font-bold text-app-text tabular-nums">{formatCurrency(model.weekRevenue)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-app-muted">Est. Food Cost</p>
+                  <p className="mt-0.5 text-lg font-bold text-app-text tabular-nums">{formatCurrency(model.weekFoodCost)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-app-muted">Est. Profit</p>
+                  <p className="mt-0.5 text-lg font-bold text-app-success tabular-nums">
+                    {formatCurrency(model.weekProfit)}
+                    {model.margin > 0 && <span className="ml-1 text-xs font-semibold text-app-muted">· {model.margin}%</span>}
+                  </p>
+                </div>
+              </div>
+              {model.weekRevenue > 0 && (
+                <div className="mt-3 h-16">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={model.spark} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
+                      <defs>
+                        <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#22c55e" stopOpacity={0.35} />
+                          <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <Area type="monotone" dataKey="v" stroke="#22c55e" strokeWidth={2} fill="url(#rev)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                  <p className="mt-1 text-center text-xs text-app-muted">Revenue, last 7 days</p>
+                </div>
+              )}
+            </Section>
+          </motion.div>
+
+          {/* Detailed reports pointer */}
+          <motion.div variants={ANIMATION_VARIANTS.item}>
+            <Link to="/analytics" className="flex items-center justify-between rounded-xl border border-app-border bg-app-card px-4 py-3 text-sm text-app-text transition-colors hover:border-app-primary/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+              <span className="inline-flex items-center gap-2"><PartyPopper className="h-4 w-4 text-app-primary" /> Full reports &amp; analysis</span>
+              <ArrowRight className="h-4 w-4 text-app-muted" />
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
+  );
 };
 
 export default DashboardPage;

@@ -84,22 +84,22 @@ export const OrderFormModal: React.FC<{
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div className="w-full max-w-lg bg-card rounded-2xl border border-border shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="p-4 border-b border-border bg-muted/30 flex justify-between items-center">
-                    <h2 className="text-lg font-bold">{initialData ? 'Edit Order' : 'New Order'}</h2>
-                    <button onClick={onClose}><X className="h-5 w-5 text-muted-foreground" /></button>
+            <div className="w-full max-w-lg bg-app-card rounded-2xl border border-app-border shadow-card overflow-hidden flex flex-col max-h-[90vh]">
+                <div className="p-4 border-b border-app-border flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-app-text">{initialData ? 'Edit Order' : 'New Order'}</h2>
+                    <button onClick={onClose} aria-label="Close" className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-app-muted/10 transition-colors"><X className="h-5 w-5 text-app-muted" /></button>
                 </div>
-                
-                <div className="flex border-b border-border">
-                    <button 
+
+                <div className="flex border-b border-app-border">
+                    <button
                         onClick={() => setStep(1)}
-                        className={cn("flex-1 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-colors", step === 1 ? "border-primary text-primary" : "border-transparent text-muted-foreground")}
+                        className={cn("flex-1 py-3 text-sm font-semibold border-b-2 transition-colors", step === 1 ? "border-app-primary text-app-primary" : "border-transparent text-app-muted")}
                     >
                         Customer Details
                     </button>
-                    <button 
+                    <button
                         onClick={() => setStep(2)}
-                        className={cn("flex-1 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-colors", step === 2 ? "border-primary text-primary" : "border-transparent text-muted-foreground")}
+                        className={cn("flex-1 py-3 text-sm font-semibold border-b-2 transition-colors", step === 2 ? "border-app-primary text-app-primary" : "border-transparent text-app-muted")}
                     >
                         Order Items ({selectedItems.length})
                     </button>
@@ -109,44 +109,44 @@ export const OrderFormModal: React.FC<{
                     {step === 1 ? (
                         <div className="space-y-4">
                             <div>
-                                <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Customer Name</label>
+                                <label className="text-xs font-medium text-app-muted mb-1.5 block">Customer Name</label>
                                 <div className="relative">
-                                    <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <input 
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
+                                    <input
                                         value={formData.customerName} onChange={e => setFormData({...formData, customerName: e.target.value})}
-                                        className="w-full h-10 pl-9 pr-3 rounded-lg bg-muted/20 border border-border focus:ring-1 focus:ring-primary"
+                                        className="w-full min-h-[44px] pl-9 pr-3 rounded-xl bg-app-elevated text-app-text border border-app-border focus:ring-2 focus:ring-app-primary placeholder:text-app-muted"
                                         placeholder="e.g. John Doe"
                                     />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Phone Number</label>
+                                <label className="text-xs font-medium text-app-muted mb-1.5 block">Phone Number</label>
                                 <div className="relative">
-                                    <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <input 
+                                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
+                                    <input
                                         value={formData.customerPhone} onChange={e => setFormData({...formData, customerPhone: e.target.value})}
-                                        className="w-full h-10 pl-9 pr-3 rounded-lg bg-muted/20 border border-border focus:ring-1 focus:ring-primary"
+                                        className="w-full min-h-[44px] pl-9 pr-3 rounded-xl bg-app-elevated text-app-text border border-app-border focus:ring-2 focus:ring-app-primary placeholder:text-app-muted"
                                         placeholder="(555) 000-0000"
                                     />
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Delivery Address</label>
+                                <label className="text-xs font-medium text-app-muted mb-1.5 block">Delivery Address</label>
                                 <div className="relative">
-                                    <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <input 
+                                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
+                                    <input
                                         value={formData.deliveryAddress} onChange={e => setFormData({...formData, deliveryAddress: e.target.value})}
-                                        className="w-full h-10 pl-9 pr-3 rounded-lg bg-muted/20 border border-border focus:ring-1 focus:ring-primary"
+                                        className="w-full min-h-[44px] pl-9 pr-3 rounded-xl bg-app-elevated text-app-text border border-app-border focus:ring-2 focus:ring-app-primary placeholder:text-app-muted"
                                         placeholder="123 Main St..."
                                     />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Priority</label>
-                                    <select 
+                                    <label className="text-xs font-medium text-app-muted mb-1.5 block">Priority</label>
+                                    <select
                                         value={formData.priority} onChange={e => setFormData({...formData, priority: e.target.value as OrderPriority})}
-                                        className="w-full h-10 px-2 rounded-lg bg-muted/20 border border-border focus:ring-1 focus:ring-primary"
+                                        className="w-full min-h-[44px] px-3 rounded-xl bg-app-elevated text-app-text border border-app-border focus:ring-2 focus:ring-app-primary"
                                     >
                                         <option value="low">Low</option>
                                         <option value="normal">Normal</option>
@@ -154,41 +154,41 @@ export const OrderFormModal: React.FC<{
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Due Date</label>
+                                    <label className="text-xs font-medium text-app-muted mb-1.5 block">Due Date</label>
                                     <div className="relative">
-                                        <input 
+                                        <input
                                             type="date"
                                             value={formData.dueDate} onChange={e => setFormData({...formData, dueDate: e.target.value})}
-                                            className="w-full h-10 px-3 rounded-lg bg-muted/20 border border-border focus:ring-1 focus:ring-primary"
+                                            className="w-full min-h-[44px] px-3 rounded-xl bg-app-elevated text-app-text border border-app-border focus:ring-2 focus:ring-app-primary"
                                         />
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-muted-foreground uppercase mb-1 block">Notes</label>
-                                <textarea 
+                                <label className="text-xs font-medium text-app-muted mb-1.5 block">Notes</label>
+                                <textarea
                                     value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})}
-                                    className="w-full p-3 rounded-lg bg-muted/20 border border-border focus:ring-1 focus:ring-primary h-20 resize-none text-sm"
+                                    className="w-full p-3 rounded-xl bg-app-elevated text-app-text border border-app-border focus:ring-2 focus:ring-app-primary h-20 resize-none text-sm placeholder:text-app-muted"
                                     placeholder="Allergies, special requests..."
                                 />
                             </div>
                         </div>
                     ) : (
                         <div className="space-y-4">
-                             <div className="p-3 bg-muted/30 rounded-xl space-y-3">
-                                <h3 className="text-xs font-bold text-muted-foreground uppercase">Add Item</h3>
+                             <div className="p-4 bg-app-elevated rounded-xl space-y-3">
+                                <h3 className="text-xs font-medium text-app-muted">Add Item</h3>
                                 <div className="flex gap-2">
-                                     <select 
+                                     <select
                                         value={currentRecipeId} onChange={e => setCurrentRecipeId(e.target.value)}
-                                        className="flex-1 h-10 px-2 rounded-lg bg-background border border-border text-sm"
+                                        className="flex-1 min-h-[44px] px-3 rounded-xl bg-app-card text-app-text border border-app-border text-sm focus:ring-2 focus:ring-app-primary"
                                      >
                                         {recipes.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                                      </select>
-                                     <input 
+                                     <input
                                         type="number" min="1" value={currentQty} onChange={e => setCurrentQty(parseInt(e.target.value))}
-                                        className="w-16 h-10 px-2 rounded-lg bg-background border border-border text-center font-bold"
+                                        className="w-16 min-h-[44px] px-2 rounded-xl bg-app-card text-app-text border border-app-border text-center font-semibold focus:ring-2 focus:ring-app-primary"
                                      />
-                                     <button onClick={addItem} className="h-10 w-10 bg-primary text-primary-foreground rounded-lg flex items-center justify-center">
+                                     <button onClick={addItem} aria-label="Add item" className="h-11 w-11 shrink-0 bg-app-primary text-primary-foreground rounded-full flex items-center justify-center hover:brightness-105 active:scale-[0.97] transition-all">
                                         <Plus className="h-5 w-5" />
                                      </button>
                                 </div>
@@ -196,23 +196,23 @@ export const OrderFormModal: React.FC<{
 
                             <div className="space-y-2">
                                 {selectedItems.length === 0 ? (
-                                    <div className="text-center py-8 text-muted-foreground">
-                                        <Utensils className="h-8 w-8 mx-auto mb-2 opacity-20" />
+                                    <div className="text-center py-8 text-app-muted">
+                                        <Utensils className="h-8 w-8 mx-auto mb-2 opacity-40" />
                                         <p className="text-sm">No items added yet.</p>
                                     </div>
                                 ) : (
                                     selectedItems.map((item, idx) => {
                                         const r = recipes.find(rec => rec.id === item.recipeId);
                                         return (
-                                            <div key={idx} className="flex justify-between items-center p-3 bg-muted/10 rounded-lg border border-border/50">
+                                            <div key={idx} className="flex justify-between items-center p-3 bg-app-elevated rounded-xl border border-app-border">
                                                 <div>
-                                                    <div className="text-sm font-medium">
-                                                        <span className="font-bold text-primary mr-2">{item.quantity}x</span> 
+                                                    <div className="text-sm font-medium text-app-text">
+                                                        <span className="font-semibold text-app-primary mr-2">{item.quantity}x</span>
                                                         {r?.name}
                                                     </div>
-                                                    <div className="text-xs text-muted-foreground">{formatCurrency(item.unitPrice)} ea</div>
+                                                    <div className="text-xs text-app-muted">{formatCurrency(item.unitPrice)} ea</div>
                                                 </div>
-                                                <button onClick={() => removeItem(idx)} className="text-muted-foreground hover:text-red-500 hover:bg-red-50 p-1.5 rounded transition-colors">
+                                                <button onClick={() => removeItem(idx)} aria-label="Remove item" className="flex h-9 w-9 items-center justify-center text-app-muted hover:text-app-danger hover:bg-app-danger/10 rounded-full transition-colors">
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
                                             </div>
@@ -224,17 +224,17 @@ export const OrderFormModal: React.FC<{
                     )}
                 </div>
 
-                <div className="p-4 border-t border-border bg-muted/30 flex justify-between gap-3">
+                <div className="p-4 border-t border-app-border flex justify-between items-center gap-3">
                     {step === 2 && (
-                         <button onClick={() => setStep(1)} className="px-4 py-2 text-sm font-bold text-muted-foreground hover:text-foreground">Back</button>
+                         <button onClick={() => setStep(1)} className="min-h-[44px] px-4 rounded-full text-sm font-semibold text-app-muted hover:text-app-text hover:bg-app-muted/10 transition-colors">Back</button>
                     )}
                     {step === 1 ? (
-                        <button onClick={() => setStep(2)} className="ml-auto px-6 py-2.5 bg-primary text-primary-foreground rounded-xl font-bold text-sm">Next: Items</button>
+                        <button onClick={() => setStep(2)} className="ml-auto min-h-[44px] px-6 bg-app-primary text-primary-foreground rounded-full font-semibold text-sm hover:brightness-105 active:scale-[0.97] shadow-soft transition-all">Next: Items</button>
                     ) : (
-                        <button 
-                            onClick={handleSubmit} 
+                        <button
+                            onClick={handleSubmit}
                             disabled={!formData.customerName || selectedItems.length === 0}
-                            className="ml-auto px-6 py-2.5 bg-green-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-green-600/20 disabled:opacity-50 hover:bg-green-700"
+                            className="ml-auto min-h-[44px] px-6 bg-app-success text-white rounded-full font-semibold text-sm shadow-soft disabled:opacity-50 hover:brightness-105 active:scale-[0.97] transition-all"
                         >
                             {initialData ? 'Update Order' : 'Create Order'}
                         </button>
