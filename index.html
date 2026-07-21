@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>iKITCHEN | COMMAND</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            app: {
+              bg: '#12161d',      // Surface-0
+              sidebar: '#1c222b', // Surface-1
+              card: '#222e3c',    // Surface-2
+              primary: '#3b7ddd', // Accent Blue
+              success: '#1cbb8c', // Alert Success
+              warning: '#fcb92c', // Alert Warning
+              danger: '#f43f5e',  // Alert Danger
+              muted: '#7e8998',
+              text: '#e9ecef',
+              border: 'rgba(255, 255, 255, 0.05)',
+            },
+            border: "rgba(255, 255, 255, 0.05)",
+            background: "#12161d",
+            foreground: "#e9ecef",
+            primary: {
+              DEFAULT: "#3b7ddd",
+              foreground: "#ffffff",
+            }
+          },
+          borderRadius: {
+            'sm': '0.125rem',
+            'md': '0.25rem',
+            'lg': '0.5rem',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            bengali: ['"Hind Siliguri"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #12161d;
+      --foreground: #e9ecef;
+      --card: #222e3c;
+      --primary: #3b7ddd;
+      --border: rgba(255, 255, 255, 0.05);
+    }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #12161d;
+      color: #e9ecef;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      letter-spacing: -0.04em;
+      font-weight: 800;
+    }
+
+    .tactical-label {
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #7e8998;
+    }
+
+    .glass-panel {
+      background: rgba(34, 46, 60, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .status-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .4; transform: scale(1.2); }
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #12161d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b7ddd;
+    }
+
+    .tabular-nums {
+        font-variant-numeric: tabular-nums;
+        font-family: 'JetBrains Mono', monospace;
+    }
+  </style>
+  <script type="importmap">
+{
+  "imports": {
+    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "firebase/": "https://esm.sh/firebase@^12.7.0/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
+    "clsx": "https://esm.sh/clsx@^2.1.1",
+    "xlsx": "https://esm.sh/xlsx@^0.18.5",
+    "tailwind-merge": "https://esm.sh/tailwind-merge@^3.4.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="dark">
+  <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "name": "iCooking",
+  "description": "A comprehensive kitchen management system for recipes, pantry, and orders. It features dynamic recipe costing, inventory tracking, order management, and a user-friendly cooking mode, all wrapped in a modern, responsive interface.",
+  "requestFramePermissions": []
+}
