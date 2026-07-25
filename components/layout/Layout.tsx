@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import BottomNav from './BottomNav';
+import SaveStatusBanner from './SaveStatusBanner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Layout: React.FC = () => {
@@ -13,9 +14,10 @@ const Layout: React.FC = () => {
       <Sidebar />
       <div className="flex flex-1 flex-col overflow-hidden relative">
         <Header />
-        
+        <SaveStatusBanner />
+
         {/* Main Content Area */}
-        <main className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-16 md:pb-0">
+        <main className="flex-1 min-h-0 overflow-x-hidden overflow-y-auto pb-nav md:pb-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

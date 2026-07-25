@@ -3,6 +3,7 @@ import React, { Suspense, lazy } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DataProvider } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
 import Layout from './components/layout/Layout';
 import { ChefHat } from 'lucide-react';
 
@@ -19,6 +20,7 @@ const CustomerOrderFormPage = lazy(() => import('./pages/CustomerOrderFormPage')
 const CookingModePage = lazy(() => import('./pages/CookingModePage'));
 const CookingLogsPage = lazy(() => import('./pages/CookingLogsPage'));
 const CookingPage = lazy(() => import('./pages/CookingPage'));
+const SignInPage = lazy(() => import('./pages/SignInPage'));
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -29,12 +31,14 @@ const LoadingFallback = () => (
 const App: React.FC = () => {
   return (
     <ThemeProvider>
+      <AuthProvider>
       <DataProvider>
         <HashRouter>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/order-form" element={<CustomerOrderFormPage />} />
-              
+              <Route path="/signin" element={<SignInPage />} />
+
               {/* Full Screen Cooking Mode - Outside Layout */}
               <Route path="/recipes/:recipeId/cook" element={<CookingModePage />} />
 
@@ -56,6 +60,7 @@ const App: React.FC = () => {
           </Suspense>
         </HashRouter>
       </DataProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 };

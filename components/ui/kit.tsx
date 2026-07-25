@@ -23,12 +23,12 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button: React.FC<ButtonProps> = ({ variant = 'primary', icon: Icon, full, className, children, ...props }) => (
   <button
     className={cn(
-      'inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 disabled:opacity-50',
+      'inline-flex h-9 items-center justify-center gap-1.5 px-3.5 text-sm font-semibold transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 disabled:opacity-50',
       BTN[variant], full && 'w-full', className
     )}
     {...props}
   >
-    {Icon && <Icon className="h-[18px] w-[18px]" />}
+    {Icon && <Icon className="h-4 w-4" />}
     {children}
   </button>
 );
@@ -42,7 +42,7 @@ interface SegmentedProps<T extends string> {
 }
 export function Segmented<T extends string>({ options, value, onChange, className }: SegmentedProps<T>) {
   return (
-    <div className={cn('inline-flex rounded-md bg-app-elevated p-0.5', className)} role="tablist">
+    <div className={cn('inline-flex border border-app-border bg-app-elevated', className)} role="tablist">
       {options.map(o => (
         <button
           key={o.value}
@@ -50,8 +50,8 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
           className={cn(
-            'h-8 rounded-[5px] px-4 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
-            value === o.value ? 'bg-app-primary text-primary-foreground shadow-soft' : 'text-app-muted hover:text-app-text'
+            'h-8 px-3.5 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+            value === o.value ? 'bg-app-primary text-primary-foreground' : 'text-app-muted hover:text-app-text'
           )}
         >
           {o.label}
@@ -66,8 +66,10 @@ export const Chip: React.FC<{ active?: boolean; onClick?: () => void; children: 
   <button
     onClick={onClick}
     className={cn(
-      'whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
-      active ? 'bg-app-primary text-primary-foreground' : 'bg-app-elevated text-app-muted hover:text-app-text',
+      'whitespace-nowrap border px-2.5 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+      active
+        ? 'border-app-primary bg-app-primary text-primary-foreground'
+        : 'border-app-border bg-app-elevated text-app-muted hover:border-app-primary/40 hover:text-app-text',
       className
     )}
   >
@@ -83,12 +85,12 @@ export const IconButton: React.FC<
     aria-label={label}
     title={label}
     className={cn(
-      'flex h-9 w-9 items-center justify-center rounded-md bg-app-elevated text-app-text transition-colors hover:bg-app-muted/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+      'flex h-8 w-8 items-center justify-center border border-app-border bg-app-elevated text-app-text transition-colors hover:border-app-primary/40 hover:bg-app-muted/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
       className
     )}
     {...props}
   >
-    <Icon className="h-[18px] w-[18px]" />
+    <Icon className="h-4 w-4" />
   </button>
 );
 
@@ -101,20 +103,20 @@ export const PageHeader: React.FC<{
   action?: React.ReactNode;
   className?: string;
 }> = ({ title, subtitle, backTo, onBack, action, className }) => (
-  <div className={cn('mb-4 flex items-center gap-3', className)}>
+  <div className={cn('mb-2 flex items-center gap-2 border-b border-app-border pb-2', className)}>
     {(backTo || onBack) &&
       (backTo ? (
-        <Link to={backTo} aria-label="Back" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-app-elevated text-app-text hover:bg-app-muted/15">
-          <ChevronLeft className="h-5 w-5" />
+        <Link to={backTo} aria-label="Back" className="flex h-8 w-8 shrink-0 items-center justify-center border border-app-border bg-app-elevated text-app-text hover:border-app-primary/40 hover:bg-app-muted/15">
+          <ChevronLeft className="h-4 w-4" />
         </Link>
       ) : (
-        <button onClick={onBack} aria-label="Back" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-app-elevated text-app-text hover:bg-app-muted/15">
-          <ChevronLeft className="h-5 w-5" />
+        <button onClick={onBack} aria-label="Back" className="flex h-8 w-8 shrink-0 items-center justify-center border border-app-border bg-app-elevated text-app-text hover:border-app-primary/40 hover:bg-app-muted/15">
+          <ChevronLeft className="h-4 w-4" />
         </button>
       ))}
     <div className="min-w-0 flex-1">
-      <h1 className="truncate text-xl font-bold tracking-tight text-app-text md:text-2xl">{title}</h1>
-      {subtitle && <p className="truncate text-sm text-app-muted">{subtitle}</p>}
+      <h1 className="truncate text-lg font-bold tracking-tight text-app-text md:text-xl">{title}</h1>
+      {subtitle && <p className="truncate text-xs text-app-muted">{subtitle}</p>}
     </div>
     {action && <div className="shrink-0">{action}</div>}
   </div>

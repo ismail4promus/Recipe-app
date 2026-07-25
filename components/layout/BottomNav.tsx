@@ -9,8 +9,8 @@ const ICONS = { Home, ClipboardList, ChefHat, Warehouse, UtensilsCrossed };
 // Flat, minimal bottom bar (reference style): line icons, muted inactive,
 // teal active with a thin indicator line above the selected tab.
 const BottomNav: React.FC = () => (
-  <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-app-border bg-app-sidebar md:hidden">
-    <div className="flex h-[58px] items-stretch justify-around pb-[env(safe-area-inset-bottom)]">
+  <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-app-border bg-app-sidebar pb-safe md:hidden">
+    <div className="flex h-[58px] items-stretch justify-around">
       {BOTTOM_NAV_ITEMS.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}
@@ -24,7 +24,7 @@ const BottomNav: React.FC = () => (
         >
           {({ isActive }) => (
             <>
-              {isActive && <span className="absolute top-0 h-[2px] w-7 rounded-sm bg-app-primary" />}
+              {isActive && <span className="absolute top-0 left-0 right-0 h-[2px] bg-app-primary" />}
               <Icon className="h-[21px] w-[21px]" strokeWidth={isActive ? 2.2 : 1.8} />
               <span className="text-[10px] font-medium tracking-tight">{label}</span>
             </>

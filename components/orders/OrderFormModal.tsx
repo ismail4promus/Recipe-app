@@ -83,9 +83,9 @@ export const OrderFormModal: React.FC<{
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2.5">
             <div className="w-full max-w-lg bg-app-card rounded-lg border border-app-border shadow-card overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="p-4 border-b border-app-border flex justify-between items-center">
+                <div className="p-2.5 border-b border-app-border flex justify-between items-center">
                     <h2 className="text-lg font-bold text-app-text">{initialData ? 'Edit Order' : 'New Order'}</h2>
                     <button onClick={onClose} aria-label="Close" className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-app-muted/10 transition-colors"><X className="h-5 w-5 text-app-muted" /></button>
                 </div>
@@ -105,9 +105,9 @@ export const OrderFormModal: React.FC<{
                     </button>
                 </div>
 
-                <div className="p-4 overflow-y-auto flex-1">
+                <div className="p-2.5 overflow-y-auto flex-1">
                     {step === 1 ? (
-                        <div className="space-y-4">
+                        <div className="space-y-2.5">
                             <div>
                                 <label className="text-xs font-medium text-app-muted mb-1.5 block">Customer Name</label>
                                 <div className="relative">
@@ -141,7 +141,7 @@ export const OrderFormModal: React.FC<{
                                     />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-2.5">
                                 <div>
                                     <label className="text-xs font-medium text-app-muted mb-1.5 block">Priority</label>
                                     <select
@@ -174,8 +174,8 @@ export const OrderFormModal: React.FC<{
                             </div>
                         </div>
                     ) : (
-                        <div className="space-y-4">
-                             <div className="p-4 bg-app-elevated rounded-md space-y-3">
+                        <div className="space-y-2.5">
+                             <div className="p-2.5 bg-app-elevated rounded-md space-y-3">
                                 <h3 className="text-xs font-medium text-app-muted">Add Item</h3>
                                 <div className="flex gap-2">
                                      <select
@@ -224,17 +224,17 @@ export const OrderFormModal: React.FC<{
                     )}
                 </div>
 
-                <div className="p-4 border-t border-app-border flex justify-between items-center gap-3">
+                <div className="p-2.5 border-t border-app-border flex justify-between items-center gap-3">
                     {step === 2 && (
                          <button onClick={() => setStep(1)} className="min-h-[44px] px-4 rounded-md text-sm font-semibold text-app-muted hover:text-app-text hover:bg-app-muted/10 transition-colors">Back</button>
                     )}
                     {step === 1 ? (
-                        <button onClick={() => setStep(2)} className="ml-auto min-h-[44px] px-6 bg-app-primary text-primary-foreground rounded-md font-semibold text-sm hover:brightness-105 active:scale-[0.97] shadow-soft transition-all">Next: Items</button>
+                        <button onClick={() => setStep(2)} className="ml-auto min-h-[44px] px-3 bg-app-primary text-primary-foreground rounded-md font-semibold text-sm hover:brightness-105 active:scale-[0.97] shadow-soft transition-all">Next: Items</button>
                     ) : (
                         <button
                             onClick={handleSubmit}
                             disabled={!formData.customerName || selectedItems.length === 0}
-                            className="ml-auto min-h-[44px] px-6 bg-app-success text-white rounded-md font-semibold text-sm shadow-soft disabled:opacity-50 hover:brightness-105 active:scale-[0.97] transition-all"
+                            className="ml-auto min-h-[44px] px-3 bg-app-success text-white rounded-md font-semibold text-sm shadow-soft disabled:opacity-50 hover:brightness-105 active:scale-[0.97] transition-all"
                         >
                             {initialData ? 'Update Order' : 'Create Order'}
                         </button>

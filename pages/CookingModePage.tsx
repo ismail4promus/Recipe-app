@@ -309,9 +309,9 @@ export default function CookingModePage() {
     return (
         <div className="fixed inset-0 bg-app-bg z-[150] flex flex-col font-sans overflow-hidden text-app-text">
             {/* Header */}
-            <div className="bg-app-card border-b border-app-border h-16 flex items-center justify-between px-6 shadow-soft z-30">
-                <div className="flex items-center gap-4 min-w-0">
-                    <button aria-label="Back" onClick={() => setShowSaveNamingModal(true)} className="h-10 w-10 flex items-center justify-center bg-app-elevated border border-app-border rounded-full text-app-muted hover:text-app-primary transition-all">
+            <div className="bg-app-card border-b border-app-border h-16 flex items-center justify-between gap-2 px-3 md:px-6 shadow-soft z-30 pt-safe">
+                <div className="flex items-center gap-2 md:gap-4 min-w-0">
+                    <button aria-label="Back" onClick={() => setShowSaveNamingModal(true)} className="h-10 w-10 shrink-0 flex items-center justify-center bg-app-elevated border border-app-border text-app-muted hover:text-app-primary transition-all">
                         <ArrowLeft className="h-5 w-5"/>
                     </button>
                     <div className="min-w-0">
@@ -326,21 +326,21 @@ export default function CookingModePage() {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                     <div className="flex items-center gap-1 bg-app-elevated p-1 rounded-full border border-app-border">
-                        <button aria-label="Fewer servings" onClick={() => setLocalServings(Math.max(1, localServings - 1))} className="h-9 w-9 rounded-full bg-app-card border border-app-border flex items-center justify-center text-app-muted hover:text-app-primary transition-all active:scale-90 font-semibold">-</button>
-                        <div className="px-4 text-center">
-                            <input aria-label="Servings" type="number" min="1" value={localServings} onChange={(e) => setLocalServings(Math.max(1, parseInt(e.target.value) || 1))} className="w-10 bg-transparent text-center text-sm font-semibold tabular-nums text-app-text outline-none border-none" />
-                            <span className="block text-xs text-app-muted font-medium leading-none mt-0.5">Serves</span>
+                <div className="flex items-center shrink-0">
+                     <div className="flex items-center bg-app-elevated border border-app-border">
+                        <button aria-label="Fewer servings" onClick={() => setLocalServings(Math.max(1, localServings - 1))} className="h-10 w-9 md:w-10 flex items-center justify-center text-app-muted hover:text-app-primary transition-all active:scale-90 font-semibold text-lg">−</button>
+                        <div className="px-2 text-center border-x border-app-border">
+                            <input aria-label="Servings" type="number" min="1" value={localServings} onChange={(e) => setLocalServings(Math.max(1, parseInt(e.target.value) || 1))} className="w-9 bg-transparent text-center text-sm font-semibold tabular-nums text-app-text outline-none border-none" />
+                            <span className="block text-[10px] text-app-muted font-medium leading-none mb-1">Serves</span>
                         </div>
-                        <button aria-label="More servings" onClick={() => setLocalServings(localServings + 1)} className="h-9 w-9 rounded-full bg-app-primary text-primary-foreground flex items-center justify-center transition-all active:scale-90 font-semibold">+</button>
+                        <button aria-label="More servings" onClick={() => setLocalServings(localServings + 1)} className="h-10 w-9 md:w-10 bg-app-primary text-primary-foreground flex items-center justify-center transition-all active:scale-90 font-semibold text-lg">+</button>
                     </div>
                 </div>
             </div>
 
             <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
                 {/* Steps Timeline */}
-                <div className="w-full md:w-3/5 overflow-y-auto p-6 md:p-10 md:border-r border-app-border bg-app-bg scrollbar-hide">
+                <div className="w-full md:w-3/5 overflow-y-auto p-3 md:p-10 md:border-r border-app-border bg-app-bg scrollbar-hide">
                     <div className="max-w-3xl mx-auto space-y-5 pb-20">
                         <div className="flex items-center gap-3 px-2">
                             <ListChecks className="h-5 w-5 text-app-primary" />
@@ -391,7 +391,7 @@ export default function CookingModePage() {
                 </div>
 
                 {/* Sidebar */}
-                <div className="w-full md:w-2/5 overflow-y-auto p-6 md:p-10 bg-app-card/30 scrollbar-hide border-l border-app-border">
+                <div className="w-full md:w-2/5 overflow-y-auto p-3 md:p-10 bg-app-card/30 scrollbar-hide border-l border-app-border">
                     <div className="max-w-xl mx-auto space-y-10">
                         {/* Timer Section */}
                         <div className="animate-in fade-in slide-in-from-right duration-300">
@@ -459,22 +459,23 @@ export default function CookingModePage() {
             </div>
 
             {/* Navigation Footer */}
-            <div className="bg-app-card border-t border-app-border h-20 flex items-center px-8 shadow-soft z-40 relative">
+            <div className="bg-app-card border-t border-app-border h-20 flex items-center px-3 md:px-8 pb-safe shadow-soft z-40 relative">
                  <div className="absolute top-0 left-0 h-1 bg-app-muted/10 w-full overflow-hidden">
                     <motion.div initial={{ width: 0 }} animate={{ width: `${progressPercent}%` }} className="h-full bg-app-primary" />
                  </div>
 
-                <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-4">
-                    <button disabled={currentStepIndex === 0} onClick={() => setCurrentStepIndex(c => c - 1)} className="min-h-[44px] px-8 rounded-md border border-app-border flex items-center gap-3 text-app-muted hover:text-app-text hover:bg-app-muted/10 disabled:opacity-30 transition-all">
+                <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2 md:gap-4">
+                    <button disabled={currentStepIndex === 0} onClick={() => setCurrentStepIndex(c => c - 1)} className="min-h-[44px] px-4 md:px-8 border border-app-border flex items-center gap-2 md:gap-3 text-app-muted hover:text-app-text hover:bg-app-muted/10 disabled:opacity-30 transition-all">
                         <ArrowLeft className="h-4 w-4" />
-                        <span className="text-sm font-semibold">Back</span>
+                        <span className="text-sm font-semibold hidden sm:inline">Back</span>
                     </button>
 
-                    <div className="flex flex-col items-center gap-2">
-                         <span className="text-xs text-app-primary font-medium">{progressPercent}% done</span>
-                         <div className="flex gap-1.5">
+                    <div className="flex flex-col items-center gap-2 min-w-0">
+                         <span className="text-xs text-app-primary font-medium whitespace-nowrap">{progressPercent}% done</span>
+                         {/* Dots only where there is room; the bar at the top carries it on phones. */}
+                         <div className="hidden sm:flex gap-1.5 max-w-full overflow-hidden">
                             {steps.map((_, i) => (
-                                <div key={i} className={cn("h-1.5 rounded-full transition-all duration-500", i === currentStepIndex ? "w-12 bg-app-primary" : i < currentStepIndex ? "w-4 bg-app-success" : "w-4 bg-app-muted/20")} />
+                                <div key={i} className={cn("h-1.5 transition-all duration-500 shrink-0", i === currentStepIndex ? "w-12 bg-app-primary" : i < currentStepIndex ? "w-4 bg-app-success" : "w-4 bg-app-muted/20")} />
                             ))}
                          </div>
                     </div>
@@ -483,7 +484,7 @@ export default function CookingModePage() {
                         disabled={!isCurrentStepTasksCompleted}
                         onClick={() => currentStepIndex === steps.length - 1 ? handleFinish() : setCurrentStepIndex(c => c + 1)}
                         className={cn(
-                            "min-h-[44px] px-12 rounded-md font-semibold text-sm flex items-center gap-3 transition-all shadow-soft disabled:opacity-40",
+                            "min-h-[44px] px-5 md:px-12 font-semibold text-sm flex items-center gap-2 md:gap-3 transition-all shadow-soft disabled:opacity-40",
                             currentStepIndex === steps.length - 1
                                 ? "bg-app-success text-white"
                                 : "bg-app-primary text-primary-foreground"

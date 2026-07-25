@@ -463,6 +463,89 @@ export const MOCK_RECIPES: Recipe[] = [
       { id: 'step_beg_3', stepNumber: 3, instruction: 'Heat oil for deep frying. Target temperature: 170–180°C (338–356°F).', duration: 5 },
       { id: 'step_beg_4', stepNumber: 4, instruction: 'Dip eggplant slices (Begun) into the batter and fry until golden brown and crispy.', duration: 10 }
     ]
+  },
+  {
+    id: 'rec_ruchiraj_beef_tehari',
+    name: 'Ruchiraj Beef Tehari',
+    category: 'Main Course',
+    cuisine: 'Bangladeshi',
+    prepTime: 30,
+    cookTime: 90,
+    servings: 12.8,
+    difficulty: 'Hard',
+    isFavorite: false,
+    overheadPercentage: 15,
+    profitMargin: 25,
+    imageUrl: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&q=80&w=1000',
+    createdAt: new Date(),
+    tags: ['rice', 'beef', 'tehari', 'traditional', 'Ruchiraj'],
+    allergens: ['Milk'],
+    ingredientSections: [
+      {
+        id: 'sec_rbt_1',
+        name: 'Step 1',
+        ingredients: [
+          { id: 'ri_rbt_01', ingredientId: 'ing_ruchiraj_beef', name: 'Beef', quantity: 1300, unit: 'KG', type: 'Whole' },
+          { id: 'ri_rbt_02', ingredientId: 'ing_ruchiraj_cinnamon', name: 'Cinnamon', quantity: 2, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_03', ingredientId: 'ing_ruchiraj_cardamom', name: 'Cardamom', quantity: 10, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_04', ingredientId: 'ing_ruchiraj_mace', name: 'Mace', quantity: 3, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_05', ingredientId: 'ing_ruchiraj_white_pepper', name: 'White Pepper', quantity: 20, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_06', ingredientId: 'ing_ruchiraj_nutmeg', name: 'Nutmeg', quantity: 0.5, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_07', ingredientId: 'ing_ruchiraj_cumin_powder', name: 'Cumin Powder', quantity: 1.8, unit: 'TSP', type: 'Powder' },
+          { id: 'ri_rbt_08', ingredientId: 'ing_ruchiraj_coriander_powder', name: 'Coriander Powder', quantity: 6, unit: 'gm', type: 'Powder' },
+          { id: 'ri_rbt_09', ingredientId: 'ing_ruchiraj_cloves', name: 'Cloves', quantity: 8, unit: 'PC', type: 'Whole' }
+        ]
+      },
+      {
+        id: 'sec_rbt_2',
+        name: 'Step 2',
+        ingredients: [
+          { id: 'ri_rbt_10', ingredientId: 'ing_ruchiraj_cooking_oil', name: 'Cooking Oil', quantity: 1.2, unit: 'CUP', type: 'Liquid' },
+          { id: 'ri_rbt_11', ingredientId: 'ing_ruchiraj_green_chili', name: 'Green Chili', quantity: 14, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_12', ingredientId: 'ing_ruchiraj_onion_beresta', name: 'Onion Beresta', quantity: 1, unit: 'CUP', type: 'Whole' },
+          { id: 'ri_rbt_13', ingredientId: 'ing_ruchiraj_garlic_paste', name: 'Garlic Paste', quantity: 2, unit: 'TBS', type: 'Paste' },
+          { id: 'ri_rbt_14', ingredientId: 'ing_ruchiraj_ginger_paste', name: 'Ginger Paste', quantity: 3, unit: 'TBS', type: 'Paste' },
+          { id: 'ri_rbt_15', ingredientId: 'ing_ruchiraj_tehari_ground_masala', name: 'Tehari Ground Masala', quantity: 14.3, unit: 'gm', type: 'Powder' },
+          { id: 'ri_rbt_16', ingredientId: 'ing_ruchiraj_hot_water', name: 'Hot Water', quantity: 0.5, unit: 'CUP', type: 'Liquid' },
+          { id: 'ri_rbt_17', ingredientId: 'ing_ruchiraj_salt', name: 'Salt', quantity: 2, unit: 'TSP', type: 'Whole' },
+          { id: 'ri_rbt_18', ingredientId: 'ing_ruchiraj_sour_yogurt', name: 'Sour Yogurt', quantity: 3, unit: 'TBS', type: 'Paste' }
+        ]
+      },
+      {
+        id: 'sec_rbt_3',
+        name: 'Step 3',
+        ingredients: [
+          { id: 'ri_rbt_19', ingredientId: 'ing_ruchiraj_potato', name: 'Potato', quantity: 8, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_20', ingredientId: 'ing_ruchiraj_chinigura_rice', name: 'Chinigura Rice', quantity: 5, unit: 'CUP', type: 'Whole' }
+        ]
+      },
+      {
+        id: 'sec_rbt_4',
+        name: 'Step 4',
+        ingredients: [
+          { id: 'ri_rbt_21', ingredientId: 'ing_ruchiraj_hot_water', name: 'Hot Water', quantity: 9.2, unit: 'CUP', type: 'Liquid' },
+          { id: 'ri_rbt_22', ingredientId: 'ing_ruchiraj_testing_salt', name: 'Testing Salt', quantity: 0.2, unit: 'TSP', type: 'Whole' },
+          { id: 'ri_rbt_23', ingredientId: 'ing_ruchiraj_lemon', name: 'Lemon', quantity: 0.5, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_24', ingredientId: 'ing_ruchiraj_salt', name: 'Salt', quantity: 3, unit: 'TSP', type: 'Whole' },
+          { id: 'ri_rbt_25', ingredientId: 'ing_ruchiraj_milk_powder', name: 'Milk Powder', quantity: 40, unit: 'gm', type: 'Powder' },
+          { id: 'ri_rbt_26', ingredientId: 'ing_ruchiraj_green_chili', name: 'Green Chili', quantity: 20, unit: 'PC', type: 'Whole' },
+          { id: 'ri_rbt_27', ingredientId: 'ing_ruchiraj_keora_water', name: 'Keora Water', quantity: 1, unit: 'TBS', type: 'Liquid' },
+          { id: 'ri_rbt_28', ingredientId: 'ing_ruchiraj_rose_water', name: 'Rose Water', quantity: 1, unit: 'TBS', type: 'Liquid' },
+          { id: 'ri_rbt_29', ingredientId: 'ing_ruchiraj_mustard_oil', name: 'Mustard Oil', quantity: 0.5, unit: 'CUP', type: 'Liquid' },
+          { id: 'ri_rbt_30', ingredientId: 'ing_ruchiraj_tehari_food_container', name: 'Tehari Food Container', quantity: 1, unit: 'Ea', type: 'Whole' },
+          { id: 'ri_rbt_31', ingredientId: 'ing_ruchiraj_lime_juice', name: 'Lime Juice', quantity: 1, unit: 'Ea', type: 'Liquid' }
+        ]
+      }
+    ],
+    steps: [
+      { id: 'step_rbt_1', stepNumber: 1, duration: 10, linkedIngredientIds: ['ri_rbt_02', 'ri_rbt_03', 'ri_rbt_04', 'ri_rbt_05', 'ri_rbt_06', 'ri_rbt_07', 'ri_rbt_08', 'ri_rbt_09'], instruction: 'Prepare the Tehari ground masala using cinnamon, cardamom, mace, white pepper, nutmeg, cumin powder, coriander powder, and cloves.' },
+      { id: 'step_rbt_2', stepNumber: 2, duration: 20, linkedIngredientIds: ['ri_rbt_10', 'ri_rbt_11', 'ri_rbt_12', 'ri_rbt_13', 'ri_rbt_14', 'ri_rbt_15', 'ri_rbt_16', 'ri_rbt_17', 'ri_rbt_18'], instruction: 'Heat cooking oil. Add green chili, onion beresta, garlic paste, ginger paste, Tehari ground masala, hot water, salt, and sour yogurt mixed with water. Cook until the masala is well combined and aromatic.' },
+      { id: 'step_rbt_3', stepNumber: 3, duration: 45, linkedIngredientIds: ['ri_rbt_01', 'ri_rbt_19'], instruction: 'Add the beef and cook. Add the potatoes. When the beef is cooked, separate the beef and excess oil from the pot.' },
+      { id: 'step_rbt_4', stepNumber: 4, duration: 10, linkedIngredientIds: ['ri_rbt_20'], instruction: 'Add the Chinigura rice to the pot and mix it with the reserved Tehari oil and masala.' },
+      { id: 'step_rbt_5', stepNumber: 5, duration: 25, linkedIngredientIds: ['ri_rbt_21', 'ri_rbt_22', 'ri_rbt_23', 'ri_rbt_24'], instruction: 'Add hot water. Test the salt and adjust with lemon and additional salt as needed. Cook the rice until nearly done.' },
+      { id: 'step_rbt_6', stepNumber: 6, duration: 15, linkedIngredientIds: ['ri_rbt_25', 'ri_rbt_26', 'ri_rbt_27', 'ri_rbt_28', 'ri_rbt_29'], instruction: 'Add milk powder, green chili, keora water, rose water, and mustard oil. Add the fried onion with the keora water, then finish cooking on low heat.' },
+      { id: 'step_rbt_7', stepNumber: 7, duration: 5, linkedIngredientIds: ['ri_rbt_30', 'ri_rbt_31'], instruction: 'Portion the Beef Tehari into food containers and serve with lime juice.' }
+    ]
   }
 ];
 

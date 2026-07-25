@@ -7,7 +7,7 @@ const Block: React.FC<{ className?: string }> = ({ className }) => (
 
 // Loading skeleton mirroring the dashboard layout so nothing flashes empty.
 const DashboardSkeleton: React.FC = () => (
-  <div className="space-y-6">
+  <div className="space-y-3">
     <div className="space-y-2">
       <Block className="h-7 w-56" />
       <Block className="h-4 w-72" />
@@ -22,7 +22,7 @@ const DashboardSkeleton: React.FC = () => (
         <Block key={i} className="h-32" />
       ))}
     </div>
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
       <Block className="h-64 lg:col-span-2" />
       <Block className="h-64" />
     </div>

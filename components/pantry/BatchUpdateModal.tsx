@@ -22,7 +22,7 @@ export const BatchUpdateModal: React.FC<{
     return (
         <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-md"
+            className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-2.5 backdrop-blur-md"
             onClick={onClose}
         >
             <motion.div
@@ -30,7 +30,7 @@ export const BatchUpdateModal: React.FC<{
                 className="bg-app-card rounded-lg shadow-soft w-full max-w-sm overflow-hidden border border-app-border relative"
                 onClick={e => e.stopPropagation()}
             >
-                <div className="bg-app-elevated p-6 border-b border-app-border flex justify-between items-center relative z-10">
+                <div className="bg-app-elevated p-3 border-b border-app-border flex justify-between items-center relative z-10">
                     <div>
                         <h2 className="text-xl font-bold text-app-text tracking-tight flex items-center gap-3 leading-none">
                             <Layers className="h-5 w-5 text-app-primary" /> Batch Update
@@ -42,8 +42,8 @@ export const BatchUpdateModal: React.FC<{
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-5 space-y-5 relative z-10">
-                    <div className="space-y-4">
+                <form onSubmit={handleSubmit} className="p-2.5 space-y-2.5 relative z-10">
+                    <div className="space-y-2.5">
                         <div className="flex items-center gap-3">
                             <Settings2 className="h-4 w-4 text-app-primary" />
                             <label className="text-xs text-app-muted font-medium">Operation</label>
@@ -65,7 +65,7 @@ export const BatchUpdateModal: React.FC<{
                         </div>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-2.5">
                          <div className="flex items-center gap-3">
                             <Layers className="h-4 w-4 text-app-primary" />
                             <label className="text-xs text-app-muted font-medium">Amount</label>
@@ -73,7 +73,7 @@ export const BatchUpdateModal: React.FC<{
                         <div className="relative group">
                             <input
                                 type="number" step="any" min="0" autoFocus required value={value} onChange={e => setValue(e.target.value)}
-                                className="w-full h-16 px-6 rounded-lg bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-2xl font-bold text-app-text tabular-nums tracking-tight"
+                                className="w-full h-16 px-3 rounded-lg bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-2xl font-bold text-app-text tabular-nums tracking-tight"
                                 placeholder="0"
                             />
                             <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">

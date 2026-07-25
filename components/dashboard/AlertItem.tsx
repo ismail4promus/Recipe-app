@@ -25,20 +25,20 @@ const AlertItem: React.FC<AlertItemProps> = ({ icon: Icon, title, message, sever
   return (
     <div
       className={cn(
-        'flex items-center gap-3 rounded-md border border-app-border border-l-[3px] bg-app-card/60 p-3',
+        'flex items-center gap-2 border border-app-border border-l-[3px] bg-app-card/60 px-2 py-1.5',
         s.border
       )}
     >
-      <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-lg', s.icon)}>
-        <Icon className="h-4 w-4" strokeWidth={2} />
+      <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center', s.icon)}>
+        <Icon className="h-3.5 w-3.5" strokeWidth={2} />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-app-text">{title}</p>
-        <p className="truncate text-xs text-app-muted">{message}</p>
+        <p className="truncate text-[13px] font-semibold leading-tight text-app-text">{title}</p>
+        <p className="truncate text-[11px] leading-tight text-app-muted">{message}</p>
       </div>
       <Link
         to={to}
-        className="shrink-0 rounded-md border border-app-border px-3 py-1.5 text-xs font-semibold text-app-text transition-colors hover:border-app-primary/50 hover:text-app-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+        className="shrink-0 border border-app-border px-2.5 py-1 text-[11px] font-semibold text-app-text transition-colors hover:border-app-primary/50 hover:text-app-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
       >
         {actionLabel}
       </Link>

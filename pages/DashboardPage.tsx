@@ -180,35 +180,36 @@ const DashboardPage: React.FC = () => {
   return (
     <motion.div
       initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
-      className="mx-auto max-w-5xl space-y-4 px-1 pb-20"
+      className="mx-auto max-w-5xl space-y-2.5 px-1 pb-20"
     >
       {/* 1. Welcome + daily summary */}
       <motion.header variants={ANIMATION_VARIANTS.item}>
-        <h1 className="text-xl font-bold tracking-tight text-app-text md:text-2xl">{greeting}</h1>
-        <p className="mt-1 text-sm text-app-muted">{dateLabel}</p>
-        <p className="mt-2 text-sm text-app-text">
-          {allClear
-            ? 'All caught up — nothing needs your attention right now.'
-            : <>You have <span className="font-semibold">{summaryText}</span>.</>}
-        </p>
+        {/* Greeting, date and the day's summary on two lines instead of four */}
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 border-b border-app-border pb-2">
+          <h1 className="text-lg font-bold tracking-tight text-app-text md:text-xl">{greeting}</h1>
+          <span className="text-xs text-app-muted">{dateLabel}</span>
+          <p className="w-full text-xs text-app-text sm:w-auto sm:border-l sm:border-app-border sm:pl-2">
+            {allClear
+              ? 'All caught up — nothing needs your attention.'
+              : <>You have <span className="font-semibold">{summaryText}</span>.</>}
+          </p>
+        </div>
 
-        {/* Weekly revenue target */}
-        <div className="mt-3 rounded-md border border-app-border bg-app-card p-3">
-          <div className="flex items-center justify-between gap-2 text-sm">
-            <span className="font-medium text-app-muted">Weekly revenue target</span>
-            <span className="font-semibold tabular-nums text-app-text">
-              {formatCurrency(model.weekRevenue)} <span className="font-normal text-app-muted">/ {formatCurrency(weekTarget)}</span>
-            </span>
-          </div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-sm bg-app-muted/15">
+        {/* Weekly revenue target — label, figures and progress on one line */}
+        <div className="mt-2 flex items-center gap-3 border border-app-border bg-app-card px-2.5 py-1.5">
+          <span className="shrink-0 text-xs font-medium text-app-muted">Weekly target</span>
+          <div className="h-1.5 flex-1 overflow-hidden bg-app-muted/15">
             <div className={targetPct >= 100 ? 'h-full bg-app-success' : 'h-full bg-app-primary'} style={{ width: `${targetPct}%` }} />
           </div>
-          <p className="mt-1 text-xs text-app-muted">{targetPct}% of this week's target</p>
+          <span className="shrink-0 text-xs font-semibold tabular-nums text-app-text">
+            {formatCurrency(model.weekRevenue)}
+            <span className="font-normal text-app-muted"> / {formatCurrency(weekTarget)} · {targetPct}%</span>
+          </span>
         </div>
       </motion.header>
 
       {/* 2. Quick actions (the four most common) */}
-      <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-2 gap-1.5 lg:grid-cols-4">
         <QuickAction icon={Plus} label="Add Recipe" to="/recipes/new" primary />
         <QuickAction icon={ClipboardPlus} label="Create Order" to="/orders?new=1" />
         <QuickAction icon={ChefHat} label="Start Cooking" to="/recipes" />
@@ -216,7 +217,7 @@ const DashboardPage: React.FC = () => {
       </motion.div>
 
       {/* 3. Today's overview (each card opens the related page) */}
-      <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-2 gap-1.5 lg:grid-cols-4">
         <SummaryCard
           icon={ShoppingBag} accent="info" title="Today's Orders"
           value={model.todaysOrders.length}

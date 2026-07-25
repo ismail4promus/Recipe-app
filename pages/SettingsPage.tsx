@@ -108,15 +108,15 @@ const SettingsPage: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-4 pb-20 font-sans px-2">
-      <div className="flex items-center justify-between border-b border-app-border pb-4 pt-2">
+    <div className="max-w-5xl mx-auto space-y-2.5 pb-20 font-sans px-2">
+      <div className="flex items-center justify-between border-b border-app-border pb-2 pt-1">
         <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-app-primary/10 rounded-md flex items-center justify-center border border-app-primary/20">
-                <Settings className="h-5 w-5 text-app-primary" />
+            <div className="h-8 w-8 bg-app-primary/10 flex items-center justify-center border border-app-primary/20 shrink-0">
+                        <Settings className="h-4 w-4 text-app-primary" />
             </div>
             <div>
-                <h1 className="text-2xl font-bold tracking-tight text-app-text leading-none">Settings</h1>
-                <p className="text-xs font-medium text-app-muted mt-1.5 flex items-center gap-2">
+                <h1 className="text-lg md:text-xl font-bold tracking-tight text-app-text leading-none">Settings</h1>
+                <p className="text-xs font-medium text-app-muted mt-0.5 flex items-center gap-1.5">
                     <Activity className="h-3 w-3 text-app-success" /> Manage your kitchen
                 </p>
             </div>
@@ -130,7 +130,7 @@ const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 items-start">
           <div className="lg:col-span-3 space-y-3">
               <div className="bg-app-card border border-app-border rounded-lg p-1.5 shadow-soft">
                 <div className="flex lg:flex-col gap-1 overflow-x-auto scrollbar-hide">
@@ -152,7 +152,7 @@ const SettingsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="hidden lg:block bg-app-card border border-app-border rounded-lg p-5 shadow-soft">
+              <div className="hidden lg:block bg-app-card border border-app-border rounded-lg p-2.5 shadow-soft">
                     <div className="flex items-center gap-2 mb-3">
                         <ShieldCheck className="h-4 w-4 text-app-success" />
                         <span className="text-xs font-medium text-app-muted">Kitchen summary</span>
@@ -175,16 +175,16 @@ const SettingsPage: React.FC = () => {
                 {activeTab === 'profile' && (
                     <motion.div
                         key="profile" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                        className="space-y-4"
+                        className="space-y-2.5"
                     >
                         <Card className="rounded-lg border-app-border bg-app-card shadow-soft overflow-hidden">
-                            <CardHeader className="border-b border-app-border p-5">
+                            <CardHeader className="border-b border-app-border p-2.5">
                                 <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
                                     <Building className="h-4 w-4 text-app-primary" /> Kitchen details
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-5 space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <CardContent className="p-2.5 space-y-3">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                                     <div className="space-y-2">
                                         <label className="text-xs font-medium text-app-muted ml-1">Kitchen name</label>
                                         <div className="relative">
@@ -211,7 +211,7 @@ const SettingsPage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start pt-2">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 items-start pt-2">
                                     <div className="space-y-2">
                                         <label className="text-xs font-medium text-app-muted ml-1">Currency</label>
                                         <div className="relative">
@@ -229,7 +229,7 @@ const SettingsPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    <div className="p-4 bg-app-warning/10 border border-app-border rounded-md flex items-start gap-3">
+                                    <div className="p-2.5 bg-app-warning/10 border border-app-border rounded-md flex items-start gap-3">
                                         <Info className="h-4 w-4 text-app-warning mt-0.5 shrink-0" />
                                         <p className="text-xs text-app-muted font-medium leading-normal">
                                             Changing your currency refreshes the app to update past totals.
@@ -237,7 +237,7 @@ const SettingsPage: React.FC = () => {
                                     </div>
                                 </div>
                             </CardContent>
-                            <CardFooter className="border-t border-app-border p-4 flex justify-end">
+                            <CardFooter className="border-t border-app-border p-2.5 flex justify-end">
                                 <Button
                                     onClick={handleSaveProfile}
                                     disabled={isSavingProfile}
@@ -254,23 +254,23 @@ const SettingsPage: React.FC = () => {
                 {activeTab === 'appearance' && (
                     <motion.div
                         key="appearance" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                        className="space-y-4"
+                        className="space-y-2.5"
                     >
                          <Card className="rounded-lg border-app-border bg-app-card shadow-soft overflow-hidden">
-                            <CardHeader className="border-b border-app-border p-5">
+                            <CardHeader className="border-b border-app-border p-2.5">
                                 <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
                                     <Monitor className="h-4 w-4 text-app-primary" /> Theme
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-5 space-y-6">
+                            <CardContent className="p-2.5 space-y-3">
                                 <div>
-                                    <p className="text-sm font-medium text-app-muted mb-4">Pick how the app looks.</p>
+                                    <p className="text-sm font-medium text-app-muted mb-2">Pick how the app looks.</p>
                                     <div className="grid grid-cols-2 gap-3">
                                         <button
                                             onClick={() => setTheme('light')}
                                             aria-pressed={theme === 'light'}
                                             className={cn(
-                                                "flex items-center gap-3 p-4 rounded-lg border transition-all min-h-[64px]",
+                                                "flex items-center gap-3 p-2.5 rounded-lg border transition-all min-h-[64px]",
                                                 theme === 'light'
                                                     ? "border-app-primary ring-2 ring-app-primary bg-app-primary/10"
                                                     : "border-app-border bg-app-elevated hover:bg-app-muted/10"
@@ -289,7 +289,7 @@ const SettingsPage: React.FC = () => {
                                             onClick={() => setTheme('dark')}
                                             aria-pressed={theme === 'dark'}
                                             className={cn(
-                                                "flex items-center gap-3 p-4 rounded-lg border transition-all min-h-[64px]",
+                                                "flex items-center gap-3 p-2.5 rounded-lg border transition-all min-h-[64px]",
                                                 theme === 'dark'
                                                     ? "border-app-primary ring-2 ring-app-primary bg-app-primary/10"
                                                     : "border-app-border bg-app-elevated hover:bg-app-muted/10"
@@ -314,17 +314,17 @@ const SettingsPage: React.FC = () => {
                 {activeTab === 'data' && (
                     <motion.div
                         key="data" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                        className="space-y-4"
+                        className="space-y-2.5"
                     >
                         <Card className="rounded-lg border-app-border bg-app-card shadow-soft overflow-hidden">
-                            <CardHeader className="border-b border-app-border p-5">
+                            <CardHeader className="border-b border-app-border p-2.5">
                                 <CardTitle className="text-base font-bold tracking-tight text-app-text flex items-center gap-2">
                                     <HardDrive className="h-4 w-4 text-app-primary" /> Your data
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-5 space-y-3">
-                                <div className="flex items-center justify-between p-4 border border-app-border rounded-lg bg-app-elevated hover:border-app-primary/40 transition-all gap-4 group">
-                                    <div className="flex items-center gap-4">
+                            <CardContent className="p-2.5 space-y-3">
+                                <div className="flex items-center justify-between p-2.5 border border-app-border rounded-lg bg-app-elevated hover:border-app-primary/40 transition-all gap-2.5 group">
+                                    <div className="flex items-center gap-2.5">
                                         <div className="h-10 w-10 rounded-md bg-app-info/10 text-app-info flex items-center justify-center shrink-0 border border-app-border">
                                             <Download className="h-5 w-5" />
                                         </div>
@@ -343,7 +343,7 @@ const SettingsPage: React.FC = () => {
                                     </Button>
                                 </div>
 
-                                <div className="p-4 rounded-lg bg-app-muted/10 border border-app-border flex items-start gap-4">
+                                <div className="p-2.5 rounded-lg bg-app-muted/10 border border-app-border flex items-start gap-2.5">
                                     <Shield className="h-4 w-4 text-app-primary shrink-0 mt-0.5" />
                                     <p className="text-xs text-app-muted font-medium leading-relaxed">
                                         iCooking keeps your data <span className="text-app-primary">on this device only</span>. Nothing is stored on our servers.
@@ -352,8 +352,8 @@ const SettingsPage: React.FC = () => {
                             </CardContent>
                         </Card>
 
-                        <div className="bg-app-card rounded-lg border border-app-border p-5 shadow-soft">
-                             <div className="flex items-center justify-between gap-4">
+                        <div className="bg-app-card rounded-lg border border-app-border p-2.5 shadow-soft">
+                             <div className="flex items-center justify-between gap-2.5">
                                 <div className="flex items-center gap-3">
                                     <div className="h-10 w-10 rounded-md bg-app-info/10 text-app-info flex items-center justify-center border border-app-border">
                                         <RefreshCw className="h-5 w-5" />
@@ -373,8 +373,8 @@ const SettingsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-app-card rounded-lg border border-app-border p-5 shadow-soft">
-                             <div className="flex items-center justify-between gap-4">
+                        <div className="bg-app-card rounded-lg border border-app-border p-2.5 shadow-soft">
+                             <div className="flex items-center justify-between gap-2.5">
                                 <div className="flex items-center gap-3">
                                     <div className="h-10 w-10 rounded-md bg-app-danger/10 text-app-danger flex items-center justify-center border border-app-border">
                                         <Trash2 className="h-5 w-5" />
@@ -388,7 +388,7 @@ const SettingsPage: React.FC = () => {
                                     onClick={handleSeed}
                                     disabled={seeding}
                                     className={cn(
-                                        "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md px-5 text-sm font-semibold text-white shadow-soft transition-all active:scale-[0.97]",
+                                        "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold text-white shadow-soft transition-all active:scale-[0.97]",
                                         seeded
                                             ? "bg-app-success"
                                             : "bg-app-danger hover:brightness-105"

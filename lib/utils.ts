@@ -80,57 +80,24 @@ export const ANIMATION_VARIANTS = {
 } as const;
 
 // --- Unit Conversion Logic ---
-
-// Constants defined outside function to optimize memory
-const RATES: Record<string, number> = {
-  // Mass (base: g)
-  g: 1,
-  kg: 1000,
-  oz: 28.3495,
-  lb: 453.592,
-  // Volume (base: ml)
-  ml: 1,
-  l: 1000,
-  tsp: 4.92892,
-  tbsp: 14.7868,
-  cup: 236.588, // US Cup
-  // Counting
-  piece: 1,
-  pcs: 1,
-  pack: 1,
-};
-
-const TYPE_MAP: Record<string, 'mass' | 'volume' | 'count'> = {
-  g: 'mass', kg: 'mass', oz: 'mass', lb: 'mass',
-  ml: 'volume', l: 'volume', tsp: 'volume', tbsp: 'volume', cup: 'volume',
-  piece: 'count', pcs: 'count', pack: 'count'
-};
-
-export const convertUnit = (quantity: number, fromUnit: string, toUnit: string): number => {
-  if (!fromUnit || !toUnit) return quantity || 0;
-  
-  const from = fromUnit.toLowerCase();
-  const to = toUnit.toLowerCase();
-
-  if (from === to) return quantity;
-
-  const typeFrom = TYPE_MAP[from] || 'count';
-  const typeTo = TYPE_MAP[to] || 'count';
-
-  // Direct conversion if types match
-  if (typeFrom === typeTo && RATES[from] && RATES[to]) {
-    const baseQty = quantity * RATES[from];
-    return baseQty / RATES[to];
-  }
-
-  // Cross-type conversion (Simplified assumption: 1 g ~= 1 ml for water-based)
-  if ((typeFrom === 'mass' && typeTo === 'volume') || (typeFrom === 'volume' && typeTo === 'mass')) {
-     const baseQty = quantity * (RATES[from] || 1); // g or ml
-     return baseQty / (RATES[to] || 1);
-  }
-
-  // Cannot convert
-  return quantity; 
-};
-
-export const AVAILABLE_UNITS = Object.keys(RATES);
+// Lives in ./units.ts; re-exported here so existing imports keep working.
+export {
+  UNITS,
+  UNIT_GROUPS,
+  AVAILABLE_UNITS,
+  convertUnit,
+  tryConvertUnit,
+  canConvert,
+  convertibleUnits,
+  getUnit,
+  normalizeUnit,
+  normalizeUnitLoose,
+  unitLabel,
+  unitDimension,
+  isKnownUnit,
+  baseUnitRatio,
+  parseQuantity,
+  formatQuantity,
+  formatMeasure,
+} from './units';
+export type { Dimension, UnitDef } from './units';

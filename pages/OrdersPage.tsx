@@ -77,17 +77,17 @@ const OrdersPage: React.FC = () => {
     return (
         <motion.div 
             initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
-            className="space-y-5 pb-20 max-w-7xl mx-auto font-sans"
+            className="space-y-2.5 pb-20 max-w-7xl mx-auto font-sans"
         >
             {/* Header */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-app-border pb-4">
-                <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 bg-app-primary/10 rounded-md flex items-center justify-center">
-                        <ShoppingBag className="h-6 w-6 text-app-primary" />
+            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col xl:flex-row xl:items-center justify-between gap-2.5 border-b border-app-border pb-4">
+                <div className="flex items-center gap-2 min-w-0">
+                    <div className="h-8 w-8 bg-app-primary/10 flex items-center justify-center shrink-0">
+                        <ShoppingBag className="h-4 w-4 text-app-primary" />
                     </div>
-                    <div>
-                        <h1 className="text-xl md:text-2xl font-bold tracking-tight text-app-text leading-tight">Orders</h1>
-                        <p className="text-sm text-app-muted mt-1.5">Manage and track your kitchen orders</p>
+                    <div className="min-w-0">
+                        <h1 className="text-lg md:text-xl font-bold tracking-tight text-app-text leading-tight">Orders</h1>
+                        <p className="text-xs text-app-muted truncate">Manage and track your kitchen orders</p>
                     </div>
                 </div>
 
@@ -97,33 +97,33 @@ const OrdersPage: React.FC = () => {
             </motion.div>
 
             {/* Metrics */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-3 gap-2 md:gap-4">
+            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-3 gap-2 md:gap-2.5">
                 {[
                     { label: 'Pending', val: metrics.pending, icon: Clock, color: 'text-app-warning', tint: 'bg-app-warning/15' },
                     { label: 'In Progress', val: metrics.active, icon: Utensils, color: 'text-app-primary', tint: 'bg-app-primary/10' },
                     { label: 'Revenue', val: formatCurrency(metrics.revenue).split('.')[0], icon: DollarSign, color: 'text-app-success', tint: 'bg-app-success/15' }
                 ].map((m) => (
-                    <div key={m.label} className="bg-app-card border border-app-border rounded-lg shadow-soft p-3 md:p-4 md:flex md:items-center md:gap-3">
-                        <div className={cn("h-8 w-8 md:h-10 md:w-10 rounded-md flex items-center justify-center shrink-0 mb-2 md:mb-0", m.tint)}>
-                            <m.icon className={cn("h-4 w-4 md:h-5 md:w-5", m.color)} />
+                    <div key={m.label} className="bg-app-card border border-app-border shadow-soft px-2.5 py-2 flex items-center gap-2.5">
+                        <div className={cn("h-8 w-8 flex items-center justify-center shrink-0", m.tint)}>
+                            <m.icon className={cn("h-4 w-4", m.color)} />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-[11px] md:text-xs text-app-muted font-medium leading-tight">{m.label}</p>
-                            <span className="text-lg md:text-2xl font-bold tabular-nums text-app-text leading-tight">{m.val}</span>
+                            <p className="text-[11px] text-app-muted font-medium leading-tight truncate">{m.label}</p>
+                            <span className="text-lg font-bold tabular-nums text-app-text leading-tight">{m.val}</span>
                         </div>
                     </div>
                 ))}
             </motion.div>
 
             {/* Controls */}
-            <StickyToolbar innerClassName="flex flex-col lg:flex-row gap-3">
+            <StickyToolbar innerClassName="flex flex-col lg:flex-row lg:items-center gap-2">
                     <div className="relative flex-grow">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-app-muted" />
                         <input
                             placeholder="Search orders…"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full min-h-[44px] pl-11 pr-4 rounded-md bg-app-elevated border border-app-border focus:ring-2 focus:ring-app-primary text-sm text-app-text transition-all placeholder:text-app-muted"
+                            className="w-full h-9 pl-9 pr-3 bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text transition-all placeholder:text-app-muted"
                         />
                     </div>
 
@@ -147,7 +147,7 @@ const OrdersPage: React.FC = () => {
             </StickyToolbar>
 
             {/* Main Terminal Feed */}
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-2.5">
                 <AnimatePresence mode="popLayout">
                     {filteredOrders.length > 0 ? (
                         filteredOrders.map(order => (
@@ -168,7 +168,7 @@ const OrdersPage: React.FC = () => {
                             variants={ANIMATION_VARIANTS.item}
                             className="flex flex-col items-center justify-center py-16 bg-app-card border border-dashed border-app-border rounded-lg"
                         >
-                            <Box className="h-14 w-14 text-app-muted mb-5 stroke-1" />
+                            <Box className="h-14 w-14 text-app-muted mb-2.5 stroke-1" />
                             <p className="text-sm text-app-muted font-medium">No orders yet</p>
                             <button onClick={() => {setSearchQuery(""); setStatusFilter("all");}} className="mt-5 text-sm font-semibold text-app-primary hover:underline">Reset filters</button>
                         </motion.div>

@@ -67,7 +67,7 @@ const CustomerOrderFormPage: React.FC = () => {
 
     if (submitted) {
         return (
-            <div className="min-h-screen bg-app-bg flex items-center justify-center p-4">
+            <div className="min-h-screen bg-app-bg flex items-center justify-center p-2.5">
                 <Card className="w-full max-w-md text-center rounded-lg bg-app-card border border-app-border shadow-soft">
                     <CardHeader>
                         <div className="mx-auto bg-app-success/10 rounded-full p-3 w-fit">
@@ -85,22 +85,22 @@ const CustomerOrderFormPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-app-bg flex justify-center p-4">
-            <div className="w-full max-w-4xl space-y-6">
+        <div className="min-h-screen bg-app-bg flex justify-center p-2.5">
+            <div className="w-full max-w-4xl space-y-3">
                 <h1 className="text-4xl font-bold tracking-tight text-center text-app-text">Place Your Order</h1>
-                <div className="grid md:grid-cols-3 gap-4">
-                    <div className="md:col-span-2 space-y-4">
+                <div className="grid md:grid-cols-3 gap-2.5">
+                    <div className="md:col-span-2 space-y-2.5">
                         {recipes.map(recipe => (
                             <Card key={recipe.id} className="flex items-center overflow-hidden rounded-lg bg-app-card border border-app-border shadow-soft">
                                 <div className="w-24 h-24 bg-app-elevated shrink-0">
                                     <img src={recipe.imageUrl} alt={recipe.name} className="w-full h-full object-cover" />
                                 </div>
-                                <CardContent className="p-4 flex-grow">
+                                <CardContent className="p-2.5 flex-grow">
                                     <h3 className="font-semibold text-app-text">{recipe.name}</h3>
                                     <p className="text-sm text-app-muted">{recipe.cuisine}</p>
                                     <p className="font-bold text-app-primary mt-1">{formatCurrency(getSalePrice(recipe.id))}</p>
                                 </CardContent>
-                                <CardFooter className="p-4">
+                                <CardFooter className="p-2.5">
                                     <div className="flex items-center gap-2">
                                         <button aria-label="Remove one" onClick={() => handleQuantityChange(recipe.id, -1)}><MinusCircle className="h-6 w-6 text-app-danger" /></button>
                                         <span className="w-8 text-center font-bold text-app-text">{cart[recipe.id] || 0}</span>
@@ -136,7 +136,7 @@ const CustomerOrderFormPage: React.FC = () => {
                                 )}
                             </CardContent>
                             <CardFooter>
-                                <form onSubmit={handleSubmit} className="w-full space-y-4">
+                                <form onSubmit={handleSubmit} className="w-full space-y-2.5">
                                     <input
                                         type="text"
                                         placeholder="Your Name"

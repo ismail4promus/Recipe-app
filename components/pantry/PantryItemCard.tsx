@@ -49,7 +49,7 @@ export const PantryItemCard: React.FC<{
             <div 
                 onClick={() => isSelectionMode ? onToggleSelect(item.id) : onEdit(item)}
                 className={cn(
-                    "group relative flex items-center gap-4 p-3 bg-app-card border rounded-md hover:border-app-primary/40 transition-all select-none shadow-soft overflow-hidden",
+                    "group relative flex items-center gap-2.5 p-3 bg-app-card border rounded-md hover:border-app-primary/40 transition-all select-none shadow-soft overflow-hidden",
                     isSelected ? "border-app-primary bg-app-primary/10" : "border-app-border",
                     isLowStock && "border-l-4 border-l-app-warning"
                 )}
@@ -58,7 +58,7 @@ export const PantryItemCard: React.FC<{
                     {getCategoryIcon(item.category)}
                 </div>
 
-                <div className="flex-1 min-w-0 flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0 flex items-center justify-between gap-2.5">
                     <div className="min-w-0 flex-1">
                         <h4 className="font-semibold text-sm text-app-text truncate tracking-tight leading-none mb-1.5">{item.name}</h4>
                         <div className="flex items-center gap-3">
@@ -102,7 +102,7 @@ export const PantryItemCard: React.FC<{
                 isLowStock && "border-t-2 border-t-app-warning"
             )}
         >
-            <div className="p-4 flex flex-col h-full gap-4 relative z-10">
+            <div className="p-2.5 flex flex-col h-full gap-2.5 relative z-10">
                 <div className="flex items-start gap-3">
                     <div className="h-10 w-10 rounded-md bg-app-elevated flex items-center justify-center text-xl shrink-0 border border-app-border">
                         {getCategoryIcon(item.category)}

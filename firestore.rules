@@ -1,0 +1,33 @@
+rules_version = '2';
+
+// Cook Jatra — kitchen data is shared by everyone signed in to the kitchen.
+// Reads and writes require an authenticated Google account; nothing is public.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    match /recipes/{recipeId} {
+      allow read, write: if signedIn();
+    }
+
+    match /ingredients/{ingredientId} {
+      allow read, write: if signedIn();
+    }
+
+    match /orders/{orderId} {
+      allow read, write: if signedIn();
+    }
+
+    match /cookingSessions/{sessionId} {
+      allow read, write: if signedIn();
+    }
+
+    // Anything not listed above stays closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

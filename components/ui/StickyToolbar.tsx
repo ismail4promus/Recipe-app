@@ -23,10 +23,10 @@ export const StickyToolbar: React.FC<{ className?: string; innerClassName?: stri
   }, []);
 
   return (
-    <div ref={ref} className={cn('sticky top-0 z-30 py-2', className)}>
+    <div ref={ref} className={cn('sticky top-0 z-30 py-1.5', className)}>
       <div
         className={cn(
-          'rounded-md border border-app-border bg-app-card p-2 transition-shadow duration-150',
+          'border border-app-border bg-app-card p-1.5 transition-shadow duration-150',
           stuck ? 'shadow-card' : 'shadow-soft',
           innerClassName
         )}

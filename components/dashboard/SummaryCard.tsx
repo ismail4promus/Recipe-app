@@ -27,37 +27,41 @@ interface SummaryCardProps {
 const SummaryCard: React.FC<SummaryCardProps> = ({ icon: Icon, title, value, hint, accent = 'primary', to, trend, bar }) => {
   const a = ACCENT[accent];
   const pct = bar === undefined ? 0 : Math.round(Math.min(1, Math.max(0, bar)) * 100);
+  // Icon and figures share one row; the status bar is a hairline on the bottom
+  // edge rather than its own stacked block.
   const body = (
     <div
       className={cn(
-        'group flex h-full flex-col rounded-lg border border-app-border bg-app-card p-3 transition-all duration-200',
-        to && cn('cursor-pointer hover:-translate-y-0.5 hover:shadow-card', a.ring)
+        'group relative flex h-full items-center gap-2.5 border border-app-border bg-app-card px-2.5 py-2 transition-colors duration-200',
+        to && cn('cursor-pointer', a.ring)
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <span className={cn('flex h-9 w-9 items-center justify-center rounded-md', a.icon)}>
-          <Icon className="h-5 w-5" strokeWidth={2} />
-        </span>
-        {trend && (
-          <span
-            className={cn(
-              'inline-flex items-center gap-0.5 text-xs font-semibold',
-              (trend.good ?? trend.direction === 'up') ? 'text-app-success' : 'text-app-danger'
-            )}
-          >
-            {trend.direction === 'up' ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
-            {trend.value}
-          </span>
-        )}
+      <span className={cn('flex h-8 w-8 shrink-0 items-center justify-center', a.icon)}>
+        <Icon className="h-4 w-4" strokeWidth={2} />
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="truncate text-xs font-medium text-app-muted">{title}</p>
+          {trend && (
+            <span
+              className={cn(
+                'inline-flex shrink-0 items-center gap-0.5 text-[11px] font-semibold',
+                (trend.good ?? trend.direction === 'up') ? 'text-app-success' : 'text-app-danger'
+              )}
+            >
+              {trend.direction === 'up' ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+              {trend.value}
+            </span>
+          )}
+        </div>
+        <p className="text-lg font-bold leading-tight tracking-tight text-app-text tabular-nums">{value}</p>
+        {hint && <p className="truncate text-[11px] leading-tight text-app-muted">{hint}</p>}
       </div>
-      <p className="mt-2 text-[13px] font-medium text-app-muted leading-tight md:text-sm">{title}</p>
-      <p className="mt-0.5 text-xl font-bold tracking-tight text-app-text tabular-nums md:text-2xl">{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-app-muted">{hint}</p>}
+
       {bar !== undefined && (
-        <div className="mt-auto pt-2">
-          <div className="h-1 overflow-hidden rounded-sm bg-app-muted/15">
-            <div className={cn('h-full transition-all', a.fill)} style={{ width: `${pct}%` }} />
-          </div>
+        <div className="absolute inset-x-0 bottom-0 h-[3px] bg-app-muted/15">
+          <div className={cn('h-full transition-all', a.fill)} style={{ width: `${pct}%` }} />
         </div>
       )}
     </div>
@@ -65,7 +69,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ icon: Icon, title, value, hin
 
   if (to) {
     return (
-      <Link to={to} className="block h-full rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+      <Link to={to} className="block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
         {body}
       </Link>
     );

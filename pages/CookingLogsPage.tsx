@@ -40,11 +40,11 @@ const LogItem: React.FC<{
     return (
         <motion.div
             layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-app-card border border-app-border rounded-lg p-6 hover:border-app-primary/40 transition-all group relative overflow-hidden shadow-soft"
+            className="bg-app-card border border-app-border rounded-lg p-3 hover:border-app-primary/40 transition-all group relative overflow-hidden shadow-soft"
         >
             <div className={cn("absolute top-0 left-0 w-1.5 h-full transition-colors", session.status === 'in_progress' ? "bg-app-primary" : "bg-app-muted/20")}></div>
 
-            <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center relative z-10">
+            <div className="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center relative z-10">
                 <div className="flex-1 min-w-0 md:pl-4">
                     <div className="flex items-center gap-3 mb-2">
                         {isEditing ? (
@@ -60,12 +60,12 @@ const LogItem: React.FC<{
                                 <h3 className="text-base font-bold text-app-text tracking-tight truncate">
                                     {session.sessionName || `Session ${session.id.split('_')[1]}`}
                                 </h3>
-                                <button aria-label="Rename session" onClick={() => { setTempName(session.sessionName || ''); setIsEditing(true); }} className="opacity-0 group-hover/title:opacity-100 p-1 text-app-muted hover:text-app-primary transition-all"><Edit className="h-3.5 w-3.5" /></button>
+                                <button aria-label="Rename session" onClick={() => { setTempName(session.sessionName || ''); setIsEditing(true); }} className="opacity-100 md:opacity-0 md:group-hover/title:opacity-100 p-1 text-app-muted hover:text-app-primary transition-all"><Edit className="h-3.5 w-3.5" /></button>
                             </div>
                         )}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-2.5">
                         <div className="flex items-center gap-2 text-xs text-app-muted font-medium">
                             <Calendar className="h-3.5 w-3.5 text-app-primary" /> {getRelativeTime(session.startTime)}
                         </div>
@@ -149,45 +149,45 @@ export default function CookingLogsPage() {
     if (!recipe) return null;
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6 pb-20 font-sans px-4 md:px-0">
+        <div className="max-w-7xl mx-auto space-y-2.5 md:space-y-3 pb-nav md:pb-10 font-sans px-1 md:px-0">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-app-border pb-6">
-                <div className="flex items-center gap-4">
-                    <IconButton icon={ArrowLeft} label="Back to recipe" onClick={() => navigate(`/recipes/${recipeId}`)} className="h-12 w-12" />
-                    <div>
-                        <div className="flex items-center gap-3 mb-2">
-                            <History className="h-6 w-6 text-app-primary" />
-                            <h1 className="text-3xl font-bold tracking-tight text-app-text">Cooking History</h1>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 md:gap-2.5 border-b border-app-border pb-4 md:pb-3">
+                <div className="flex items-center gap-3 md:gap-2.5 min-w-0">
+                    <IconButton icon={ArrowLeft} label="Back to recipe" onClick={() => navigate(`/recipes/${recipeId}`)} className="h-11 w-11 md:h-12 md:w-12 shrink-0" />
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-2 md:gap-3 mb-1">
+                            <History className="h-5 w-5 md:h-6 md:w-6 text-app-primary shrink-0" />
+                            <h1 className="text-xl md:text-xl font-bold tracking-tight text-app-text truncate">Cooking History</h1>
                         </div>
-                        <p className="text-sm text-app-muted font-medium">{recipe.name} &bull; Past sessions</p>
+                        <p className="text-xs md:text-sm text-app-muted font-medium truncate">{recipe.name} &bull; Past sessions</p>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 bg-app-card border border-app-border p-4 rounded-lg shadow-soft min-w-[360px]">
-                    <div className="text-center px-2">
-                        <p className="text-xs text-app-muted font-medium mb-1">Success rate</p>
-                        <p className="text-xl font-bold text-app-success tabular-nums leading-none">{stats.successRate}%</p>
+                <div className="grid grid-cols-3 gap-2 md:gap-3 bg-app-card border border-app-border p-3 md:p-2.5 shadow-soft w-full md:w-auto md:min-w-[340px]">
+                    <div className="text-center px-1">
+                        <p className="text-[11px] md:text-xs text-app-muted font-medium mb-1 truncate">Success</p>
+                        <p className="text-lg md:text-xl font-bold text-app-success tabular-nums leading-none">{stats.successRate}%</p>
                     </div>
-                    <div className="text-center border-x border-app-border px-2">
-                        <p className="text-xs text-app-muted font-medium mb-1">Active</p>
-                        <p className="text-xl font-bold text-app-primary tabular-nums leading-none">{stats.active}</p>
+                    <div className="text-center border-x border-app-border px-1">
+                        <p className="text-[11px] md:text-xs text-app-muted font-medium mb-1 truncate">Active</p>
+                        <p className="text-lg md:text-xl font-bold text-app-primary tabular-nums leading-none">{stats.active}</p>
                     </div>
-                    <div className="text-center px-2">
-                        <p className="text-xs text-app-muted font-medium mb-1">Total</p>
-                        <p className="text-xl font-bold text-app-text tabular-nums leading-none">{stats.total}</p>
+                    <div className="text-center px-1">
+                        <p className="text-[11px] md:text-xs text-app-muted font-medium mb-1 truncate">Total</p>
+                        <p className="text-lg md:text-xl font-bold text-app-text tabular-nums leading-none">{stats.total}</p>
                     </div>
                 </div>
             </div>
 
             {/* Start cooking */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-app-card border border-app-border p-5 md:p-10 rounded-lg relative overflow-hidden group shadow-soft">
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-app-card border border-app-border p-2.5 md:p-10 rounded-lg relative overflow-hidden group shadow-soft">
+                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-2.5">
                     <div className="text-center md:text-left space-y-2">
                         <div className="flex items-center gap-3 justify-center md:justify-start">
                             <span className="h-2 w-2 rounded-full bg-app-success animate-pulse" />
                             <span className="text-xs text-app-success font-medium">Ready to go</span>
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-bold text-app-text tracking-tight leading-tight">Start cooking</h2>
+                        <h2 className="text-2xl md:text-xl font-bold text-app-text tracking-tight leading-tight">Start cooking</h2>
                         <p className="text-sm text-app-muted font-medium">Serves {requestedServings || recipe.servings} &bull; About {recipe.prepTime + recipe.cookTime} min</p>
                     </div>
                     <Button onClick={handleLaunchNewService} icon={Rocket} className="w-full md:w-auto min-h-[56px] px-10 text-base">
@@ -197,7 +197,7 @@ export default function CookingLogsPage() {
             </motion.div>
 
             {/* Filter Hub */}
-            <div className="bg-app-card border border-app-border p-3 rounded-lg flex flex-col md:flex-row gap-3 shadow-soft sticky top-14 md:top-20 z-30 backdrop-blur-md">
+            <div className="bg-app-card border border-app-border p-1.5 flex flex-col md:flex-row md:items-center gap-2 shadow-soft sticky top-14 md:top-20 z-30 backdrop-blur-md">
                 <Segmented
                     value={activeTab}
                     onChange={setActiveTab}
@@ -217,7 +217,7 @@ export default function CookingLogsPage() {
             </div>
 
             {/* Archive List */}
-            <div className="space-y-4">
+            <div className="space-y-2.5">
                 <AnimatePresence mode="popLayout">
                     {filteredSessions.length > 0 ? (
                         filteredSessions.map(session => (
@@ -225,7 +225,7 @@ export default function CookingLogsPage() {
                         ))
                     ) : (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center border border-dashed border-app-border rounded-lg bg-app-card/30">
-                            <Activity className="h-12 w-12 text-app-muted opacity-20 mx-auto mb-6" />
+                            <Activity className="h-12 w-12 text-app-muted opacity-20 mx-auto mb-3" />
                             <p className="text-sm text-app-muted font-medium">No sessions yet</p>
                         </motion.div>
                     )}

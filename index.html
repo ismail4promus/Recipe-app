@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>iCooking</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -40,17 +40,26 @@
               foreground: 'rgb(var(--c-primary-fg) / <alpha-value>)',
             }
           },
+          // Squared-off design language: every surface is a crisp rectangle.
+          // Genuinely circular things (spinners, status dots) opt back in with
+          // the .circle utility in index.css.
           borderRadius: {
-            'sm': '3px',
-            'md': '4px',
-            'lg': '6px',
-            'xl': '8px',
-            '2xl': '10px',
+            'none': '0px',
+            'sm': '0px',
+            DEFAULT: '0px',
+            'md': '0px',
+            'lg': '0px',
+            'xl': '0px',
+            '2xl': '0px',
+            '3xl': '0px',
+            'full': '0px',
           },
+          // Sharp edges need light, tight shadows — big soft blurs read as
+          // rounded even when the corners are square.
           boxShadow: {
-            soft: '0 1px 2px rgba(20,40,50,0.06), 0 1px 3px rgba(20,40,50,0.08)',
-            card: '0 1px 2px rgba(20,40,50,0.06), 0 4px 12px -6px rgba(20,40,50,0.14)',
-            float: '0 2px 8px -2px rgba(20,40,50,0.18)',
+            soft: '0 1px 0 rgba(20,40,50,0.04), 0 1px 2px rgba(20,40,50,0.07)',
+            card: '0 1px 0 rgba(20,40,50,0.05), 0 2px 8px -4px rgba(20,40,50,0.16)',
+            float: '0 1px 0 rgba(20,40,50,0.06), 0 6px 16px -8px rgba(20,40,50,0.28)',
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],

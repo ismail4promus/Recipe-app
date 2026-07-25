@@ -50,7 +50,7 @@ export const EditIngredientModal: React.FC<{
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-md"
+      className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-2.5 backdrop-blur-md"
       onClick={onClose}
     >
       <motion.div
@@ -58,7 +58,7 @@ export const EditIngredientModal: React.FC<{
         className="bg-app-card rounded-lg shadow-soft w-full max-w-lg overflow-hidden border border-app-border relative"
         onClick={e => e.stopPropagation()}
       >
-        <div className="bg-app-elevated p-6 border-b border-app-border flex justify-between items-center relative z-10">
+        <div className="bg-app-elevated p-3 border-b border-app-border flex justify-between items-center relative z-10">
             <div>
                 <h2 className="text-xl font-bold text-app-text tracking-tight flex items-center gap-3 leading-none">
                     <Edit className="h-5 w-5 text-app-primary" /> Edit Item
@@ -70,14 +70,14 @@ export const EditIngredientModal: React.FC<{
             </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-5 max-h-[80vh] overflow-y-auto scrollbar-hide relative z-10">
+        <form onSubmit={handleSubmit} className="p-2.5 space-y-2.5 max-h-[80vh] overflow-y-auto scrollbar-hide relative z-10">
             {/* Identity Group */}
-            <div className="space-y-4">
+            <div className="space-y-2.5">
                 <div className="flex items-center gap-3">
                     <Tag className="h-4 w-4 text-app-primary" />
                     <h3 className="text-xs text-app-muted font-medium">Item details</h3>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2.5">
                     <div className="col-span-2 space-y-2">
                         <label className="text-xs text-app-muted font-medium block ml-1">Name</label>
                         <input name="name" value={formData.name} onChange={handleChange} className="w-full min-h-[44px] px-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text" required />
@@ -98,12 +98,12 @@ export const EditIngredientModal: React.FC<{
             <div className="h-px bg-app-border"></div>
 
             {/* Packaging Group */}
-            <div className="space-y-4">
+            <div className="space-y-2.5">
                 <div className="flex items-center gap-3">
                     <Scale className="h-4 w-4 text-app-primary" />
                     <h3 className="text-xs text-app-muted font-medium">Packaging</h3>
                 </div>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2.5">
                     <div className="space-y-2">
                         <label className="text-xs text-app-muted font-medium block ml-1">Base unit</label>
                         <select name="baseUnit" value={formData.baseUnit} onChange={handleChange} className="w-full min-h-[44px] px-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text appearance-none">
@@ -130,12 +130,12 @@ export const EditIngredientModal: React.FC<{
             <div className="h-px bg-app-border"></div>
 
             {/* Inventory Group */}
-            <div className="space-y-4">
+            <div className="space-y-2.5">
                 <div className="flex items-center gap-3">
                     <DollarSign className="h-4 w-4 text-app-primary" />
                     <h3 className="text-xs text-app-muted font-medium">Stock and cost</h3>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-2.5">
                     <div className="space-y-2">
                         <label className="text-xs text-app-muted font-medium block ml-1">In stock</label>
                         <input type="number" name="packagesInStock" value={formData.packagesInStock} onChange={handleChange} className="w-full min-h-[44px] px-4 rounded-md bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text tabular-nums" required />
@@ -149,7 +149,7 @@ export const EditIngredientModal: React.FC<{
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between p-5 rounded-md bg-app-elevated border border-app-border">
+                <div className="flex items-center justify-between p-2.5 rounded-md bg-app-elevated border border-app-border">
                     <div className="text-xs text-app-muted font-medium">Unit cost</div>
                     <div className="text-lg font-bold text-app-text tabular-nums tracking-tight">
                         {formatCurrency(calculatedUnitCost)} <span className="text-xs text-app-muted font-medium">/ {formData.baseUnit}</span>
@@ -157,14 +157,14 @@ export const EditIngredientModal: React.FC<{
                 </div>
             </div>
 
-            <div className="pt-2 flex justify-between items-center gap-4">
+            <div className="pt-2 flex justify-between items-center gap-2.5">
                 <button
                     type="button" onClick={handleDelete}
-                    className="min-h-[44px] px-6 rounded-md text-sm font-semibold text-app-danger hover:bg-app-danger/10 transition-all flex items-center gap-2"
+                    className="min-h-[44px] px-3 rounded-md text-sm font-semibold text-app-danger hover:bg-app-danger/10 transition-all flex items-center gap-2"
                 >
                     <Trash2 className="h-4 w-4" /> Delete
                 </button>
-                <div className="flex gap-4">
+                <div className="flex gap-2.5">
                     <button type="button" onClick={onClose} className="min-h-[44px] px-8 rounded-md text-sm font-semibold text-app-muted hover:text-app-text transition-colors">
                         Cancel
                     </button>

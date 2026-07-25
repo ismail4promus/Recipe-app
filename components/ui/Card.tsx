@@ -31,31 +31,31 @@ const Card: React.FC<CardProps> = ({ className, children, isPrimary, ...props })
 };
 
 const CardHeader: React.FC<CardDivProps> = ({ className, children, ...props }) => (
-  <div className={cn('flex flex-col space-y-0.5 px-3 py-2 border-b border-app-border', className)} {...props}>
+  <div className={cn('flex flex-col space-y-0.5 px-2.5 py-1.5 border-b border-app-border', className)} {...props}>
     {children}
   </div>
 );
 
 const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ className, children, ...props }) => (
-  <h3 className={cn('text-base font-bold tracking-tight text-app-text', className)} {...props}>
+  <h3 className={cn('text-sm font-bold tracking-tight text-app-text', className)} {...props}>
     {children}
   </h3>
 );
 
 const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({ className, children, ...props }) => (
-  <p className={cn('text-sm text-app-muted', className)} {...props}>
+  <p className={cn('text-xs text-app-muted', className)} {...props}>
     {children}
   </p>
 );
 
 const CardContent: React.FC<CardDivProps> = ({ className, children, ...props }) => (
-  <div className={cn('p-3', className)} {...props}>
+  <div className={cn('p-2.5', className)} {...props}>
     {children}
   </div>
 );
 
 const CardFooter: React.FC<CardDivProps> = ({ className, children, ...props }) => (
-  <div className={cn('flex items-center px-3 py-2 border-t border-app-border bg-app-muted/5', className)} {...props}>
+  <div className={cn('flex items-center px-2.5 py-1.5 border-t border-app-border bg-app-muted/5', className)} {...props}>
     {children}
   </div>
 );

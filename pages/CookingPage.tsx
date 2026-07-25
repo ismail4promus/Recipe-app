@@ -79,11 +79,11 @@ const CookingPage: React.FC = () => {
   return (
     <motion.div
       initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
-      className="mx-auto max-w-5xl space-y-4 px-1 pb-20"
+      className="mx-auto max-w-5xl space-y-2.5 px-1 pb-20"
     >
       <motion.header variants={ANIMATION_VARIANTS.item}>
-        <h1 className="text-2xl font-bold tracking-tight text-app-text">Cooking</h1>
-        <p className="mt-1 text-sm text-app-muted">What's on the stove and what's coming up next.</p>
+        <h1 className="text-lg md:text-xl font-bold tracking-tight text-app-text">Cooking</h1>
+        <p className="mt-0.5 text-xs text-app-muted">What's on the stove and what's coming up next.</p>
       </motion.header>
 
       <motion.div variants={ANIMATION_VARIANTS.item}>

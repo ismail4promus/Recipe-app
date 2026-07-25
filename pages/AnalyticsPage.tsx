@@ -28,7 +28,7 @@ const MetricCard: React.FC<{
     color: string;
     description: string;
 }> = React.memo(({ title, value, trend, icon: Icon, color, description }) => (
-    <div className="bg-app-card border border-app-border p-4 rounded-lg relative overflow-hidden group hover:border-app-primary/40 transition-all shadow-soft">
+    <div className="bg-app-card border border-app-border p-2.5 rounded-lg relative overflow-hidden group hover:border-app-primary/40 transition-all shadow-soft">
         <div className="relative z-10 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
                 <div className={cn("h-9 w-9 rounded-md flex items-center justify-center border border-app-border bg-app-muted/10 shrink-0", color)}>
@@ -134,16 +134,16 @@ const AnalyticsPage: React.FC = () => {
     }, [ingredients]);
 
     return (
-        <motion.div initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container} className="space-y-4 pb-20 max-w-6xl mx-auto font-sans px-4 md:px-0">
+        <motion.div initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container} className="space-y-2.5 pb-20 max-w-6xl mx-auto font-sans px-4 md:px-0">
             {/* Header */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-app-border pb-4">
+            <motion.div variants={ANIMATION_VARIANTS.item} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-app-border pb-4">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-app-primary/10 rounded-md flex items-center justify-center border border-app-primary/20">
-                        <BarChart3 className="h-5 w-5 text-app-primary" />
+                    <div className="h-8 w-8 bg-app-primary/10 flex items-center justify-center border border-app-primary/20 shrink-0">
+                        <BarChart3 className="h-4 w-4 text-app-primary" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-app-text leading-none">Insights</h1>
-                        <p className="text-xs font-medium text-app-muted mt-1.5 flex items-center gap-2">
+                        <h1 className="text-lg md:text-xl font-bold tracking-tight text-app-text leading-none">Insights</h1>
+                        <p className="text-xs font-medium text-app-muted mt-0.5 flex items-center gap-1.5">
                             <Activity className="h-3 w-3 text-app-success" /> Your kitchen at a glance
                         </p>
                     </div>
@@ -169,11 +169,11 @@ const AnalyticsPage: React.FC = () => {
             </motion.div>
 
             {/* Performance Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5">
                 {/* Financial chart */}
                 <motion.div variants={ANIMATION_VARIANTS.item} className="lg:col-span-8">
                     <Card className="rounded-lg border-app-border bg-app-card overflow-hidden shadow-soft">
-                        <CardHeader className="p-4 border-b border-app-border">
+                        <CardHeader className="p-2.5 border-b border-app-border">
                             <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2 text-app-text">
                                 <TrendingUp className="h-4 w-4 text-app-info" /> Sales over time
                             </CardTitle>
@@ -202,7 +202,7 @@ const AnalyticsPage: React.FC = () => {
                 {/* Pie */}
                 <motion.div variants={ANIMATION_VARIANTS.item} className="lg:col-span-4">
                     <Card className="rounded-lg border-app-border bg-app-card h-full overflow-hidden shadow-soft">
-                         <CardHeader className="p-4 border-b border-app-border">
+                         <CardHeader className="p-2.5 border-b border-app-border">
                             <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2 text-app-text">
                                 <PieIcon className="h-4 w-4 text-app-primary" /> Where your stock value sits
                             </CardTitle>
@@ -230,9 +230,11 @@ const AnalyticsPage: React.FC = () => {
                                     <span className="text-[10px] font-medium text-app-muted">Total value</span>
                                 </div>
                             </div>
-                            <div className="mt-3 space-y-1.5 max-h-[100px] overflow-y-auto scrollbar-hide">
+                            {/* No fixed height — four rows always fit, and a clipped
+                                half-row read as a rendering fault. */}
+                            <div className="mt-2 space-y-1">
                                 {inventoryData.slice(0, 4).map((i, idx) => (
-                                    <div key={i.name} className="flex items-center justify-between p-2 rounded-md bg-app-muted/10 border border-app-border">
+                                    <div key={i.name} className="flex items-center justify-between px-2 py-1 bg-app-muted/10 border border-app-border">
                                         <div className="flex items-center gap-2">
                                             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
                                             <span className="text-xs font-medium truncate max-w-[100px] text-app-muted">{i.name}</span>
@@ -249,11 +251,11 @@ const AnalyticsPage: React.FC = () => {
             {/* Menu Matrix */}
             <motion.div variants={ANIMATION_VARIANTS.item}>
                 <Card className="rounded-lg border-app-border bg-app-card overflow-hidden shadow-soft">
-                    <CardHeader className="p-4 border-b border-app-border flex flex-row items-center justify-between">
+                    <CardHeader className="p-2.5 border-b border-app-border flex flex-row items-center justify-between">
                         <CardTitle className="text-sm font-bold tracking-tight flex items-center gap-2 text-app-text">
                             <Star className="h-4 w-4 text-app-warning" /> Menu performance
                         </CardTitle>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2.5">
                              <div className="flex items-center gap-1.5">
                                 <div className="h-2 w-2 rounded-full bg-app-success" />
                                 <span className="text-xs font-medium text-app-muted">Popular</span>
@@ -301,8 +303,8 @@ const AnalyticsPage: React.FC = () => {
             </motion.div>
 
             {/* Insight Grid */}
-            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-app-elevated text-app-text p-5 rounded-lg border border-app-border relative overflow-hidden group shadow-soft">
+            <motion.div variants={ANIMATION_VARIANTS.item} className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                <div className="bg-app-elevated text-app-text p-2.5 rounded-lg border border-app-border relative overflow-hidden group shadow-soft">
                     <Zap className="absolute -bottom-2 -right-2 h-16 w-16 text-app-primary/10 group-hover:scale-110 transition-transform" />
                     <div className="flex items-center gap-2 mb-2">
                         <div className="h-7 w-7 bg-app-primary/20 rounded-lg flex items-center justify-center">
@@ -316,7 +318,7 @@ const AnalyticsPage: React.FC = () => {
                     </p>
                 </div>
 
-                <div className="bg-app-card border border-app-border p-5 rounded-lg relative overflow-hidden group shadow-soft">
+                <div className="bg-app-card border border-app-border p-2.5 rounded-lg relative overflow-hidden group shadow-soft">
                     <AlertTriangle className="absolute -bottom-2 -right-2 h-16 w-16 text-app-warning/10 group-hover:scale-110 transition-transform" />
                     <div className="flex items-center gap-2 mb-2">
                          <div className="h-7 w-7 bg-app-warning/10 rounded-lg flex items-center justify-center">

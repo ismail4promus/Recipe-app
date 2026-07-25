@@ -18,7 +18,7 @@ export const InvoiceModal: React.FC<{ order: Order; onClose: () => void }> = ({ 
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2.5 overflow-y-auto">
             <div className="w-full max-w-2xl bg-white text-black rounded-lg shadow-card overflow-hidden relative">
                 <div className="absolute top-4 right-4 flex gap-2 print:hidden">
                     <button onClick={handlePrint} aria-label="Print" className="flex h-11 w-11 items-center justify-center rounded-full bg-app-elevated text-app-text hover:bg-app-muted/15 transition-colors">
@@ -29,10 +29,10 @@ export const InvoiceModal: React.FC<{ order: Order; onClose: () => void }> = ({ 
                     </button>
                 </div>
                 
-                <div ref={printRef} className="p-10 space-y-5 print:p-0 print:m-0">
+                <div ref={printRef} className="p-10 space-y-2.5 print:p-0 print:m-0">
                     <div className="flex justify-between items-start border-b pb-8">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">INVOICE</h1>
+                            <h1 className="text-xl font-bold text-gray-900">INVOICE</h1>
                             <p className="text-gray-500 font-medium">#{order.orderNumber}</p>
                         </div>
                         <div className="text-right">

@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext, ReactNode, useMemo, useEffe
 import { Recipe, Ingredient, Order, OrderStatus, CookingSession } from '../types';
 import { MOCK_RECIPES, MOCK_INGREDIENTS, MOCK_ORDERS, MOCK_SESSIONS } from '../constants';
 import { db, convertTimestamps } from '../lib/firebase';
+import { useAuth } from './AuthContext';
 import { 
   collection, 
   onSnapshot, 
@@ -48,9 +49,37 @@ interface DataContextType {
   resetPantryFromConstants?: () => Promise<void>;
   loading: boolean;
   isDemoMode: boolean;
+  /** Set when a write did not reach Firestore. Null when everything is saved. */
+  saveError: string | null;
+  dismissSaveError: () => void;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
+
+/**
+ * Firestore rejects `undefined` anywhere in a document, including inside nested
+ * arrays such as a recipe's ingredient sections. Optional fields cleared in the
+ * editor arrive as undefined, so drop them before writing.
+ */
+const stripUndefined = (value: any): any => {
+    if (Array.isArray(value)) return value.map(stripUndefined);
+    if (value && typeof value === 'object' && !(value instanceof Date) && !(value instanceof Timestamp)) {
+        const out: any = {};
+        Object.entries(value).forEach(([k, v]) => {
+            if (v !== undefined) out[k] = stripUndefined(v);
+        });
+        return out;
+    }
+    return value;
+};
+
+/** Merge incoming records into a list by id, replacing matches and appending the rest. */
+const upsertById = <T extends { id: string }>(current: T[], incoming: T[]): T[] => {
+    const byId = new Map(incoming.map(item => [item.id, item]));
+    const merged = current.map(item => byId.get(item.id) ?? item);
+    current.forEach(item => byId.delete(item.id));
+    return [...merged, ...byId.values()];
+};
 
 // Helper for batched writes
 const batchWriteDocs = async (collectionName: string, items: any[], idField: string = 'id') => {
@@ -70,29 +99,82 @@ const batchWriteDocs = async (collectionName: string, items: any[], idField: str
                 }
             });
             const docRef = id ? doc(db, collectionName, id) : doc(collection(db, collectionName));
-            batch.set(docRef, cleanData);
+            batch.set(docRef, stripUndefined(cleanData));
         });
         await batch.commit();
     }
 };
 
+/** Turn a Firestore write failure into something a cook can act on. */
+const describeWriteError = (label: string, e: any, signedIn: boolean): string => {
+  switch (e?.code) {
+    case 'permission-denied':
+      return signedIn
+        ? `Not saved: ${label} — your account does not have permission to write to this database.`
+        : `Not saved: ${label} — sign in first.`;
+    case 'unavailable':
+      return `Not saved yet: ${label} — the database is unreachable. It will retry while you stay on this page.`;
+    case 'not-found':
+      return `Not saved: ${label} — that record no longer exists in the database.`;
+    case 'invalid-argument':
+      return `Not saved: ${label} — rejected by the database (${e?.message || 'invalid data'}).`;
+    default:
+      return `Not saved: ${label} — ${e?.message || 'unknown error'}.`;
+  }
+};
+
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user, loading: authLoading } = useAuth();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [cookingSessions, setCookingSessions] = useState<CookingSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const dismissSaveError = useCallback(() => setSaveError(null), []);
+
+  /**
+   * Every write goes through here so a failure is never silent: the change is
+   * still applied locally so the user does not lose their work, but they are
+   * told it did not reach the database.
+   */
+  const persist = useCallback(async (label: string, remote: () => Promise<void>, local: () => void) => {
+    if (isDemoMode) {
+      local();
+      setSaveError(user
+        ? `Not saved: ${label} — the app is showing local demo data because the database is unreachable.`
+        : `Not saved: ${label} — sign in to write to the kitchen database.`);
+      return;
+    }
+    try {
+      await remote();
+      setSaveError(null);
+    } catch (e: any) {
+      console.error(`Firestore write failed [${label}]`, e);
+      local();
+      setSaveError(describeWriteError(label, e, !!user));
+    }
+  }, [isDemoMode, user]);
 
   // --- Optimization: Maps for O(1) lookup ---
   const ingredientMap = useMemo(() => new Map(ingredients.map(i => [i.id, i])), [ingredients]);
   const recipeMap = useMemo(() => new Map(recipes.map(r => [r.id, r])), [recipes]);
 
   // --- Firestore Listeners ---
+  // Re-subscribed whenever the signed-in user changes: with auth-gated rules a
+  // signed-out session gets permission-denied, and those listeners stay dead
+  // until they are rebuilt with the new credentials.
   useEffect(() => {
+    if (authLoading) return;
+
     let unsubscribers: Unsubscribe[] = [];
     let loadedState = { recipes: false, ingredients: false, orders: false, cookingSessions: false };
-    
+
+    setLoading(true);
+    setIsDemoMode(false);
+
     const updateLoading = () => {
         if (Object.values(loadedState).every(v => v)) {
             setLoading(false);
@@ -167,16 +249,19 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         unsubscribers.forEach(unsub => unsub && unsub());
         clearTimeout(timeout);
     };
-  }, []); // Run once on mount
+  }, [user?.uid, authLoading]);
 
-  // Auto-seed if empty (and not demo mode)
+  // Auto-seed if empty. Only ever attempted for a signed-in user — seeding while
+  // signed out just produces a wall of permission-denied errors.
+  const seedAttempted = React.useRef(false);
   useEffect(() => {
-    if (!loading && !isDemoMode && recipes.length === 0 && ingredients.length === 0) {
-        // Prevent auto-seed loop by checking against empty state once
+    if (loading || isDemoMode || !user || seedAttempted.current) return;
+    if (recipes.length === 0 && ingredients.length === 0) {
+        seedAttempted.current = true;
         console.log("Database empty. Auto-seeding...");
         seedDatabase();
     }
-  }, [loading, isDemoMode, recipes.length, ingredients.length]);
+  }, [loading, isDemoMode, user, recipes.length, ingredients.length]);
 
   // --- Accessors ---
   const getRecipeById = useCallback((id: string) => recipeMap.get(id), [recipeMap]);
@@ -200,55 +285,48 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       priority: newOrderData.priority || 'normal',
     };
     
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        await setDoc(doc(db, 'orders', generatedId), {
+    await persist(
+        'Order',
+        () => setDoc(doc(db, 'orders', generatedId), stripUndefined({
             ...newOrder,
             createdAt: Timestamp.fromDate(newOrder.createdAt),
             dueDate: newOrder.dueDate ? Timestamp.fromDate(newOrder.dueDate) : null
-        });
-    } catch (e) {
-        setOrders(prev => [...prev, newOrder]);
-    }
-  }, [isDemoMode]);
+        })),
+        () => setOrders(prev => [...prev, newOrder])
+    );
+  }, [persist]);
 
   const updateOrder = useCallback(async (id: string, updates: Partial<Order>) => {
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        const cleanUpdates = { ...updates };
-        if (cleanUpdates.dueDate && cleanUpdates.dueDate instanceof Date) {
-            (cleanUpdates as any).dueDate = Timestamp.fromDate(cleanUpdates.dueDate);
-        }
-        await updateDoc(doc(db, 'orders', id), cleanUpdates);
-    } catch (e) {
-        setOrders(prev => prev.map(o => o.id === id ? { ...o, ...updates } : o));
-    }
-  }, [isDemoMode]);
+    const cleanUpdates: any = { ...updates };
+    if (cleanUpdates.dueDate instanceof Date) cleanUpdates.dueDate = Timestamp.fromDate(cleanUpdates.dueDate);
+    await persist(
+        'Order',
+        () => updateDoc(doc(db, 'orders', id), stripUndefined(cleanUpdates)),
+        () => setOrders(prev => prev.map(o => o.id === id ? { ...o, ...updates } : o))
+    );
+  }, [persist]);
 
   const deleteOrder = useCallback(async (id: string) => {
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        await deleteDoc(doc(db, 'orders', id));
-    } catch (e) {
-        setOrders(prev => prev.filter(o => o.id !== id));
-    }
-  }, [isDemoMode]);
+    await persist(
+        'Order deletion',
+        () => deleteDoc(doc(db, 'orders', id)),
+        () => setOrders(prev => prev.filter(o => o.id !== id))
+    );
+  }, [persist]);
 
   const updateOrderStatus = useCallback(async (orderId: string, status: OrderStatus) => {
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        // Optimization: Use transaction for critical status updates to ensure consistency
-        await runTransaction(db, async (transaction) => {
+    await persist(
+        'Order status',
+        // Transaction so a status change cannot race another writer.
+        () => runTransaction(db, async (transaction) => {
             const orderRef = doc(db, 'orders', orderId);
             const orderDoc = await transaction.get(orderRef);
             if (!orderDoc.exists()) throw new Error("Order does not exist");
             transaction.update(orderRef, { status });
-        });
-    } catch (e) {
-        console.warn("Update status failed or demo mode", e);
-        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
-    }
-  }, [isDemoMode]);
+        }),
+        () => setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
+    );
+  }, [persist]);
 
   // --- Ingredient Logic ---
   const addIngredient = useCallback(async (newIngredient: Ingredient) => {
@@ -256,49 +334,41 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const docId = id || `ing_${Date.now()}`;
     const finalData = { ...data, last_verified: data.last_verified ? Timestamp.fromDate(data.last_verified) : Timestamp.now() };
     
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        await setDoc(doc(db, 'ingredients', docId), finalData);
-    } catch (e) {
-        setIngredients(prev => [...prev, { ...newIngredient, id: docId, last_verified: new Date() }]);
-    }
-  }, [isDemoMode]);
+    await persist(
+        'Inventory item',
+        () => setDoc(doc(db, 'ingredients', docId), stripUndefined(finalData)),
+        () => setIngredients(prev => [...prev, { ...newIngredient, id: docId, last_verified: new Date() }])
+    );
+  }, [persist]);
 
   const batchAddIngredients = useCallback(async (newIngredients: Ingredient[]) => {
-    try {
-      if (isDemoMode) {
-        setIngredients(prev => [...prev, ...newIngredients]);
-        return;
-      }
-      await batchWriteDocs('ingredients', newIngredients);
-    } catch (e) {
-      console.error("Batch ingredient import failed", e);
-      setIngredients(prev => [...prev, ...newIngredients]);
-    }
-  }, [isDemoMode]);
+    await persist(
+        `${newIngredients.length} inventory item${newIngredients.length === 1 ? '' : 's'}`,
+        () => batchWriteDocs('ingredients', newIngredients),
+        // Upsert by id so the local view matches what a batch `set` would do —
+        // appending would show an imported item twice.
+        () => setIngredients(prev => upsertById(prev, newIngredients))
+    );
+  }, [persist]);
 
   const updateIngredient = useCallback(async (updatedIngredient: Ingredient) => {
     const { id, ...data } = updatedIngredient;
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        const cleanData: any = { ...data };
-        if (cleanData.last_verified instanceof Date) {
-            cleanData.last_verified = Timestamp.fromDate(cleanData.last_verified);
-        }
-        await updateDoc(doc(db, 'ingredients', id), cleanData);
-    } catch (e) {
-        setIngredients(prev => prev.map(i => i.id === id ? updatedIngredient : i));
-    }
-  }, [isDemoMode]);
+    const cleanData: any = { ...data };
+    if (cleanData.last_verified instanceof Date) cleanData.last_verified = Timestamp.fromDate(cleanData.last_verified);
+    await persist(
+        'Inventory item',
+        () => updateDoc(doc(db, 'ingredients', id), stripUndefined(cleanData)),
+        () => setIngredients(prev => prev.map(i => i.id === id ? updatedIngredient : i))
+    );
+  }, [persist]);
 
   const deleteIngredient = useCallback(async (id: string) => {
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        await deleteDoc(doc(db, 'ingredients', id));
-    } catch (e) {
-        setIngredients(prev => prev.filter(i => i.id !== id));
-    }
-  }, [isDemoMode]);
+    await persist(
+        'Inventory deletion',
+        () => deleteDoc(doc(db, 'ingredients', id)),
+        () => setIngredients(prev => prev.filter(i => i.id !== id))
+    );
+  }, [persist]);
 
   // --- Recipe Logic ---
   const addRecipe = useCallback(async (newRecipe: Recipe) => {
@@ -306,47 +376,39 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const docId = id || `rec_${Date.now()}`;
     const finalData = { ...data, createdAt: data.createdAt ? Timestamp.fromDate(data.createdAt) : Timestamp.now() };
 
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        await setDoc(doc(db, 'recipes', docId), finalData);
-    } catch (e) {
-        setRecipes(prev => [...prev, { ...newRecipe, id: docId, createdAt: newRecipe.createdAt || new Date() }]);
-    }
-  }, [isDemoMode]);
+    await persist(
+        'Recipe',
+        () => setDoc(doc(db, 'recipes', docId), stripUndefined(finalData)),
+        () => setRecipes(prev => [...prev, { ...newRecipe, id: docId, createdAt: newRecipe.createdAt || new Date() }])
+    );
+  }, [persist]);
 
   const batchAddRecipes = useCallback(async (newRecipes: Recipe[]) => {
-    try {
-      if (isDemoMode) {
-        setRecipes(prev => [...prev, ...newRecipes]);
-        return;
-      }
-      await batchWriteDocs('recipes', newRecipes);
-    } catch (e) {
-      console.error("Batch recipe import failed", e);
-      setRecipes(prev => [...prev, ...newRecipes]);
-    }
-  }, [isDemoMode]);
+    await persist(
+        `${newRecipes.length} recipe${newRecipes.length === 1 ? '' : 's'}`,
+        () => batchWriteDocs('recipes', newRecipes),
+        () => setRecipes(prev => upsertById(prev, newRecipes))
+    );
+  }, [persist]);
 
   const updateRecipe = useCallback(async (updatedRecipe: Recipe) => {
     const { id, ...data } = updatedRecipe;
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        const cleanData: any = { ...data };
-        if (cleanData.createdAt instanceof Date) cleanData.createdAt = Timestamp.fromDate(cleanData.createdAt);
-        await updateDoc(doc(db, 'recipes', id), cleanData);
-    } catch (e) {
-        setRecipes(prev => prev.map(r => r.id === id ? updatedRecipe : r));
-    }
-  }, [isDemoMode]);
+    const cleanData: any = { ...data };
+    if (cleanData.createdAt instanceof Date) cleanData.createdAt = Timestamp.fromDate(cleanData.createdAt);
+    await persist(
+        'Recipe',
+        () => updateDoc(doc(db, 'recipes', id), stripUndefined(cleanData)),
+        () => setRecipes(prev => prev.map(r => r.id === id ? updatedRecipe : r))
+    );
+  }, [persist]);
 
   const deleteRecipe = useCallback(async (id: string) => {
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        await deleteDoc(doc(db, 'recipes', id));
-    } catch (e) {
-        setRecipes(prev => prev.filter(r => r.id !== id));
-    }
-  }, [isDemoMode]);
+    await persist(
+        'Recipe deletion',
+        () => deleteDoc(doc(db, 'recipes', id)),
+        () => setRecipes(prev => prev.filter(r => r.id !== id))
+    );
+  }, [persist]);
 
   const duplicateRecipe = useCallback(async (recipe: Recipe) => {
      const newId = `rec_${Date.now()}_copy`;
@@ -370,35 +432,31 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         endTime: data.endTime ? Timestamp.fromDate(data.endTime) : null
     };
 
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        await setDoc(doc(db, 'cookingSessions', docId), finalData);
-    } catch (e) {
-        setCookingSessions(prev => [...prev, session]);
-    }
-  }, [isDemoMode]);
+    await persist(
+        'Cooking session',
+        () => setDoc(doc(db, 'cookingSessions', docId), stripUndefined(finalData)),
+        () => setCookingSessions(prev => [...prev, session])
+    );
+  }, [persist]);
 
   const updateCookingSession = useCallback(async (id: string, updates: Partial<CookingSession>) => {
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        const cleanUpdates: any = { ...updates };
-        if (cleanUpdates.startTime instanceof Date) cleanUpdates.startTime = Timestamp.fromDate(cleanUpdates.startTime);
-        if (cleanUpdates.endTime instanceof Date) cleanUpdates.endTime = Timestamp.fromDate(cleanUpdates.endTime);
-        
-        await updateDoc(doc(db, 'cookingSessions', id), cleanUpdates);
-    } catch (e) {
-        setCookingSessions(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s));
-    }
-  }, [isDemoMode]);
+    const cleanUpdates: any = { ...updates };
+    if (cleanUpdates.startTime instanceof Date) cleanUpdates.startTime = Timestamp.fromDate(cleanUpdates.startTime);
+    if (cleanUpdates.endTime instanceof Date) cleanUpdates.endTime = Timestamp.fromDate(cleanUpdates.endTime);
+    await persist(
+        'Cooking session',
+        () => updateDoc(doc(db, 'cookingSessions', id), stripUndefined(cleanUpdates)),
+        () => setCookingSessions(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s))
+    );
+  }, [persist]);
 
   const deleteCookingSession = useCallback(async (id: string) => {
-    try {
-        if (isDemoMode) throw new Error("Demo Mode");
-        await deleteDoc(doc(db, 'cookingSessions', id));
-    } catch (e) {
-        setCookingSessions(prev => prev.filter(s => s.id !== id));
-    }
-  }, [isDemoMode]);
+    await persist(
+        'Session deletion',
+        () => deleteDoc(doc(db, 'cookingSessions', id)),
+        () => setCookingSessions(prev => prev.filter(s => s.id !== id))
+    );
+  }, [persist]);
 
   const getSessionsByRecipeId = useCallback((recipeId: string) => {
     return cookingSessions
@@ -421,10 +479,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         await batchWriteDocs('orders', MOCK_ORDERS);
         await batchWriteDocs('cookingSessions', MOCK_SESSIONS);
         console.log("Database Seeded Successfully");
-    } catch (e) {
+        setSaveError(null);
+    } catch (e: any) {
         console.error("Failed to seed database:", e);
+        setSaveError(describeWriteError('Sample data', e, !!user));
     }
-  }, [isDemoMode]);
+  }, [isDemoMode, user]);
 
   const resetPantryFromConstants = useCallback(async () => {
     try {
@@ -450,10 +510,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Re-seed
       await batchWriteDocs('ingredients', MOCK_INGREDIENTS);
       console.log('Pantry reset complete.');
-    } catch (err) {
+      setSaveError(null);
+    } catch (err: any) {
       console.error('Failed to reset pantry:', err);
+      setSaveError(describeWriteError('Pantry reset', err, !!user));
     }
-  }, [isDemoMode]);
+  }, [isDemoMode, user]);
 
   const syncMissingData = useCallback(async () => {
     try {
@@ -477,13 +539,15 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
         
         console.log("Data Sync Complete");
-    } catch (e) {
+        setSaveError(null);
+    } catch (e: any) {
         console.error("Failed to sync missing data:", e);
+        setSaveError(describeWriteError('Data sync', e, !!user));
     }
-  }, [isDemoMode, recipes, ingredients]);
+  }, [isDemoMode, recipes, ingredients, user]);
 
   const value = useMemo(() => ({
-    recipes, ingredients, orders, cookingSessions, loading, isDemoMode,
+    recipes, ingredients, orders, cookingSessions, loading, isDemoMode, saveError, dismissSaveError,
     getRecipeById, getIngredientById, getIngredientsByIds,
     addOrder, updateOrder, deleteOrder, updateOrderStatus,
     addIngredient, updateIngredient, deleteIngredient, batchAddIngredients,
@@ -491,7 +555,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     addCookingSession, updateCookingSession, deleteCookingSession, getSessionsByRecipeId,
     seedDatabase, resetPantryFromConstants, syncMissingData
   }), [
-    recipes, ingredients, orders, cookingSessions, loading, isDemoMode,
+    recipes, ingredients, orders, cookingSessions, loading, isDemoMode, saveError, dismissSaveError,
     getRecipeById, getIngredientById, getIngredientsByIds,
     addOrder, updateOrder, deleteOrder, updateOrderStatus,
     addIngredient, updateIngredient, deleteIngredient, batchAddIngredients,

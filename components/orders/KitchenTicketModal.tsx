@@ -19,7 +19,7 @@ export const KitchenTicketModal: React.FC<{ order: Order; onClose: () => void }>
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2.5 overflow-y-auto">
             <div className="w-full max-w-md bg-white text-black rounded-lg shadow-card overflow-hidden relative">
                 <div className="absolute top-4 right-4 flex gap-2 print:hidden">
                     <button onClick={handlePrint} aria-label="Print" className="flex h-11 w-11 items-center justify-center rounded-full bg-app-elevated text-app-text hover:bg-app-muted/15 transition-colors">
@@ -30,7 +30,7 @@ export const KitchenTicketModal: React.FC<{ order: Order; onClose: () => void }>
                     </button>
                 </div>
                 
-                <div ref={printRef} className="p-6 space-y-6 print:p-0 print:m-0 font-mono">
+                <div ref={printRef} className="p-3 space-y-3 print:p-0 print:m-0 font-mono">
                     <div className="text-center border-b-2 border-black pb-4">
                         <h2 className="text-2xl font-black">KITCHEN TICKET</h2>
                         <div className="flex justify-between mt-2 text-sm font-bold">
@@ -44,9 +44,9 @@ export const KitchenTicketModal: React.FC<{ order: Order; onClose: () => void }>
                         )}
                     </div>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-2.5">
                         {order.items.map((item, idx) => (
-                            <div key={idx} className="flex gap-4 items-start">
+                            <div key={idx} className="flex gap-2.5 items-start">
                                 <span className="font-black text-xl w-8">{item.quantity}</span>
                                 <div className="flex-1">
                                     <span className="font-bold text-lg block leading-tight">{item.recipeName}</span>
@@ -62,7 +62,7 @@ export const KitchenTicketModal: React.FC<{ order: Order; onClose: () => void }>
                         </div>
                     )}
 
-                    <div className="text-center pt-6 text-xs font-bold uppercase">
+                    <div className="text-center pt-3 text-xs font-bold uppercase">
                         --- End of Ticket ---
                     </div>
                 </div>

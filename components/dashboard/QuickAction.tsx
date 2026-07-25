@@ -15,14 +15,14 @@ const QuickAction: React.FC<QuickActionProps> = ({ icon: Icon, label, to, primar
   <Link
     to={to}
     className={cn(
-      'flex min-h-[60px] flex-col items-center justify-center gap-2 rounded-md border p-2.5 text-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 active:scale-[0.97]',
+      'flex min-h-[44px] items-center justify-center gap-2 border px-2 py-2 text-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 active:scale-[0.97]',
       primary
-        ? 'border-transparent bg-app-primary text-primary-foreground shadow-md shadow-app-primary/20 hover:brightness-105'
-        : 'border-app-border bg-app-card text-app-text hover:border-app-primary/40 hover:bg-white/[0.03]'
+        ? 'border-app-primary bg-app-primary text-primary-foreground hover:brightness-105'
+        : 'border-app-border bg-app-card text-app-text hover:border-app-primary/40 hover:bg-app-muted/[0.06]'
     )}
   >
-    <Icon className={cn('h-5 w-5', primary ? '' : 'text-app-primary')} strokeWidth={2} />
-    <span className="text-xs font-semibold leading-tight">{label}</span>
+    <Icon className={cn('h-4 w-4 shrink-0', primary ? '' : 'text-app-primary')} strokeWidth={2} />
+    <span className="truncate text-xs font-semibold leading-tight">{label}</span>
   </Link>
 );
 

@@ -43,7 +43,7 @@ const Section: React.FC<SectionProps> = ({ title, icon: Icon, action, className,
         </Link>
       )}
     </header>
-    <div className="p-4">{children}</div>
+    <div className="p-2.5">{children}</div>
   </section>
 );
 

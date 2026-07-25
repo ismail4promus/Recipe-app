@@ -44,7 +44,7 @@ export const AddIngredientModal: React.FC<{
     return (
         <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-4 backdrop-blur-md"
+            className="fixed inset-0 bg-black/60 z-[200] flex items-center justify-center p-2.5 backdrop-blur-md"
             onClick={onClose}
         >
             <motion.div
@@ -52,7 +52,7 @@ export const AddIngredientModal: React.FC<{
                 className="bg-app-card rounded-lg shadow-soft w-full max-w-lg overflow-hidden border border-app-border relative"
                 onClick={e => e.stopPropagation()}
             >
-                <div className="bg-app-elevated p-6 border-b border-app-border flex justify-between items-center relative z-10">
+                <div className="bg-app-elevated p-3 border-b border-app-border flex justify-between items-center relative z-10">
                     <div>
                         <h2 className="text-xl font-bold text-app-text tracking-tight flex items-center gap-3 leading-none">
                             <PlusCircle className="h-5 w-5 text-app-primary" /> Add Inventory Item
@@ -64,15 +64,15 @@ export const AddIngredientModal: React.FC<{
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-5 space-y-5 max-h-[80vh] overflow-y-auto scrollbar-hide relative z-10">
+                <form onSubmit={handleSubmit} className="p-2.5 space-y-2.5 max-h-[80vh] overflow-y-auto scrollbar-hide relative z-10">
                     
                     {/* Identification Section */}
-                    <div className="space-y-4">
+                    <div className="space-y-2.5">
                         <div className="flex items-center gap-3">
                             <Tag className="h-4 w-4 text-app-primary" />
                             <h3 className="text-xs text-app-muted font-medium">Item details</h3>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-2.5">
                             <div className="col-span-2 space-y-2">
                                 <label className="text-xs text-app-muted font-medium block ml-1">Name</label>
                                 <input
@@ -104,12 +104,12 @@ export const AddIngredientModal: React.FC<{
                     <div className="h-px bg-app-border"></div>
 
                     {/* Logistics Section */}
-                    <div className="space-y-4">
+                    <div className="space-y-2.5">
                         <div className="flex items-center gap-3">
                             <Package className="h-4 w-4 text-app-primary" />
                             <h3 className="text-xs text-app-muted font-medium">Packaging</h3>
                         </div>
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-3 gap-2.5">
                             <div className="space-y-2">
                                 <label className="text-xs text-app-muted font-medium block ml-1">Base unit</label>
                                 <select
@@ -135,7 +135,7 @@ export const AddIngredientModal: React.FC<{
                             </div>
                         </div>
 
-                        <div className="bg-app-elevated p-5 rounded-md border border-app-border flex items-center justify-between group">
+                        <div className="bg-app-elevated p-2.5 rounded-md border border-app-border flex items-center justify-between group">
                             <div className="space-y-1.5 flex-1">
                                 <label className="text-xs font-medium text-app-primary block">Quantity in stock</label>
                                 <input
@@ -154,9 +154,9 @@ export const AddIngredientModal: React.FC<{
                     </div>
 
                     {/* Financial Readout Section */}
-                    <div className="space-y-4 pt-4 border-t border-app-border">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-4">
+                    <div className="space-y-2.5 pt-4 border-t border-app-border">
+                        <div className="grid grid-cols-2 gap-2.5">
+                            <div className="space-y-2.5">
                                 <div className="flex items-center gap-3">
                                     <DollarSign className="h-4 w-4 text-app-primary" />
                                     <h3 className="text-xs text-app-muted font-medium">Cost</h3>
@@ -173,7 +173,7 @@ export const AddIngredientModal: React.FC<{
                                 </div>
                             </div>
 
-                            <div className="bg-app-primary/10 rounded-md p-5 border border-app-primary/20 flex flex-col justify-center">
+                            <div className="bg-app-primary/10 rounded-md p-2.5 border border-app-primary/20 flex flex-col justify-center">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Scale className="h-4 w-4 text-app-primary" />
                                     <span className="text-xs font-medium text-app-primary">Unit cost</span>
@@ -186,7 +186,7 @@ export const AddIngredientModal: React.FC<{
                         </div>
                     </div>
 
-                    <div className="pt-6 border-t border-app-border flex gap-4">
+                    <div className="pt-3 border-t border-app-border flex gap-2.5">
                         <div className="flex-1 space-y-2">
                             <label className="text-xs text-app-muted font-medium block flex items-center gap-2"><Calendar className="h-3 w-3"/> Shelf life (days)</label>
                              <input
@@ -196,7 +196,7 @@ export const AddIngredientModal: React.FC<{
                         </div>
                     </div>
 
-                    <div className="pt-4 flex justify-end gap-4">
+                    <div className="pt-4 flex justify-end gap-2.5">
                         <button type="button" onClick={onClose} className="min-h-[44px] px-8 rounded-md text-sm font-semibold text-app-muted hover:text-app-text transition-colors">
                             Cancel
                         </button>

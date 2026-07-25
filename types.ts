@@ -26,6 +26,7 @@ export interface RecipeIngredient {
   type?: string; // e.g., 'Whole', 'Powder', 'Liquid'
   notes?: string;
   manualCostPerUnit?: number; // Cost per 1 unit of the 'unit' defined above, used for overrides
+  baseUnitPerUnit?: number; // 1 [unit] expressed in the linked pantry item's baseUnit (e.g. 1 pc = 150 g)
 }
 
 export interface IngredientSection {

@@ -21,26 +21,26 @@ export const NutritionTab: React.FC<{ recipe: Recipe; scaleFactor: number }> = (
     const hasData = nutrition.calories > 0;
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-2">
             {!hasData && (
-                <div className="bg-app-muted/10 rounded-lg p-4 flex items-center gap-3 border border-app-border">
-                    <Info className="h-5 w-5 text-app-muted" />
-                    <p className="text-sm text-app-muted">Nutrition data has not been added for this recipe.</p>
+                <div className="bg-app-muted/10 p-2.5 flex items-center gap-2.5 border border-app-border">
+                    <Info className="h-4 w-4 shrink-0 text-app-muted" />
+                    <p className="text-xs text-app-muted">Nutrition data has not been added for this recipe.</p>
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-app-card border border-app-border shadow-soft p-6 rounded-lg flex flex-col justify-center items-center relative">
-                    <h3 className="absolute top-4 left-4 text-sm font-semibold text-app-muted">Calorie Breakdown</h3>
-                    <div className="h-48 w-full flex items-center justify-center relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="bg-app-elevated border border-app-border p-2.5 flex flex-col relative">
+                    <h3 className="text-[11px] font-semibold text-app-muted uppercase tracking-wider">Calorie breakdown</h3>
+                    <div className="h-36 w-full flex items-center justify-center relative">
                         {hasData ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
                                         data={data}
-                                        innerRadius={60}
-                                        outerRadius={80}
-                                        paddingAngle={5}
+                                        innerRadius={44}
+                                        outerRadius={62}
+                                        paddingAngle={4}
                                         dataKey="value"
                                         stroke="none"
                                     >
@@ -52,72 +52,50 @@ export const NutritionTab: React.FC<{ recipe: Recipe; scaleFactor: number }> = (
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="h-32 w-32 rounded-full border-4 border-app-border flex items-center justify-center">
-                                <Activity className="h-8 w-8 text-app-muted opacity-50" />
+                            <div className="h-24 w-24 border-2 border-app-border flex items-center justify-center">
+                                <Activity className="h-6 w-6 text-app-muted opacity-50" />
                             </div>
                         )}
                         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <span className="text-3xl font-bold text-app-text">{Math.round(scaledCalories)}</span>
-                            <span className="text-xs font-medium text-app-muted">Calories</span>
+                            <span className="text-2xl font-bold text-app-text tabular-nums leading-none">{Math.round(scaledCalories)}</span>
+                            <span className="text-[10px] font-medium text-app-muted mt-0.5">Calories</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-app-card border border-app-border shadow-soft p-6 rounded-lg space-y-6">
-                    <h3 className="text-sm font-semibold text-app-muted">Macronutrients</h3>
-                    <div className="space-y-4">
-                        <div className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                                <span className="font-semibold text-app-info">Protein</span>
-                                <span className="font-semibold text-app-text">{Math.round(nutrition.protein * scaleFactor)}g</span>
+                <div className="bg-app-elevated border border-app-border p-2.5 space-y-2.5">
+                    <h3 className="text-[11px] font-semibold text-app-muted uppercase tracking-wider">Macronutrients</h3>
+                    {[
+                        { label: 'Protein', grams: nutrition.protein, calories: nutrition.protein * 4, text: 'text-app-info', bar: 'bg-app-info', track: 'bg-app-info/15' },
+                        { label: 'Carbs', grams: nutrition.carbs, calories: nutrition.carbs * 4, text: 'text-app-success', bar: 'bg-app-success', track: 'bg-app-success/15' },
+                        { label: 'Fat', grams: nutrition.fat, calories: nutrition.fat * 9, text: 'text-app-warning', bar: 'bg-app-warning', track: 'bg-app-warning/15' },
+                    ].map(macro => (
+                        <div key={macro.label} className="space-y-1">
+                            <div className="flex justify-between text-xs">
+                                <span className={cn("font-semibold", macro.text)}>{macro.label}</span>
+                                <span className="font-semibold text-app-text tabular-nums">{Math.round(macro.grams * scaleFactor)}g</span>
                             </div>
-                            <div className="h-2 w-full bg-app-info/15 rounded-full overflow-hidden">
+                            <div className={cn("h-1.5 w-full overflow-hidden", macro.track)}>
                                 <div
-                                    className="h-full bg-app-info"
-                                    style={{ width: `${hasData ? (nutrition.protein * 4 / nutrition.calories) * 100 : 0}%` }}
+                                    className={cn("h-full", macro.bar)}
+                                    style={{ width: `${hasData ? Math.min(100, (macro.calories / nutrition.calories) * 100) : 0}%` }}
                                 ></div>
                             </div>
                         </div>
-                        <div className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                                <span className="font-semibold text-app-success">Carbs</span>
-                                <span className="font-semibold text-app-text">{Math.round(nutrition.carbs * scaleFactor)}g</span>
-                            </div>
-                            <div className="h-2 w-full bg-app-success/15 rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-app-success"
-                                    style={{ width: `${hasData ? (nutrition.carbs * 4 / nutrition.calories) * 100 : 0}%` }}
-                                ></div>
-                            </div>
-                        </div>
-                        <div className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                                <span className="font-semibold text-app-warning">Fat</span>
-                                <span className="font-semibold text-app-text">{Math.round(nutrition.fat * scaleFactor)}g</span>
-                            </div>
-                            <div className="h-2 w-full bg-app-warning/15 rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-app-warning"
-                                    style={{ width: `${hasData ? (nutrition.fat * 9 / nutrition.calories) * 100 : 0}%` }}
-                                ></div>
-                            </div>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
 
             {allergens.length > 0 && (
-                <div className="p-4 bg-app-danger/10 border border-app-danger/20 rounded-lg">
-                    <h4 className="flex items-center gap-2 text-app-danger font-semibold text-sm mb-2">
-                        <AlertCircle className="h-4 w-4" /> Allergen Warning
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                        {allergens.map(allergen => (
-                            <span key={allergen} className="px-3 py-1 bg-app-danger/15 text-app-danger rounded-md text-xs font-medium">
-                                {allergen}
-                            </span>
-                        ))}
-                    </div>
+                <div className="p-2.5 bg-app-danger/10 border border-app-danger/20 flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                    <span className="flex items-center gap-1.5 text-app-danger font-semibold text-xs">
+                        <AlertCircle className="h-3.5 w-3.5" /> Allergens
+                    </span>
+                    {allergens.map(allergen => (
+                        <span key={allergen} className="px-2 py-0.5 bg-app-danger/15 text-app-danger text-[11px] font-medium">
+                            {allergen}
+                        </span>
+                    ))}
                 </div>
             )}
         </div>

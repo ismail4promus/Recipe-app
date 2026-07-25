@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Grid3X3, List, Plus, Star, Clock, Search, ArrowRight, ArrowUpDown } from "lucide-react";
+import { Grid3X3, List, Plus, Star, Clock, Search, ArrowRight, ArrowUpDown, Download, Upload, MoreVertical } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { Recipe, Ingredient } from "../types";
 import { formatCurrency, cn, ANIMATION_VARIANTS } from "../lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { Chip } from "../components/ui/kit";
 import { StickyToolbar } from "../components/ui/StickyToolbar";
+import { exportRecipes, parseImportedRecipes } from "../lib/recipeIO";
 
 const CATEGORIES = ["All", "Main Course", "Appetizer", "Dessert", "Beverage"];
 type SortKey = "featured" | "name" | "cost" | "time";
@@ -117,12 +118,37 @@ const RecipeCard: React.FC<{
 });
 
 export default function RecipesPage() {
-  const { recipes, updateRecipe, ingredients } = useData();
+  const { recipes, updateRecipe, batchAddRecipes, ingredients } = useData();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [sortBy, setSortBy] = useState<SortKey>("featured");
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleExport = useCallback(() => {
+    setMenuOpen(false);
+    if (recipes.length === 0) {
+      alert("No recipes to export.");
+      return;
+    }
+    exportRecipes(recipes);
+  }, [recipes]);
+
+  const handleImportFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-importing the same file
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const imported = parseImportedRecipes(text);
+      await batchAddRecipes(imported);
+      alert(`Imported ${imported.length} recipe${imported.length === 1 ? "" : "s"}.`);
+    } catch (err) {
+      alert(`Import failed: ${err instanceof Error ? err.message : "Unknown error"}`);
+    }
+  }, [batchAddRecipes]);
 
   // Cost per serving computed once per recipe (reused for display + sorting).
   const costMap = useMemo(() => {
@@ -158,19 +184,61 @@ export default function RecipesPage() {
   return (
     <motion.div
       initial="hidden" animate="visible" variants={ANIMATION_VARIANTS.container}
-      className="mx-auto max-w-[1500px] space-y-4 pb-20"
+      className="mx-auto max-w-[1500px] space-y-2.5 pb-20"
     >
       {/* Header */}
-      <motion.div variants={ANIMATION_VARIANTS.item} className="flex items-center justify-between gap-4 border-b border-app-border pb-4">
+      <motion.div variants={ANIMATION_VARIANTS.item} className="flex items-center justify-between gap-2.5 border-b border-app-border pb-4">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-app-text md:text-2xl">Recipes</h1>
           <p className="mt-0.5 text-sm text-app-muted">
             {filteredRecipes.length} of {recipes.length} {recipes.length === 1 ? "recipe" : "recipes"}
           </p>
         </div>
-        <Link to="/recipes/new" className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-app-primary px-4 text-sm font-semibold text-primary-foreground shadow-soft transition-all hover:brightness-105 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
-          <Plus className="h-[18px] w-[18px]" /> Add Recipe
-        </Link>
+        <div className="flex items-center gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="text/csv,.csv"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label="Import or export recipes"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              title="Import / export"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-app-border bg-app-elevated text-app-muted shadow-soft transition-all hover:text-app-text hover:border-app-primary/40 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+            >
+              <MoreVertical className="h-[18px] w-[18px]" />
+            </button>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                <div role="menu" className="absolute right-0 top-11 z-50 w-44 overflow-hidden rounded-md border border-app-border bg-app-card py-1 shadow-soft">
+                  <button
+                    role="menuitem"
+                    onClick={() => { setMenuOpen(false); fileInputRef.current?.click(); }}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-app-text transition-colors hover:bg-app-elevated"
+                  >
+                    <Upload className="h-4 w-4 text-app-muted" /> Import (CSV)
+                  </button>
+                  <button
+                    role="menuitem"
+                    onClick={handleExport}
+                    className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-app-text transition-colors hover:bg-app-elevated"
+                  >
+                    <Download className="h-4 w-4 text-app-muted" /> Export (CSV)
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+          <Link to="/recipes/new" aria-label="Add recipe" className="inline-flex h-10 items-center justify-center gap-2 bg-app-primary px-3 sm:px-4 text-sm font-semibold text-primary-foreground shadow-soft transition-all hover:brightness-105 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+            <Plus className="h-[18px] w-[18px]" /> <span className="hidden sm:inline">Add Recipe</span>
+          </Link>
+        </div>
       </motion.div>
 
       {/* Search + filters + sort */}
@@ -183,7 +251,7 @@ export default function RecipesPage() {
               aria-label="Search recipes"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-full rounded-md border border-app-border bg-app-elevated pl-10 pr-3 text-sm text-app-text placeholder:text-app-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+              className="h-9 w-full border border-app-border bg-app-elevated pl-9 pr-3 text-sm text-app-text placeholder:text-app-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
             />
           </div>
 

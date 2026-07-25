@@ -1,54 +1,46 @@
 import React from 'react';
 import { Recipe } from '../../types';
-import { Clock, Check, Target, ChevronRight } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { Clock, Check } from 'lucide-react';
 
 export const StepsTab: React.FC<{ steps: Recipe['steps'] }> = ({ steps }) => (
-    <div className="space-y-6 relative pl-6 md:pl-10">
-        <div className="absolute left-6 md:left-10 top-4 bottom-12 w-0.5 bg-app-border border-l-2 border-dashed border-app-primary/20"></div>
+    <div className="relative space-y-1.5 pl-7">
+        {/* Timeline rail, aligned to the centre of the step markers */}
+        <div className="absolute left-[13px] top-2 bottom-8 w-px bg-app-border"></div>
 
         {(!steps || steps.length === 0) && (
-            <div className="text-center py-20 text-app-muted bg-app-elevated rounded-lg border border-dashed border-app-border">
+            <div className="py-10 text-center text-app-muted bg-app-elevated border border-dashed border-app-border">
                 <p className="text-sm font-medium">No steps added yet</p>
             </div>
         )}
 
         {steps?.map((step, index) => (
             <div key={step.id} className="relative">
-                <div className="absolute -left-[14px] md:-left-[18px] top-1 h-7 w-7 rounded-full bg-app-elevated border-2 border-app-primary flex items-center justify-center z-10 shadow-soft">
-                    <span className="text-xs font-semibold text-app-primary">{index + 1}</span>
+                <div className="absolute -left-7 top-1.5 h-[26px] w-[26px] bg-app-elevated border border-app-primary/50 flex items-center justify-center z-10">
+                    <span className="text-[11px] font-bold text-app-primary tabular-nums">{index + 1}</span>
                 </div>
 
-                <div className="bg-app-elevated border border-app-border p-6 rounded-lg hover:border-app-primary/30 transition-all group shadow-soft ml-4">
-                    <div className="flex items-center justify-between mb-3 border-b border-app-border pb-3">
-                        <div className="flex items-center gap-2">
-                             <Target className="h-3.5 w-3.5 text-app-muted" />
-                             <span className="text-xs font-medium text-app-muted">Step {index + 1}</span>
-                        </div>
-                        {step.duration && (
-                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-app-primary/10 text-app-primary border border-app-primary/20">
-                                <Clock className="h-3 w-3" />
-                                <span className="text-xs font-medium">{step.duration} min</span>
-                            </div>
-                        )}
-                    </div>
-                    <p className="text-base md:text-lg text-app-text font-medium leading-relaxed tracking-tight font-sans">
+                <div className="bg-app-elevated border border-app-border px-3 py-2 hover:border-app-primary/40 transition-colors">
+                    <p className="text-sm text-app-text font-medium leading-relaxed">
                         {step.instruction}
                     </p>
+                    {!!step.duration && (
+                        <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-app-primary">
+                            <Clock className="h-3 w-3" /> {step.duration} min
+                        </span>
+                    )}
                 </div>
             </div>
         ))}
 
         {steps.length > 0 && (
-             <div className="relative pt-8">
-                 <div className="absolute -left-[18px] md:-left-[22px] top-5 h-9 w-9 rounded-full bg-app-success flex items-center justify-center z-10 shadow-soft text-white">
-                    <Check className="h-5 w-5" strokeWidth={3} />
+            <div className="relative pt-1">
+                <div className="absolute -left-7 top-1 h-[26px] w-[26px] bg-app-success flex items-center justify-center z-10 text-white">
+                    <Check className="h-4 w-4" strokeWidth={3} />
                 </div>
-                 <div className="ml-10">
-                    <h4 className="font-bold text-lg text-app-success tracking-tight leading-none mb-1">All done</h4>
-                    <p className="text-sm font-medium text-app-muted">Recipe complete</p>
-                 </div>
-             </div>
+                <p className="py-1.5 text-sm font-bold text-app-success tracking-tight">
+                    All done <span className="font-medium text-app-muted">· recipe complete</span>
+                </p>
+            </div>
         )}
     </div>
 );
