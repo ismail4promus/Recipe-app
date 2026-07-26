@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../components/ui/kit';
+import { useConfirm } from '../context/ConfirmContext';
+import { useToast } from '../context/ToastContext';
 
 const currencies = [
     { code: 'USD', symbol: '$', label: 'US Dollar' },
@@ -26,6 +28,9 @@ const SettingsPage: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { seedDatabase, syncMissingData, recipes, ingredients, orders, cookingSessions } = useData();
   const [activeTab, setActiveTab] = useState<'profile' | 'appearance' | 'data'>('profile');
+
+  const confirm = useConfirm();
+  const toast = useToast();
 
   // --- Profile State ---
   const [kitchenName, setKitchenName] = useState('');
@@ -61,17 +66,29 @@ const SettingsPage: React.FC = () => {
   };
 
   const handleSeed = async () => {
-      if (window.confirm("Overwrite existing data? This is irreversible.")) {
-          setSeeding(true);
-          try {
-              await seedDatabase();
-              setSeeded(true);
-              setTimeout(() => setSeeded(false), 3000);
-          } catch (e) {
-              console.error(e);
-          } finally {
-              setSeeding(false);
-          }
+      const ok = await confirm({
+          title: 'Load sample data?',
+          message: 'Sample recipes, inventory and orders are written into your kitchen database.',
+          details: [
+              'Any record that shares an id with the samples is overwritten.',
+              'This cannot be undone.',
+          ],
+          confirmLabel: 'Load sample data',
+          destructive: true,
+      });
+      if (!ok) return;
+
+      setSeeding(true);
+      try {
+          await seedDatabase();
+          setSeeded(true);
+          toast.success('Sample data loaded');
+          setTimeout(() => setSeeded(false), 3000);
+      } catch (e) {
+          console.error(e);
+          toast.error('Could not load sample data', e instanceof Error ? e.message : undefined);
+      } finally {
+          setSeeding(false);
       }
   };
 

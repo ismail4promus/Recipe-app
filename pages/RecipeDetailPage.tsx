@@ -16,11 +16,15 @@ import { PrintRecipeModal } from '../components/recipes/PrintRecipeModal';
 import { IngredientsTab } from '../components/recipes/IngredientsTab';
 import { StepsTab } from '../components/recipes/StepsTab';
 import { CostTab } from '../components/recipes/CostTab';
+import { useConfirm } from '../context/ConfirmContext';
+import { useToast } from '../context/ToastContext';
 
 export default function RecipeDetailPage() {
     const { recipeId } = useParams<{ recipeId: string }>();
     const navigate = useNavigate();
-    const { getRecipeById, updateRecipe, deleteRecipe, ingredients: pantryIngredients, updateIngredient, cookingSessions, loading } = useData();
+    const { getRecipeById, updateRecipe, deleteRecipe, addRecipe, ingredients: pantryIngredients, updateIngredient, cookingSessions, loading } = useData();
+    const confirm = useConfirm();
+    const toast = useToast();
 
     const [activeTab, setActiveTab] = useState<'ingredients' | 'steps' | 'cost' | 'nutrition'>('ingredients');
     const [showPrintModal, setShowPrintModal] = useState(false);
@@ -81,14 +85,35 @@ export default function RecipeDetailPage() {
     const currentServings = localServings ?? recipe.servings ?? 1;
     const scaleFactor = currentServings / (recipe.servings || 1);
 
-    const handleDelete = () => {
-        const warning = activeSessionsCount > 0
-            ? `\n\n${activeSessionsCount} cooking session(s) in progress will be left orphaned.`
-            : '';
-        if (window.confirm(`Delete "${recipe.name}"? This cannot be undone.${warning}`)) {
-            deleteRecipe(recipe.id);
-            navigate('/recipes');
-        }
+    const handleDelete = async () => {
+        const ok = await confirm({
+            title: `Delete "${recipe.name}"?`,
+            message: 'The recipe and its steps are removed from the kitchen.',
+            details: activeSessionsCount > 0
+                ? [`${activeSessionsCount} cooking session${activeSessionsCount === 1 ? '' : 's'} in progress will be left without a recipe.`]
+                : undefined,
+            confirmLabel: 'Delete recipe',
+            destructive: true,
+        });
+        if (!ok) return;
+
+        const deleted = await deleteRecipe(recipe.id);
+        if (!deleted) return;   // the save banner explains why
+
+        navigate('/recipes');
+        // The whole record is still in memory, so an accidental delete costs a tap.
+        toast.toast({
+            title: `Deleted "${recipe.name}"`,
+            tone: 'success',
+            duration: 10000,
+            action: {
+                label: 'Undo',
+                onClick: async () => {
+                    const restored = await addRecipe(recipe);
+                    if (restored) toast.success('Recipe restored');
+                },
+            },
+        });
     };
 
     return (

@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { ChefHat, X, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../lib/utils';
+import { useAuth } from '../../context/AuthContext';
 import { NAV_ITEMS } from './navConfig';
 
 // Slide-out menu for mobile — full nav incl. secondary items (Insights, Settings).
 const MobileDrawer: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
+  const { user } = useAuth();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     if (open) document.addEventListener('keydown', onKey);
@@ -58,16 +60,26 @@ const MobileDrawer: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
               ))}
             </nav>
 
-            <div className="p-3">
-              <div className="flex items-center gap-3 rounded-lg border border-app-border bg-app-card p-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-app-muted">
-                  <User className="h-4 w-4" />
+            <div className="p-2">
+              <Link
+                to={user ? '/settings' : '/signin'}
+                onClick={onClose}
+                className="flex items-center gap-2.5 border border-app-border bg-app-card p-2"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden border border-app-border bg-app-elevated text-app-muted">
+                  {user?.photoURL
+                    ? <img src={user.photoURL} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                    : <User className="h-4 w-4" />}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-app-text">Kitchen Owner</p>
-                  <p className="truncate text-xs text-app-muted">Signed in</p>
+                  <p className="truncate text-[13px] font-semibold text-app-text">
+                    {user ? (user.displayName || 'Signed in') : 'Not signed in'}
+                  </p>
+                  <p className={user ? 'truncate text-[11px] text-app-muted' : 'truncate text-[11px] font-medium text-app-warning'}>
+                    {user ? (user.email || 'Signed in') : 'Sign in to save your data'}
+                  </p>
                 </div>
-              </div>
+              </Link>
             </div>
           </motion.aside>
         </div>

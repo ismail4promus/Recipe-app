@@ -4,6 +4,8 @@ import { Ingredient } from '../../types';
 import { Edit, X, Tag, Scale, Box, DollarSign, Calendar, Save, Trash2, Crosshair, Package } from 'lucide-react';
 import { formatCurrency, AVAILABLE_UNITS, cn } from '../../lib/utils';
 import { useData } from '../../context/DataContext';
+import { useConfirm } from '../../context/ConfirmContext';
+import { useToast } from '../../context/ToastContext';
 
 const CATEGORIES = ["Protein", "Vegetable", "Fruit", "Grains", "Dairy", "Spices", "Oils & Fats", "Baking", "Condiments", "Beverage", "Other"];
 const PACKAGE_TYPES = ["pack", "box", "bag", "bottle", "can", "jar", "container", "crate", "kg", "liter", "piece"];
@@ -13,7 +15,9 @@ export const EditIngredientModal: React.FC<{
   onClose: () => void;
   onSave: (updatedIngredient: Ingredient) => void;
 }> = ({ ingredient, onClose, onSave }) => {
-  const { deleteIngredient } = useData();
+  const { deleteIngredient, addIngredient } = useData();
+  const confirm = useConfirm();
+  const toast = useToast();
   const [formData, setFormData] = useState<Partial<Ingredient>>(ingredient);
 
   useEffect(() => {
@@ -38,11 +42,31 @@ export const EditIngredientModal: React.FC<{
     onSave(updatedData);
   };
 
-  const handleDelete = () => {
-    if (window.confirm(`Delete ${ingredient.name}?`)) {
-        deleteIngredient(ingredient.id);
-        onClose();
-    }
+  const handleDelete = async () => {
+    const ok = await confirm({
+      title: `Delete ${ingredient.name}?`,
+      message: 'Recipes using it will lose their cost and stock link until you relink them.',
+      confirmLabel: 'Delete',
+      destructive: true,
+    });
+    if (!ok) return;
+
+    const deleted = await deleteIngredient(ingredient.id);
+    if (!deleted) return;   // the save banner explains why
+
+    onClose();
+    toast.toast({
+      title: `Deleted ${ingredient.name}`,
+      tone: 'success',
+      duration: 10000,
+      action: {
+        label: 'Undo',
+        onClick: async () => {
+          const restored = await addIngredient(ingredient);
+          if (restored) toast.success(`${ingredient.name} restored`);
+        },
+      },
+    });
   };
 
   const calculatedUnitCost = (formData.costPerPackage || 0) / (formData.packageSize || 1);

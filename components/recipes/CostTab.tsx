@@ -29,7 +29,7 @@ export const CostTab: React.FC<{
                 return;
             }
 
-            const ratio = baseUnitRatio(ing, pantryItem.baseUnit);
+            const ratio = baseUnitRatio(ing, pantryItem.baseUnit, pantryItem.unitConversions);
             if (ratio === null) {
                 // e.g. recipe says "2 pc" and the pantry stocks grams — guessing here
                 // would quietly produce a wrong price, so leave it out and say so.

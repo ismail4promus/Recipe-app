@@ -26,9 +26,13 @@ export const ViewIngredientRow: React.FC<{
     onEditPantryItem: (item: Ingredient) => void;
     onLinkIngredient: (ingId: string, pantryId: string) => void;
     onUpdateCost: (newCostPerUnit: number) => void;
+    /** Store "1 <unit> = n <baseUnit>" on the inventory item itself. */
+    onSetUnitConversion: (item: Ingredient, unit: string, perUnit: number) => void;
     pantryIngredients: Ingredient[];
-}> = React.memo(({ ing, index, pantryItem, scaleFactor, currentUnit, onUnitChange, onEditPantryItem, onLinkIngredient, onUpdateCost, pantryIngredients }) => {
+}> = React.memo(({ ing, index, pantryItem, scaleFactor, currentUnit, onUnitChange, onEditPantryItem, onLinkIngredient, onUpdateCost, onSetUnitConversion, pantryIngredients }) => {
     const [isEditingPrice, setIsEditingPrice] = useState(false);
+    const [bridgeValue, setBridgeValue] = useState('');
+    const [showBridge, setShowBridge] = useState(false);
     
     // Quantity logic
     const requiredAmountBase = (ing.quantity || 0) * scaleFactor;
@@ -41,7 +45,7 @@ export const ViewIngredientRow: React.FC<{
 
     // Cost logic — null ratio means the recipe unit cannot be expressed in the
     // stocked unit (e.g. "pc" vs "g") without a per-ingredient conversion.
-    const conversionRatio = pantryItem ? baseUnitRatio(ing, pantryItem.baseUnit) : null;
+    const conversionRatio = pantryItem ? baseUnitRatio(ing, pantryItem.baseUnit, pantryItem.unitConversions) : null;
     const needsConversion = !!pantryItem && conversionRatio === null && ing.manualCostPerUnit === undefined;
     const derivedUnitCost = pantryItem && conversionRatio !== null ? pantryItem.costPerUnit * conversionRatio : 0;
     const activeUnitCost = ing.manualCostPerUnit !== undefined ? ing.manualCostPerUnit : derivedUnitCost;
@@ -64,6 +68,14 @@ export const ViewIngredientRow: React.FC<{
             onUpdateCost(newUnitCost);
         }
         setIsEditingPrice(false);
+    };
+
+    const saveBridge = () => {
+        const value = parseFloat(bridgeValue);
+        if (pantryItem && Number.isFinite(value) && value > 0) {
+            onSetUnitConversion(pantryItem, safeIngUnit, value);
+        }
+        setShowBridge(false);
     };
 
     const isConverted = safeIngUnit !== safeCurrentUnit;
@@ -127,7 +139,43 @@ export const ViewIngredientRow: React.FC<{
                     {(ing.notes || isLowStock || needsConversion || ing.manualCostPerUnit !== undefined) && (
                         <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                             {isLowStock && <span className="text-[11px] font-medium bg-app-danger/10 text-app-danger px-1.5 py-0.5 rounded-sm">Low Stock</span>}
-                            {needsConversion && <span className="text-[11px] font-medium bg-app-warning/10 text-app-warning px-1.5 py-0.5 rounded-sm">Needs {unitLabel(safeIngUnit)} → {unitLabel(pantryItem!.baseUnit)}</span>}
+                            {needsConversion && (
+                                showBridge ? (
+                                    // Saved on the inventory item, so every recipe using this
+                                    // unit is costed from one answer.
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-app-text bg-app-warning/10 border border-app-warning/30 px-1.5 py-0.5">
+                                        1 {unitLabel(safeIngUnit)} =
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="any"
+                                            autoFocus
+                                            value={bridgeValue}
+                                            onChange={(e) => setBridgeValue(e.target.value)}
+                                            onKeyDown={(e) => { if (e.key === 'Enter') saveBridge(); if (e.key === 'Escape') setShowBridge(false); }}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="w-16 h-5 px-1 text-center tabular-nums bg-app-elevated border border-app-border text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+                                            placeholder="0"
+                                        />
+                                        {unitLabel(pantryItem!.baseUnit)}
+                                        <button
+                                            aria-label="Save conversion"
+                                            onClick={(e) => { e.stopPropagation(); saveBridge(); }}
+                                            className="bg-app-primary text-primary-foreground px-1 py-0.5 hover:brightness-105"
+                                        >
+                                            <Check className="h-3 w-3" />
+                                        </button>
+                                    </span>
+                                ) : (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setBridgeValue(''); setShowBridge(true); }}
+                                        title={`Tell the app how many ${unitLabel(pantryItem!.baseUnit)} one ${unitLabel(safeIngUnit)} is`}
+                                        className="text-[11px] font-medium bg-app-warning/10 text-app-warning border border-app-warning/30 px-1.5 py-0.5 hover:bg-app-warning hover:text-white transition-colors"
+                                    >
+                                        Set 1 {unitLabel(safeIngUnit)} = ? {unitLabel(pantryItem!.baseUnit)}
+                                    </button>
+                                )
+                            )}
                             {ing.manualCostPerUnit !== undefined && <span className="text-[11px] font-medium bg-app-info/10 text-app-info px-1.5 py-0.5 rounded-sm">Manual Price</span>}
                             {ing.notes && <span className="text-[11px] text-app-muted truncate max-w-[220px]">{ing.notes}</span>}
                         </div>

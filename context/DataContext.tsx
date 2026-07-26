@@ -27,28 +27,32 @@ interface DataContextType {
   getRecipeById: (id: string) => Recipe | undefined;
   getIngredientById: (id: string) => Ingredient | undefined;
   getIngredientsByIds: (ids: string[]) => Ingredient[];
-  addOrder: (order: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'totalAmount' | 'status'>) => void;
-  updateOrder: (id: string, updates: Partial<Order>) => void;
-  deleteOrder: (id: string) => void;
-  updateOrderStatus: (orderId: string, status: OrderStatus) => void;
-  addIngredient: (newIngredient: Ingredient) => void;
-  updateIngredient: (updatedIngredient: Ingredient) => void;
-  deleteIngredient: (id: string) => void;
-  batchAddIngredients: (ingredients: Ingredient[]) => Promise<void>;
-  addRecipe: (newRecipe: Recipe) => void;
-  updateRecipe: (updatedRecipe: Recipe) => void;
-  duplicateRecipe: (recipe: Recipe) => void;
-  batchAddRecipes: (recipes: Recipe[]) => Promise<void>;
-  deleteRecipe: (id: string) => void;
-  addCookingSession: (session: CookingSession) => void;
-  updateCookingSession: (id: string, updates: Partial<CookingSession>) => void;
-  deleteCookingSession: (id: string) => void;
+  // Every mutation resolves to whether the change actually reached the database,
+  // so a caller can tell the user the truth instead of assuming it saved.
+  addOrder: (order: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'totalAmount' | 'status'>) => Promise<boolean>;
+  updateOrder: (id: string, updates: Partial<Order>) => Promise<boolean>;
+  deleteOrder: (id: string) => Promise<boolean>;
+  updateOrderStatus: (orderId: string, status: OrderStatus) => Promise<boolean>;
+  addIngredient: (newIngredient: Ingredient) => Promise<boolean>;
+  updateIngredient: (updatedIngredient: Ingredient) => Promise<boolean>;
+  deleteIngredient: (id: string) => Promise<boolean>;
+  batchAddIngredients: (ingredients: Ingredient[]) => Promise<boolean>;
+  addRecipe: (newRecipe: Recipe) => Promise<boolean>;
+  updateRecipe: (updatedRecipe: Recipe) => Promise<boolean>;
+  duplicateRecipe: (recipe: Recipe) => Promise<boolean>;
+  batchAddRecipes: (recipes: Recipe[]) => Promise<boolean>;
+  deleteRecipe: (id: string) => Promise<boolean>;
+  addCookingSession: (session: CookingSession) => Promise<boolean>;
+  updateCookingSession: (id: string, updates: Partial<CookingSession>) => Promise<boolean>;
+  deleteCookingSession: (id: string) => Promise<boolean>;
   getSessionsByRecipeId: (recipeId: string) => CookingSession[];
   seedDatabase: () => Promise<void>;
   syncMissingData: () => Promise<void>;
   resetPantryFromConstants?: () => Promise<void>;
   loading: boolean;
   isDemoMode: boolean;
+  /** True when Firestore refused because nobody is signed in — the app has no data and cannot save. */
+  authRequired: boolean;
   /** Set when a write did not reach Firestore. Null when everything is saved. */
   saveError: string | null;
   dismissSaveError: () => void;
@@ -131,32 +135,46 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [cookingSessions, setCookingSessions] = useState<CookingSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  /** The database refused us because nobody is signed in — nothing can be read or written. */
+  const [authRequired, setAuthRequired] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const dismissSaveError = useCallback(() => setSaveError(null), []);
 
   /**
-   * Every write goes through here so a failure is never silent: the change is
-   * still applied locally so the user does not lose their work, but they are
-   * told it did not reach the database.
+   * Every write goes through here so a failure is never silent.
+   *
+   * When the database has refused us there is no point applying the change to
+   * local state: it cannot be saved, and leaving it on screen makes the user
+   * keep working on something that dies at the next reload. Refuse loudly.
    */
-  const persist = useCallback(async (label: string, remote: () => Promise<void>, local: () => void) => {
+  const persist = useCallback(async (label: string, remote: () => Promise<void>, local: () => void): Promise<boolean> => {
+    if (authRequired) {
+      setSaveError(`Not saved: ${label} — sign in first. Nothing can be written to the kitchen database while signed out.`);
+      return false;
+    }
     if (isDemoMode) {
       local();
-      setSaveError(user
-        ? `Not saved: ${label} — the app is showing local demo data because the database is unreachable.`
-        : `Not saved: ${label} — sign in to write to the kitchen database.`);
-      return;
+      setSaveError(`Not saved: ${label} — the database is unreachable, so this change only exists in this browser tab and will be lost on reload.`);
+      return false;
     }
     try {
       await remote();
       setSaveError(null);
+      return true;
     } catch (e: any) {
       console.error(`Firestore write failed [${label}]`, e);
+      if (e?.code === 'permission-denied') {
+        // Do not keep a change the database has rejected.
+        setAuthRequired(!user);
+        setSaveError(describeWriteError(label, e, !!user));
+        return false;
+      }
       local();
       setSaveError(describeWriteError(label, e, !!user));
+      return false;
     }
-  }, [isDemoMode, user]);
+  }, [authRequired, isDemoMode, user]);
 
   // --- Optimization: Maps for O(1) lookup ---
   const ingredientMap = useMemo(() => new Map(ingredients.map(i => [i.id, i])), [ingredients]);
@@ -174,6 +192,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setLoading(true);
     setIsDemoMode(false);
+    setAuthRequired(false);
 
     const updateLoading = () => {
         if (Object.values(loadedState).every(v => v)) {
@@ -190,14 +209,23 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const handleError = (error: any, collectionName: string) => {
         console.error(`Firestore Error [${collectionName}]:`, error);
-        // Fallback to local data on error
-        setIsDemoMode(true);
         const config = collectionsConfig.find(c => c.name === collectionName);
-        if (config) {
+        if (!config) return;
+
+        // The database rejected us rather than being unreachable. Showing sample
+        // recipes here is how work gets lost: the app looks normal, edits go to
+        // memory only, and a reload throws them away. Show nothing instead.
+        if (error?.code === 'permission-denied') {
+            setAuthRequired(true);
+            setIsDemoMode(false);
+            config.setter([] as any);
+        } else {
+            setIsDemoMode(true);
             config.setter(config.mock as any);
-            loadedState[config.key] = true;
-            updateLoading();
         }
+
+        loadedState[config.key] = true;
+        updateLoading();
     };
 
     try {
@@ -220,28 +248,35 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         });
     } catch (e) {
         console.error("Critical Firestore init error", e);
-        setIsDemoMode(true);
-        setRecipes(MOCK_RECIPES);
-        setIngredients(MOCK_INGREDIENTS);
-        setOrders(MOCK_ORDERS);
-        setCookingSessions(MOCK_SESSIONS);
+        if (user) {
+            setIsDemoMode(true);
+            setRecipes(MOCK_RECIPES);
+            setIngredients(MOCK_INGREDIENTS);
+            setOrders(MOCK_ORDERS);
+            setCookingSessions(MOCK_SESSIONS);
+        } else {
+            setAuthRequired(true);
+        }
         setLoading(false);
     }
 
-    // Timeout safety
+    // Timeout safety — stop the spinner if Firestore never answers. Sample data is
+    // only ever shown to a signed-in user whose database is unreachable; a
+    // signed-out session gets the empty, honest state instead.
     const timeout = setTimeout(() => {
         setLoading(currentLoading => {
-            if (currentLoading) {
-                console.warn("Firestore connection timeout. Using local data.");
-                setIsDemoMode(true);
-                // Only fill if empty to avoid overwriting live data that might have trickled in
-                if (recipes.length === 0) setRecipes(MOCK_RECIPES);
-                if (ingredients.length === 0) setIngredients(MOCK_INGREDIENTS);
-                if (orders.length === 0) setOrders(MOCK_ORDERS);
-                if (cookingSessions.length === 0) setCookingSessions(MOCK_SESSIONS);
+            if (!currentLoading) return currentLoading;
+            console.warn("Firestore connection timeout.");
+            if (!user) {
+                setAuthRequired(true);
                 return false;
             }
-            return currentLoading;
+            setIsDemoMode(true);
+            if (recipes.length === 0) setRecipes(MOCK_RECIPES);
+            if (ingredients.length === 0) setIngredients(MOCK_INGREDIENTS);
+            if (orders.length === 0) setOrders(MOCK_ORDERS);
+            if (cookingSessions.length === 0) setCookingSessions(MOCK_SESSIONS);
+            return false;
         });
     }, 8000);
 
@@ -285,7 +320,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       priority: newOrderData.priority || 'normal',
     };
     
-    await persist(
+    return persist(
         'Order',
         () => setDoc(doc(db, 'orders', generatedId), stripUndefined({
             ...newOrder,
@@ -299,7 +334,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const updateOrder = useCallback(async (id: string, updates: Partial<Order>) => {
     const cleanUpdates: any = { ...updates };
     if (cleanUpdates.dueDate instanceof Date) cleanUpdates.dueDate = Timestamp.fromDate(cleanUpdates.dueDate);
-    await persist(
+    return persist(
         'Order',
         () => updateDoc(doc(db, 'orders', id), stripUndefined(cleanUpdates)),
         () => setOrders(prev => prev.map(o => o.id === id ? { ...o, ...updates } : o))
@@ -307,7 +342,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [persist]);
 
   const deleteOrder = useCallback(async (id: string) => {
-    await persist(
+    return persist(
         'Order deletion',
         () => deleteDoc(doc(db, 'orders', id)),
         () => setOrders(prev => prev.filter(o => o.id !== id))
@@ -315,7 +350,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [persist]);
 
   const updateOrderStatus = useCallback(async (orderId: string, status: OrderStatus) => {
-    await persist(
+    return persist(
         'Order status',
         // Transaction so a status change cannot race another writer.
         () => runTransaction(db, async (transaction) => {
@@ -334,7 +369,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const docId = id || `ing_${Date.now()}`;
     const finalData = { ...data, last_verified: data.last_verified ? Timestamp.fromDate(data.last_verified) : Timestamp.now() };
     
-    await persist(
+    return persist(
         'Inventory item',
         () => setDoc(doc(db, 'ingredients', docId), stripUndefined(finalData)),
         () => setIngredients(prev => [...prev, { ...newIngredient, id: docId, last_verified: new Date() }])
@@ -342,7 +377,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [persist]);
 
   const batchAddIngredients = useCallback(async (newIngredients: Ingredient[]) => {
-    await persist(
+    return persist(
         `${newIngredients.length} inventory item${newIngredients.length === 1 ? '' : 's'}`,
         () => batchWriteDocs('ingredients', newIngredients),
         // Upsert by id so the local view matches what a batch `set` would do —
@@ -355,7 +390,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const { id, ...data } = updatedIngredient;
     const cleanData: any = { ...data };
     if (cleanData.last_verified instanceof Date) cleanData.last_verified = Timestamp.fromDate(cleanData.last_verified);
-    await persist(
+    return persist(
         'Inventory item',
         () => updateDoc(doc(db, 'ingredients', id), stripUndefined(cleanData)),
         () => setIngredients(prev => prev.map(i => i.id === id ? updatedIngredient : i))
@@ -363,7 +398,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [persist]);
 
   const deleteIngredient = useCallback(async (id: string) => {
-    await persist(
+    return persist(
         'Inventory deletion',
         () => deleteDoc(doc(db, 'ingredients', id)),
         () => setIngredients(prev => prev.filter(i => i.id !== id))
@@ -376,7 +411,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const docId = id || `rec_${Date.now()}`;
     const finalData = { ...data, createdAt: data.createdAt ? Timestamp.fromDate(data.createdAt) : Timestamp.now() };
 
-    await persist(
+    return persist(
         'Recipe',
         () => setDoc(doc(db, 'recipes', docId), stripUndefined(finalData)),
         () => setRecipes(prev => [...prev, { ...newRecipe, id: docId, createdAt: newRecipe.createdAt || new Date() }])
@@ -384,7 +419,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [persist]);
 
   const batchAddRecipes = useCallback(async (newRecipes: Recipe[]) => {
-    await persist(
+    return persist(
         `${newRecipes.length} recipe${newRecipes.length === 1 ? '' : 's'}`,
         () => batchWriteDocs('recipes', newRecipes),
         () => setRecipes(prev => upsertById(prev, newRecipes))
@@ -395,7 +430,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const { id, ...data } = updatedRecipe;
     const cleanData: any = { ...data };
     if (cleanData.createdAt instanceof Date) cleanData.createdAt = Timestamp.fromDate(cleanData.createdAt);
-    await persist(
+    return persist(
         'Recipe',
         () => updateDoc(doc(db, 'recipes', id), stripUndefined(cleanData)),
         () => setRecipes(prev => prev.map(r => r.id === id ? updatedRecipe : r))
@@ -403,7 +438,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [persist]);
 
   const deleteRecipe = useCallback(async (id: string) => {
-    await persist(
+    return persist(
         'Recipe deletion',
         () => deleteDoc(doc(db, 'recipes', id)),
         () => setRecipes(prev => prev.filter(r => r.id !== id))
@@ -419,7 +454,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
          createdAt: new Date(),
          isFavorite: false
      };
-     await addRecipe(newRecipe);
+     return addRecipe(newRecipe);
   }, [addRecipe]);
 
   // --- Session Logic ---
@@ -432,7 +467,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         endTime: data.endTime ? Timestamp.fromDate(data.endTime) : null
     };
 
-    await persist(
+    return persist(
         'Cooking session',
         () => setDoc(doc(db, 'cookingSessions', docId), stripUndefined(finalData)),
         () => setCookingSessions(prev => [...prev, session])
@@ -443,7 +478,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const cleanUpdates: any = { ...updates };
     if (cleanUpdates.startTime instanceof Date) cleanUpdates.startTime = Timestamp.fromDate(cleanUpdates.startTime);
     if (cleanUpdates.endTime instanceof Date) cleanUpdates.endTime = Timestamp.fromDate(cleanUpdates.endTime);
-    await persist(
+    return persist(
         'Cooking session',
         () => updateDoc(doc(db, 'cookingSessions', id), stripUndefined(cleanUpdates)),
         () => setCookingSessions(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s))
@@ -451,7 +486,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [persist]);
 
   const deleteCookingSession = useCallback(async (id: string) => {
-    await persist(
+    return persist(
         'Session deletion',
         () => deleteDoc(doc(db, 'cookingSessions', id)),
         () => setCookingSessions(prev => prev.filter(s => s.id !== id))
@@ -547,7 +582,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [isDemoMode, recipes, ingredients, user]);
 
   const value = useMemo(() => ({
-    recipes, ingredients, orders, cookingSessions, loading, isDemoMode, saveError, dismissSaveError,
+    recipes, ingredients, orders, cookingSessions, loading, isDemoMode, authRequired, saveError, dismissSaveError,
     getRecipeById, getIngredientById, getIngredientsByIds,
     addOrder, updateOrder, deleteOrder, updateOrderStatus,
     addIngredient, updateIngredient, deleteIngredient, batchAddIngredients,
@@ -555,7 +590,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     addCookingSession, updateCookingSession, deleteCookingSession, getSessionsByRecipeId,
     seedDatabase, resetPantryFromConstants, syncMissingData
   }), [
-    recipes, ingredients, orders, cookingSessions, loading, isDemoMode, saveError, dismissSaveError,
+    recipes, ingredients, orders, cookingSessions, loading, isDemoMode, authRequired, saveError, dismissSaveError,
     getRecipeById, getIngredientById, getIngredientsByIds,
     addOrder, updateOrder, deleteOrder, updateOrderStatus,
     addIngredient, updateIngredient, deleteIngredient, batchAddIngredients,

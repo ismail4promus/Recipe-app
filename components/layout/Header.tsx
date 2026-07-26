@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Bell, User, CloudOff, Search, LogIn, LogOut, Settings, Loader2 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
@@ -6,15 +6,23 @@ import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../lib/utils';
 import GlobalSearch from './GlobalSearch';
 import MobileDrawer from './MobileDrawer';
+import { buildAlerts } from '../../lib/alerts';
 
 const Header: React.FC = () => {
-  const { isDemoMode } = useData();
+  const { isDemoMode, ingredients, orders } = useData();
   const { user, loading, signingIn, signOut } = useAuth();
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mobileSearch, setMobileSearch] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+  const bellRef = useRef<HTMLDivElement>(null);
+
+  // Same derivation the dashboard panel uses, so the badge can never disagree
+  // with the list it links to.
+  const alerts = useMemo(() => buildAlerts(ingredients, orders), [ingredients, orders]);
+  const urgentCount = alerts.filter(a => a.severity === 'urgent').length;
 
   useEffect(() => {
     if (!profileOpen) return;
@@ -24,6 +32,20 @@ const Header: React.FC = () => {
     document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
   }, [profileOpen]);
+
+  useEffect(() => {
+    if (!bellOpen) return;
+    const close = (e: MouseEvent) => {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
+    };
+    const onEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setBellOpen(false); };
+    document.addEventListener('mousedown', close);
+    document.addEventListener('keydown', onEsc);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', onEsc);
+    };
+  }, [bellOpen]);
 
   const handleSignOut = async () => {
     setProfileOpen(false);
@@ -45,7 +67,7 @@ const Header: React.FC = () => {
 
         {/* Desktop / tablet search */}
         <div className="hidden flex-1 md:block md:max-w-md">
-          <GlobalSearch />
+          <GlobalSearch showShortcut />
         </div>
 
         <div className="flex-1 md:hidden" />
@@ -67,13 +89,69 @@ const Header: React.FC = () => {
             <Search className="h-5 w-5" />
           </button>
 
-          <button
-            aria-label="Notifications"
-            className="relative flex h-9 w-9 items-center justify-center text-app-muted hover:bg-app-muted/10 hover:text-app-text"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 bg-app-primary" />
-          </button>
+          {/* Notifications — the dot only appears when something is actually wrong */}
+          <div className="relative" ref={bellRef}>
+            <button
+              aria-label={alerts.length ? `Notifications (${alerts.length})` : 'Notifications'}
+              aria-haspopup="menu"
+              aria-expanded={bellOpen}
+              onClick={() => setBellOpen(o => !o)}
+              className={cn(
+                'relative flex h-9 w-9 items-center justify-center text-app-muted transition-colors hover:bg-app-muted/10 hover:text-app-text',
+                bellOpen && 'text-app-text'
+              )}
+            >
+              <Bell className="h-5 w-5" />
+              {alerts.length > 0 && (
+                <span
+                  className={cn(
+                    'absolute right-1 top-1 min-w-[14px] px-[3px] text-[9px] font-bold leading-[14px] text-white',
+                    urgentCount ? 'bg-app-danger' : 'bg-app-warning'
+                  )}
+                >
+                  {alerts.length > 9 ? '9+' : alerts.length}
+                </span>
+              )}
+            </button>
+
+            {bellOpen && (
+              <div role="menu" className="absolute right-0 top-11 z-50 w-[min(22rem,calc(100vw-1.5rem))] border border-app-border bg-app-card shadow-card">
+                <div className="flex items-center justify-between border-b border-app-border px-3 py-2">
+                  <p className="text-sm font-semibold text-app-text">Needs attention</p>
+                  <span className="text-xs text-app-muted">{alerts.length}</span>
+                </div>
+
+                {alerts.length === 0 ? (
+                  <p className="px-3 py-6 text-center text-sm text-app-muted">Everything is on track.</p>
+                ) : (
+                  <div className="max-h-[60vh] overflow-y-auto">
+                    {alerts.slice(0, 8).map(a => (
+                      <button
+                        key={a.id}
+                        role="menuitem"
+                        onClick={() => { setBellOpen(false); navigate(a.to); }}
+                        className="flex w-full items-start gap-2.5 border-b border-app-border px-3 py-2.5 text-left transition-colors last:border-b-0 hover:bg-app-elevated"
+                      >
+                        <span className={cn('mt-1 h-1.5 w-1.5 shrink-0', a.severity === 'urgent' ? 'bg-app-danger' : 'bg-app-warning')} />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-medium text-app-text">{a.title}</span>
+                          <span className="block text-xs leading-relaxed text-app-muted">{a.message}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <button
+                  role="menuitem"
+                  onClick={() => { setBellOpen(false); navigate('/dashboard'); }}
+                  className="w-full border-t border-app-border px-3 py-2 text-xs font-semibold text-app-primary transition-colors hover:bg-app-elevated"
+                >
+                  Open dashboard
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* Signed out: a plain sign-in button. Signed in: avatar + menu. */}
           {!user && !loading ? (

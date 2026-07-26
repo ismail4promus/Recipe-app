@@ -6,11 +6,12 @@ import {
     Check, BookOpen, Utensils, CheckSquare, Clock, ChevronRight,
     Users, Plus, Minus, Timer, ListChecks,
     Lock, AlertCircle, Volume2, VolumeX, FastForward, Activity,
-    Save, History, LogOut, RefreshCw, X, Tag, Crosshair, Shield, Zap
+    Save, History, LogOut, RefreshCw, X, Tag, Crosshair, Shield, Zap, PackageMinus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
-import { CookingSession } from '../types';
+import { CookingSession, Ingredient } from '../types';
+import StockUsageModal from '../components/recipes/StockUsageModal';
 
 const playTimerStartSound = () => {
     try {
@@ -108,7 +109,7 @@ export default function CookingModePage() {
     const [searchParams] = useSearchParams();
     const initialServings = searchParams.get('servings') ? parseInt(searchParams.get('servings')!) : 1;
     const requestedSessionId = searchParams.get('sessionId');
-    const { getRecipeById, cookingSessions, addCookingSession, updateCookingSession } = useData();
+    const { getRecipeById, cookingSessions, addCookingSession, updateCookingSession, ingredients: pantryIngredients, batchAddIngredients } = useData();
     const navigate = useNavigate();
     const recipe = getRecipeById(recipeId || '');
     const activeStepRef = useRef<HTMLDivElement>(null);
@@ -126,6 +127,14 @@ export default function CookingModePage() {
     const [showResumeModal, setShowResumeModal] = useState(false);
     const [showSaveNamingModal, setShowSaveNamingModal] = useState(false);
     const [sessionNameInput, setSessionNameInput] = useState('');
+    const [showStockModal, setShowStockModal] = useState(false);
+    const [stockUpdated, setStockUpdated] = useState(false);
+
+    const handleApplyStock = async (updated: Ingredient[]) => {
+        const ok = await batchAddIngredients(updated);
+        if (ok) setStockUpdated(true);
+        return ok;
+    };
 
     const steps = recipe?.steps || [];
     const scaleFactor = recipe ? localServings / recipe.servings : 1;
@@ -285,6 +294,9 @@ export default function CookingModePage() {
     const handleFinish = async () => {
         if (activeSessionId) await updateCookingSession(activeSessionId, { status: 'completed', endTime: new Date() });
         setIsFinished(true);
+        // Offer the deduction once the dish is done — the ingredients are gone
+        // from the shelf by now, and this is the moment a cook remembers.
+        if (!stockUpdated) setShowStockModal(true);
     };
 
     if (!recipe) return null;
@@ -292,14 +304,41 @@ export default function CookingModePage() {
     if (isFinished) {
         return (
             <div className="fixed inset-0 bg-app-bg z-[200] flex items-center justify-center p-4">
-                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full bg-app-card p-10 rounded-lg border border-app-border shadow-soft text-center relative overflow-hidden">
-                    <div className="h-20 w-20 bg-app-success/10 text-app-success rounded-full border border-app-success/20 flex items-center justify-center mx-auto mb-8">
-                        <PartyPopper className="h-10 w-10" />
+                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full bg-app-card p-6 border border-app-border shadow-card text-center relative overflow-hidden">
+                    <div className="h-14 w-14 bg-app-success/10 text-app-success border border-app-success/20 flex items-center justify-center mx-auto mb-4">
+                        <PartyPopper className="h-7 w-7" />
                     </div>
-                    <h1 className="text-3xl font-bold text-app-text mb-4 tracking-tight leading-tight">All Done!</h1>
-                    <p className="text-base text-app-muted mb-10 leading-relaxed">{recipe.name} is ready to serve.</p>
-                    <button onClick={() => navigate(`/recipes/${recipeId}`)} className="w-full min-h-[44px] py-4 bg-app-primary text-primary-foreground rounded-full font-semibold text-base shadow-soft hover:brightness-105 active:scale-[0.99] transition-all">Finish</button>
+                    <h1 className="text-2xl font-bold text-app-text mb-1.5 tracking-tight leading-tight">All done</h1>
+                    <p className="text-sm text-app-muted mb-5 leading-relaxed">{recipe.name} is ready to serve.</p>
+
+                    <div className="flex flex-col gap-2">
+                        <button
+                            onClick={() => setShowStockModal(true)}
+                            className={cn(
+                                "w-full min-h-[44px] font-semibold text-sm flex items-center justify-center gap-2 border transition-all",
+                                stockUpdated
+                                    ? "border-app-success/40 bg-app-success/10 text-app-success"
+                                    : "border-app-border bg-app-elevated text-app-text hover:border-app-primary/50"
+                            )}
+                        >
+                            {stockUpdated ? <Check className="h-4 w-4" /> : <PackageMinus className="h-4 w-4" />}
+                            {stockUpdated ? 'Stock updated' : 'Update stock for what you used'}
+                        </button>
+                        <button onClick={() => navigate(`/recipes/${recipeId}`)} className="w-full min-h-[44px] bg-app-primary text-primary-foreground font-semibold text-sm shadow-soft hover:brightness-105 active:scale-[0.99] transition-all">
+                            Done
+                        </button>
+                    </div>
                 </motion.div>
+
+                {showStockModal && (
+                    <StockUsageModal
+                        recipe={recipe}
+                        servings={localServings}
+                        pantryIngredients={pantryIngredients}
+                        onApply={handleApplyStock}
+                        onClose={() => setShowStockModal(false)}
+                    />
+                )}
             </div>
         );
     }
@@ -326,7 +365,22 @@ export default function CookingModePage() {
                     </div>
                 </div>
 
-                <div className="flex items-center shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
+                    {/* Deduct mid-cook too — stock often gets used before the last step. */}
+                    <button
+                        onClick={() => setShowStockModal(true)}
+                        title={stockUpdated ? 'Stock already updated for this cook' : 'Update stock for what you used'}
+                        aria-label="Update stock"
+                        className={cn(
+                            "h-10 w-10 flex items-center justify-center border transition-all",
+                            stockUpdated
+                                ? "border-app-success/40 bg-app-success/10 text-app-success"
+                                : "border-app-border bg-app-elevated text-app-muted hover:text-app-primary"
+                        )}
+                    >
+                        <PackageMinus className="h-4 w-4" />
+                    </button>
+
                      <div className="flex items-center bg-app-elevated border border-app-border">
                         <button aria-label="Fewer servings" onClick={() => setLocalServings(Math.max(1, localServings - 1))} className="h-10 w-9 md:w-10 flex items-center justify-center text-app-muted hover:text-app-primary transition-all active:scale-90 font-semibold text-lg">−</button>
                         <div className="px-2 text-center border-x border-app-border">
@@ -495,6 +549,16 @@ export default function CookingModePage() {
                     </button>
                 </div>
             </div>
+
+            {showStockModal && (
+                <StockUsageModal
+                    recipe={recipe}
+                    servings={localServings}
+                    pantryIngredients={pantryIngredients}
+                    onApply={handleApplyStock}
+                    onClose={() => setShowStockModal(false)}
+                />
+            )}
         </div>
     );
 }

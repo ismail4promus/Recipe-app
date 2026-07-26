@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { ChefHat, User } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { useAuth } from '../../context/AuthContext';
 import { NAV_ITEMS } from './navConfig';
 
 // Desktop: full labels. Tablet (md–lg): auto-collapsed to icons only.
 const Sidebar: React.FC = () => {
+  const { user } = useAuth();
   const [kitchenName, setKitchenName] = useState('iCooking');
 
   useEffect(() => {
@@ -49,16 +51,27 @@ const Sidebar: React.FC = () => {
         ))}
       </nav>
 
-      <div className="p-3">
-        <div className="flex items-center gap-3 rounded-md border border-app-border bg-app-card p-3 md:justify-center lg:justify-start">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5 text-app-muted">
-            <User className="h-4 w-4" />
+      {/* Reflects the real session — this used to read "Signed in" even when
+          signed out, which hid the reason data was not saving. */}
+      <div className="p-2">
+        <Link
+          to={user ? '/settings' : '/signin'}
+          className="flex items-center gap-2.5 border border-app-border bg-app-card p-2 transition-colors hover:border-app-primary/40 md:justify-center lg:justify-start"
+        >
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden border border-app-border bg-app-elevated text-app-muted">
+            {user?.photoURL
+              ? <img src={user.photoURL} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+              : <User className="h-4 w-4" />}
           </div>
           <div className="hidden lg:block min-w-0">
-            <p className="truncate text-sm font-semibold text-app-text">Kitchen Owner</p>
-            <p className="truncate text-xs text-app-muted">Signed in</p>
+            <p className="truncate text-[13px] font-semibold text-app-text">
+              {user ? (user.displayName || 'Signed in') : 'Not signed in'}
+            </p>
+            <p className={cn('truncate text-[11px]', user ? 'text-app-muted' : 'text-app-warning font-medium')}>
+              {user ? (user.email || 'Signed in') : 'Sign in to save your data'}
+            </p>
           </div>
-        </div>
+        </Link>
       </div>
     </aside>
   );

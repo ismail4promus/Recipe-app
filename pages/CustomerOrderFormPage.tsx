@@ -5,9 +5,12 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription }
 import { formatCurrency } from '../lib/utils';
 import { OrderItem } from '../types';
 import { ShoppingCart, MinusCircle, PlusCircle, PartyPopper } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 const CustomerOrderFormPage: React.FC = () => {
     const { recipes, addOrder } = useData();
+    const toast = useToast();
+    const [submitting, setSubmitting] = useState(false);
     const [cart, setCart] = useState<Record<string, number>>({});
     const [customerName, setCustomerName] = useState('');
     const [customerPhone, setCustomerPhone] = useState('');
@@ -42,10 +45,14 @@ const CustomerOrderFormPage: React.FC = () => {
 
     const totalAmount = cartItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (cartItems.length === 0 || !customerName) {
-            alert('Please add items to your cart and enter your name.');
+        if (cartItems.length === 0) {
+            toast.error('Your cart is empty', 'Add at least one dish before placing the order.');
+            return;
+        }
+        if (!customerName.trim()) {
+            toast.error('Name required', 'We need a name to attach the order to.');
             return;
         }
 
@@ -56,13 +63,23 @@ const CustomerOrderFormPage: React.FC = () => {
             unitPrice: item.unitPrice,
         }));
 
-        addOrder({ 
-            customerName, 
+        // Only show the customer a confirmation once the order really reached
+        // the kitchen — a thank-you screen over a lost order is the worst
+        // outcome this form can produce.
+        setSubmitting(true);
+        const saved = await addOrder({
+            customerName: customerName.trim(),
             customerPhone,
             items: orderItems,
             priority: 'normal' // Default for customer orders
         });
-        setSubmitted(true);
+        setSubmitting(false);
+
+        if (saved) {
+            setSubmitted(true);
+        } else {
+            toast.error('Order not placed', 'We could not reach the kitchen. Please try again in a moment.');
+        }
     };
 
     if (submitted) {
@@ -152,8 +169,8 @@ const CustomerOrderFormPage: React.FC = () => {
                                         onChange={e => setCustomerPhone(e.target.value)}
                                         className="w-full p-3 bg-app-bg text-app-text border border-app-border rounded-full outline-none focus:ring-2 focus:ring-app-primary placeholder:text-app-muted"
                                     />
-                                    <button type="submit" className="w-full min-h-[44px] bg-app-primary text-primary-foreground rounded-full font-semibold hover:brightness-105 transition-all disabled:opacity-50" disabled={cartItems.length === 0 || !customerName}>
-                                        Place Order
+                                    <button type="submit" className="w-full min-h-[44px] bg-app-primary text-primary-foreground rounded-full font-semibold hover:brightness-105 transition-all disabled:opacity-50" disabled={submitting || cartItems.length === 0 || !customerName.trim()}>
+                                        {submitting ? 'Placing order…' : 'Place Order'}
                                     </button>
                                 </form>
                             </CardFooter>

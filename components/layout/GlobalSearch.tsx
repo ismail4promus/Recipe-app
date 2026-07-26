@@ -19,7 +19,7 @@ const GROUP_ICON = {
   Customers: User,
 } as const;
 
-const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNavigate?: () => void }> = ({ className, autoFocus, onNavigate }) => {
+const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNavigate?: () => void; showShortcut?: boolean }> = ({ className, autoFocus, onNavigate, showShortcut }) => {
   const { recipes, ingredients, orders } = useData();
   const navigate = useNavigate();
   const [q, setQ] = useState('');
@@ -32,11 +32,27 @@ const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNaviga
     if (!term) return [];
     const out: Result[] = [];
 
-    recipes.filter(r => r.name.toLowerCase().includes(term)).slice(0, 4).forEach(r =>
-      out.push({ id: `r-${r.id}`, label: r.name, sub: r.category, to: `/recipes/${r.id}`, group: 'Recipes' }));
+    // Match the fields a cook would actually type: not just the name, but the
+    // cuisine, the tag, or an ingredient the dish contains.
+    recipes
+      .filter(r =>
+        r.name.toLowerCase().includes(term) ||
+        r.category?.toLowerCase().includes(term) ||
+        r.cuisine?.toLowerCase().includes(term) ||
+        r.tags?.some(t => t.toLowerCase().includes(term)) ||
+        r.ingredientSections?.some(s => s.ingredients?.some(ing => ing.name?.toLowerCase().includes(term))))
+      .slice(0, 4)
+      .forEach(r =>
+        out.push({ id: `r-${r.id}`, label: r.name, sub: r.category, to: `/recipes/${r.id}`, group: 'Recipes' }));
 
-    ingredients.filter(i => i.name.toLowerCase().includes(term)).slice(0, 4).forEach(i =>
-      out.push({ id: `i-${i.id}`, label: i.name, sub: i.category, to: `/pantry?q=${encodeURIComponent(i.name)}`, group: 'Ingredients' }));
+    ingredients
+      .filter(i =>
+        i.name.toLowerCase().includes(term) ||
+        i.category?.toLowerCase().includes(term) ||
+        i.supplier?.toLowerCase().includes(term))
+      .slice(0, 4)
+      .forEach(i =>
+        out.push({ id: `i-${i.id}`, label: i.name, sub: i.category, to: `/pantry?q=${encodeURIComponent(i.name)}`, group: 'Ingredients' }));
 
     orders.filter(o => o.orderNumber.toLowerCase().includes(term)).slice(0, 4).forEach(o =>
       out.push({ id: `o-${o.id}`, label: `#${o.orderNumber}`, sub: o.customerName, to: `/orders?q=${encodeURIComponent(o.orderNumber)}`, group: 'Orders' }));
@@ -52,10 +68,16 @@ const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNaviga
     return out;
   }, [q, recipes, ingredients, orders]);
 
-  const grouped = useMemo(() => {
-    const g: Record<string, Result[]> = {};
-    results.forEach(r => { (g[r.group] ||= []).push(r); });
-    return g;
+  // Kept as an ordered array of [group, items] pairs: Object.entries would lose
+  // the element type here, and the render needs it.
+  const grouped = useMemo<[string, Result[]][]>(() => {
+    const order: string[] = [];
+    const byGroup: Record<string, Result[]> = {};
+    results.forEach(r => {
+      if (!byGroup[r.group]) { byGroup[r.group] = []; order.push(r.group); }
+      byGroup[r.group].push(r);
+    });
+    return order.map(g => [g, byGroup[g]] as [string, Result[]]);
   }, [results]);
 
   useEffect(() => { setActive(0); }, [q]);
@@ -99,11 +121,14 @@ const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNaviga
           aria-label="Global search"
           className="w-full bg-transparent text-sm text-app-text outline-none placeholder:text-app-muted"
         />
-        {q && (
+        {q ? (
           <button onClick={() => { setQ(''); setOpen(false); }} aria-label="Clear search" className="ml-2 text-app-muted hover:text-app-text">
             <X className="h-4 w-4" />
           </button>
-        )}
+        ) : showShortcut ? (
+          // Points at the faster route without getting in the way.
+          <kbd className="ml-2 hidden shrink-0 border border-app-border px-1.5 py-0.5 text-[10px] font-semibold text-app-muted lg:block">⌘K</kbd>
+        ) : null}
       </div>
 
       {open && q.trim() && (
@@ -111,7 +136,7 @@ const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNaviga
           {results.length === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-app-muted">No matches for “{q}”.</p>
           ) : (
-            Object.entries(grouped).map(([group, items]) => {
+            grouped.map(([group, items]) => {
               const Icon = GROUP_ICON[group as keyof typeof GROUP_ICON];
               return (
                 <div key={group} className="mb-1 last:mb-0">

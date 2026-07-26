@@ -15,6 +15,12 @@ export interface Ingredient {
   quantityInStock: number;
   costPerUnit: number;
   wastePercentage: number;
+  /**
+   * Conversions the unit table cannot know, keyed by canonical unit:
+   * { pc: 150 } means one piece of this ingredient weighs 150 baseUnit.
+   * Defined once here so every recipe using that unit can be costed.
+   */
+  unitConversions?: Record<string, number>;
 }
 
 export interface RecipeIngredient {

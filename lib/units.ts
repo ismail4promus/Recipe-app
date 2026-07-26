@@ -126,17 +126,34 @@ export const AVAILABLE_UNITS: string[] = UNITS.map(u => u.id);
 
 /**
  * How many pantry base units one recipe unit is worth.
- * `baseUnitPerUnit` on the recipe ingredient is the manual bridge for cases the
- * unit table cannot know (1 pc onion = 150 g). Returns null when we need one.
+ *
+ * Order of preference:
+ *  1. `baseUnitPerUnit` — an override on this one recipe line.
+ *  2. The unit table, when both units measure the same thing.
+ *  3. `conversions` from the pantry item — "1 pc of this ingredient is 150 g",
+ *     stated once in inventory and reused by every recipe.
+ *
+ * Returns null when none of those apply, so callers can ask instead of guess.
  */
 export const baseUnitRatio = (
     ing: { unit?: string; baseUnitPerUnit?: number },
-    baseUnit?: string
+    baseUnit?: string,
+    conversions?: Record<string, number>
 ): number | null => {
     if (typeof ing.baseUnitPerUnit === 'number' && Number.isFinite(ing.baseUnitPerUnit) && ing.baseUnitPerUnit > 0) {
         return ing.baseUnitPerUnit;
     }
-    return tryConvertUnit(1, ing.unit, baseUnit);
+
+    const direct = tryConvertUnit(1, ing.unit, baseUnit);
+    if (direct !== null) return direct;
+
+    if (conversions) {
+        const canonical = normalizeUnit(ing.unit);
+        const stated = (canonical && conversions[canonical]) ?? (ing.unit ? conversions[ing.unit] : undefined);
+        if (typeof stated === 'number' && Number.isFinite(stated) && stated > 0) return stated;
+    }
+
+    return null;
 };
 
 // --- Quantity parsing / formatting ----------------------------------------

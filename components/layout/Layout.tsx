@@ -4,6 +4,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import BottomNav from './BottomNav';
 import SaveStatusBanner from './SaveStatusBanner';
+import CommandPalette from './CommandPalette';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Layout: React.FC = () => {
@@ -35,6 +36,9 @@ const Layout: React.FC = () => {
         {/* Mobile Bottom Navigation */}
         <BottomNav />
       </div>
+
+      {/* Cmd/Ctrl-K from anywhere inside the app shell */}
+      <CommandPalette />
     </div>
   );
 };

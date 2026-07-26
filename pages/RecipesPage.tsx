@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Chip } from "../components/ui/kit";
 import { StickyToolbar } from "../components/ui/StickyToolbar";
 import { exportRecipes, parseImportedRecipes } from "../lib/recipeIO";
+import { useToast } from "../context/ToastContext";
 
 const CATEGORIES = ["All", "Main Course", "Appetizer", "Dessert", "Beverage"];
 type SortKey = "featured" | "name" | "cost" | "time";
@@ -25,10 +26,13 @@ const DIFF: Record<string, string> = {
 };
 
 // Cost per serving using real ingredient costs (same math as the detail page).
-const costPerServing = (recipe: Recipe, pantry: Ingredient[]) => {
+// Takes a lookup map rather than the array: with a few hundred recipes against a
+// few hundred pantry items, a linear find per ingredient line is the slowest
+// thing on this page.
+const costPerServing = (recipe: Recipe, pantry: Map<string, Ingredient>) => {
   let raw = 0;
   recipe.ingredientSections?.forEach(sec => sec.ingredients?.forEach(ing => {
-    const item = pantry.find(pi => pi.id === ing.ingredientId);
+    const item = pantry.get(ing.ingredientId);
     const unit = ing.manualCostPerUnit !== undefined ? ing.manualCostPerUnit : (item?.costPerUnit || 0);
     raw += ing.quantity * unit;
   }));
@@ -119,6 +123,7 @@ const RecipeCard: React.FC<{
 
 export default function RecipesPage() {
   const { recipes, updateRecipe, batchAddRecipes, ingredients } = useData();
+  const toast = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -130,11 +135,12 @@ export default function RecipesPage() {
   const handleExport = useCallback(() => {
     setMenuOpen(false);
     if (recipes.length === 0) {
-      alert("No recipes to export.");
+      toast.info("Nothing to export", "Add a recipe first.");
       return;
     }
     exportRecipes(recipes);
-  }, [recipes]);
+    toast.success(`Exported ${recipes.length} recipe${recipes.length === 1 ? "" : "s"}`);
+  }, [recipes, toast]);
 
   const handleImportFile = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -143,23 +149,35 @@ export default function RecipesPage() {
     try {
       const text = await file.text();
       const imported = parseImportedRecipes(text);
-      await batchAddRecipes(imported);
-      alert(`Imported ${imported.length} recipe${imported.length === 1 ? "" : "s"}.`);
+      // batchAddRecipes reports whether the write reached the database; the
+      // banner explains a failure, so only claim success when it saved.
+      const saved = await batchAddRecipes(imported);
+      if (saved) {
+        toast.success(`Imported ${imported.length} recipe${imported.length === 1 ? "" : "s"}`, `From ${file.name}.`);
+      }
     } catch (err) {
-      alert(`Import failed: ${err instanceof Error ? err.message : "Unknown error"}`);
+      toast.error("Import failed", err instanceof Error ? err.message : "The file could not be read.");
     }
-  }, [batchAddRecipes]);
+  }, [batchAddRecipes, toast]);
 
   // Cost per serving computed once per recipe (reused for display + sorting).
   const costMap = useMemo(() => {
+    const pantry = new Map<string, Ingredient>(ingredients.map(i => [i.id, i] as [string, Ingredient]));
     const m = new Map<string, number>();
-    recipes.forEach(r => m.set(r.id, costPerServing(r, ingredients)));
+    recipes.forEach(r => m.set(r.id, costPerServing(r, pantry)));
     return m;
   }, [recipes, ingredients]);
 
   const filteredRecipes = useMemo(() => {
+    const term = searchQuery.trim().toLowerCase();
     const list = recipes.filter(r => {
-      const matchesSearch = r.name.toLowerCase().includes(searchQuery.toLowerCase());
+      // Search what a cook remembers about a dish, not only its exact name:
+      // the cuisine, a tag, or an ingredient it contains.
+      const matchesSearch = !term ||
+        r.name.toLowerCase().includes(term) ||
+        r.cuisine?.toLowerCase().includes(term) ||
+        r.tags?.some(t => t.toLowerCase().includes(term)) ||
+        r.ingredientSections?.some(s => s.ingredients?.some(ing => ing.name?.toLowerCase().includes(term)));
       const matchesCategory = selectedCategory === "All" || r.category === selectedCategory;
       const matchesFav = !favoritesOnly || r.isFavorite;
       return matchesSearch && matchesCategory && matchesFav;

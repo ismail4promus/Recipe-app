@@ -4,6 +4,8 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { DataProvider } from './context/DataContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import { ConfirmProvider } from './context/ConfirmContext';
 import Layout from './components/layout/Layout';
 import { ChefHat } from 'lucide-react';
 
@@ -21,6 +23,7 @@ const CookingModePage = lazy(() => import('./pages/CookingModePage'));
 const CookingLogsPage = lazy(() => import('./pages/CookingLogsPage'));
 const CookingPage = lazy(() => import('./pages/CookingPage'));
 const SignInPage = lazy(() => import('./pages/SignInPage'));
+const ShoppingListPage = lazy(() => import('./pages/ShoppingListPage'));
 
 const LoadingFallback = () => (
   <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -33,6 +36,8 @@ const App: React.FC = () => {
     <ThemeProvider>
       <AuthProvider>
       <DataProvider>
+        <ToastProvider>
+        <ConfirmProvider>
         <HashRouter>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
@@ -51,6 +56,7 @@ const App: React.FC = () => {
                 <Route path="recipes/:recipeId" element={<RecipeDetailPage />} />
                 <Route path="recipes/:recipeId/logs" element={<CookingLogsPage />} />
                 <Route path="pantry" element={<PantryPage />} />
+                <Route path="shopping" element={<ShoppingListPage />} />
                 <Route path="cooking" element={<CookingPage />} />
                 <Route path="orders" element={<OrdersPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />
@@ -59,6 +65,8 @@ const App: React.FC = () => {
             </Routes>
           </Suspense>
         </HashRouter>
+        </ConfirmProvider>
+        </ToastProvider>
       </DataProvider>
       </AuthProvider>
     </ThemeProvider>

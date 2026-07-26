@@ -12,6 +12,8 @@ import {
 import { cn, normalizeUnit, isKnownUnit, unitLabel, formatMeasure, baseUnitRatio } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import IngredientRow from '../components/recipes/IngredientRow';
+import { useConfirm } from '../context/ConfirmContext';
+import { useToast } from '../context/ToastContext';
 
 const categories = ["Main Course", "Appetizer", "Dessert", "Side Dish", "Breakfast", "Beverage"];
 const cuisines = ["Italian", "Indian", "Chinese", "Bangladeshi", "American", "Mexican", "French", "Mediterranean", "Fusion"];
@@ -32,6 +34,8 @@ export default function AddRecipePage() {
     const { recipeId } = useParams<{ recipeId: string }>();
     const navigate = useNavigate();
     const { addRecipe, updateRecipe, getRecipeById, ingredients: pantryIngredients } = useData();
+    const confirm = useConfirm();
+    const toast = useToast();
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<TabId>('general');
     const [tagInput, setTagInput] = useState('');
@@ -127,7 +131,7 @@ export default function AddRecipePage() {
 
             const needsBridge = all.filter(i => {
                 const pantryItem = pantryIngredients.find(p => p.id === i.ingredientId);
-                return pantryItem && baseUnitRatio(i, pantryItem.baseUnit) === null;
+                return pantryItem && baseUnitRatio(i, pantryItem.baseUnit, pantryItem.unitConversions) === null;
             }).length;
             if (needsBridge) list.push({ tab: 'ingredients', message: `${needsBridge} linked ingredient${needsBridge > 1 ? 's need a' : ' needs a'} unit conversion before it can be costed.` });
         }
@@ -289,11 +293,18 @@ export default function AddRecipePage() {
         }));
     }, []);
 
-    const removeSection = useCallback((index: number) => {
+    const removeSection = useCallback(async (index: number) => {
         const section = formData.ingredientSections[index];
         if (!section || formData.ingredientSections.length <= 1) return;
-        if (section.ingredients.length > 0 &&
-            !window.confirm(`Remove "${section.name}" and its ${section.ingredients.length} ingredient(s)?`)) return;
+        if (section.ingredients.length > 0) {
+            const ok = await confirm({
+                title: `Remove "${section.name}"?`,
+                message: `Its ${section.ingredients.length} ingredient${section.ingredients.length === 1 ? '' : 's'} go with it, and any step that referenced them loses the link.`,
+                confirmLabel: 'Remove section',
+                destructive: true,
+            });
+            if (!ok) return;
+        }
 
         const removedIds = new Set(section.ingredients.map(i => i.id));
         setFormData(prev => ({
@@ -304,7 +315,7 @@ export default function AddRecipePage() {
                 linkedIngredientIds: (s.linkedIngredientIds || []).filter(id => !removedIds.has(id))
             }))
         }));
-    }, [formData.ingredientSections]);
+    }, [formData.ingredientSections, confirm]);
 
     const onDragStart = (e: React.DragEvent, sIdx: number, iIdx: number) => {
         setDraggedItem({ sIdx, iIdx });
@@ -385,7 +396,7 @@ export default function AddRecipePage() {
         });
     }, []);
 
-    const handleSubmit = useCallback((e: React.FormEvent) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (issues.length > 0) {
@@ -415,22 +426,51 @@ export default function AddRecipePage() {
             steps: formData.steps.map((s, i) => ({ ...s, stepNumber: i + 1 }))
         };
 
+        let saved: boolean;
         if (!recipeId) {
             finalRecipe.id = `rec_${Date.now()}`;
             finalRecipe.createdAt = new Date();
-            addRecipe(finalRecipe);
+            saved = await addRecipe(finalRecipe);
         } else {
-            updateRecipe(finalRecipe);
+            saved = await updateRecipe(finalRecipe);
         }
+
+        // Stay on the form when the write did not land — navigating away would
+        // present an unsaved recipe as saved, and the work dies on reload.
+        if (!saved) {
+            setShowErrors(true);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
         savedSnapshot.current = JSON.stringify(finalRecipe);
         setIsDirty(false);
+        toast.success(recipeId ? `Saved "${finalRecipe.name}"` : `Added "${finalRecipe.name}"`);
         navigate(`/recipes/${finalRecipe.id}`);
-    }, [formData, issues, recipeId, addRecipe, updateRecipe, navigate]);
+    }, [formData, issues, recipeId, addRecipe, updateRecipe, navigate, toast]);
 
-    const handleBack = useCallback(() => {
-        if (isDirty && !window.confirm('Discard unsaved changes to this recipe?')) return;
+    // Closing the tab bypasses handleBack entirely, and the browser only shows
+    // its own warning if we ask for it.
+    useEffect(() => {
+        if (!isDirty) return;
+        const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+        window.addEventListener('beforeunload', warn);
+        return () => window.removeEventListener('beforeunload', warn);
+    }, [isDirty]);
+
+    const handleBack = useCallback(async () => {
+        if (isDirty) {
+            const ok = await confirm({
+                title: 'Discard unsaved changes?',
+                message: 'Everything you have typed since the last save is lost.',
+                confirmLabel: 'Discard',
+                cancelLabel: 'Keep editing',
+                destructive: true,
+            });
+            if (!ok) return;
+        }
         navigate(-1);
-    }, [isDirty, navigate]);
+    }, [isDirty, navigate, confirm]);
 
     if (loading) return null;
 

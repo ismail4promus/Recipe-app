@@ -11,6 +11,8 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
 import { Button, Segmented, IconButton } from '../components/ui/kit';
+import { useConfirm } from '../context/ConfirmContext';
+import { useToast } from '../context/ToastContext';
 
 const getRelativeTime = (date: Date) => {
     const now = new Date();
@@ -113,6 +115,8 @@ export default function CookingLogsPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { getRecipeById, getSessionsByRecipeId, updateCookingSession, deleteCookingSession, addCookingSession } = useData();
+    const confirm = useConfirm();
+    const toast = useToast();
 
     const [activeTab, setActiveTab] = useState<'ongoing' | 'history' | 'all'>('ongoing');
     const [searchQuery, setSearchQuery] = useState('');
@@ -221,7 +225,23 @@ export default function CookingLogsPage() {
                 <AnimatePresence mode="popLayout">
                     {filteredSessions.length > 0 ? (
                         filteredSessions.map(session => (
-                            <LogItem key={session.id} session={session} recipeStepsCount={recipe.steps.length} onUpdate={updateCookingSession} onDelete={(id) => { if (window.confirm("Delete this session?")) deleteCookingSession(id); }} onResume={(s) => navigate(`/recipes/${recipeId}/cook?sessionId=${s.id}`)} />
+                            <LogItem key={session.id} session={session} recipeStepsCount={recipe.steps.length} onUpdate={updateCookingSession} onDelete={async (id) => {
+                                const ok = await confirm({
+                                    title: 'Delete this cooking session?',
+                                    message: 'Its timings and step progress are removed from this recipe’s history.',
+                                    confirmLabel: 'Delete',
+                                    destructive: true,
+                                });
+                                if (!ok) return;
+                                const deleted = await deleteCookingSession(id);
+                                if (!deleted) return;
+                                toast.toast({
+                                    title: 'Session deleted',
+                                    tone: 'success',
+                                    duration: 10000,
+                                    action: { label: 'Undo', onClick: () => { addCookingSession(session); } },
+                                });
+                            }} onResume={(s) => navigate(`/recipes/${recipeId}/cook?sessionId=${s.id}`)} />
                         ))
                     ) : (
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center border border-dashed border-app-border rounded-lg bg-app-card/30">

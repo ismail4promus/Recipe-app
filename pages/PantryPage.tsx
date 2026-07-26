@@ -17,11 +17,15 @@ import { EditIngredientModal } from '../components/pantry/EditIngredientModal';
 import { PantryItemCard } from '../components/pantry/PantryItemCard';
 import { Button, Chip, IconButton } from '../components/ui/kit';
 import { StickyToolbar } from '../components/ui/StickyToolbar';
+import { useConfirm } from '../context/ConfirmContext';
+import { useToast } from '../context/ToastContext';
 
 const CATEGORIES = ["Protein", "Vegetable", "Fruit", "Grains", "Dairy", "Spices", "Oils & Fats", "Baking", "Condiments", "Beverage", "Other"];
 
 export default function PantryPage() {
     const { ingredients, addIngredient, updateIngredient, deleteIngredient, batchAddIngredients } = useData();
+    const confirm = useConfirm();
+    const toast = useToast();
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || "");
     const [filterCategory, setFilterCategory] = useState("All");
@@ -101,13 +105,82 @@ export default function PantryPage() {
         }, {} as Record<string, Ingredient[]>);
     }, [filteredIngredients, groupByCategory]);
 
-    const handleBatchDelete = useCallback(() => {
-        if (window.confirm(`Delete ${selectedIds.size} selected items?`)) {
-            selectedIds.forEach(id => deleteIngredient(id));
-            setSelectedIds(new Set());
-            setIsSelectionMode(false);
-        }
-    }, [selectedIds, deleteIngredient]);
+    // The batch modal works on the current selection, or on everything currently
+    // filtered when nothing is selected ("set stock for all items").
+    const batchTargets = useMemo(
+        () => (selectedIds.size > 0 ? ingredients.filter(i => selectedIds.has(i.id)) : filteredIngredients),
+        [selectedIds, ingredients, filteredIngredients]
+    );
+
+    const handleBatchStock = useCallback(async (operation: 'add' | 'subtract' | 'set', value: number) => {
+        const targets = batchTargets;
+        if (targets.length === 0) return;
+
+        const updated = targets.map(item => {
+            const current = item.packagesInStock || 0;
+            const next =
+                operation === 'add' ? current + value :
+                operation === 'subtract' ? Math.max(0, current - value) :
+                value;
+            const packageSize = item.packageSize > 0 ? item.packageSize : 1;
+            return {
+                ...item,
+                packagesInStock: parseFloat(next.toFixed(4)),
+                // Keep the derived figure in step, or costing and cooking read stale stock.
+                quantityInStock: parseFloat((next * packageSize).toFixed(4)),
+                last_verified: new Date(),
+            };
+        });
+
+        setShowBatchModal(false);
+        const saved = await batchAddIngredients(updated);
+        setImportReport(saved
+            ? {
+                ok: true,
+                title: `Stock updated for ${updated.length} item${updated.length === 1 ? '' : 's'}`,
+                details: [operation === 'set'
+                    ? `Every selected item now holds ${value} package(s).`
+                    : `${operation === 'add' ? 'Added' : 'Removed'} ${value} package(s) per item.`],
+            }
+            : {
+                ok: false,
+                title: 'Stock not updated',
+                details: ['The database rejected the write — sign in and try again.'],
+            });
+    }, [batchTargets, batchAddIngredients]);
+
+    const handleBatchDelete = useCallback(async () => {
+        const doomed = ingredients.filter(i => selectedIds.has(i.id));
+        if (doomed.length === 0) return;
+
+        const ok = await confirm({
+            title: `Delete ${doomed.length} inventory item${doomed.length === 1 ? '' : 's'}?`,
+            message: 'Recipes that use them will lose their cost and stock link.',
+            details: doomed.slice(0, 6).map(i => i.name)
+                .concat(doomed.length > 6 ? [`…and ${doomed.length - 6} more`] : []),
+            confirmLabel: 'Delete',
+            destructive: true,
+        });
+        if (!ok) return;
+
+        await Promise.all(doomed.map(i => deleteIngredient(i.id)));
+        setSelectedIds(new Set());
+        setIsSelectionMode(false);
+
+        // The records are still in hand, so putting them back is one tap.
+        toast.toast({
+            title: `Deleted ${doomed.length} item${doomed.length === 1 ? '' : 's'}`,
+            tone: 'success',
+            duration: 10000,
+            action: {
+                label: 'Undo',
+                onClick: async () => {
+                    const restored = await batchAddIngredients(doomed);
+                    if (restored) toast.success('Items restored');
+                },
+            },
+        });
+    }, [selectedIds, ingredients, deleteIngredient, batchAddIngredients, confirm, toast]);
 
     // --- Import / export ---
     const handleExport = useCallback(() => {
@@ -140,19 +213,34 @@ export default function PantryPage() {
             const { items, created, updated, warnings } = parseImportedIngredients(text, ingredients);
 
             if (updated > 0) {
-                const proceed = window.confirm(
-                    `${items.length} row(s) read.\n\n` +
-                    `${created} new item(s) will be added.\n` +
-                    `${updated} existing item(s) will be overwritten with the values in the file.\n\n` +
-                    `Continue?`
-                );
+                const proceed = await confirm({
+                    title: `Overwrite ${updated} existing item${updated === 1 ? '' : 's'}?`,
+                    message: `${items.length} row${items.length === 1 ? '' : 's'} read from the file.`,
+                    details: [
+                        `${created} new item${created === 1 ? '' : 's'} will be added.`,
+                        `${updated} existing item${updated === 1 ? '' : 's'} will be replaced by the values in the file.`,
+                    ],
+                    confirmLabel: 'Import',
+                    destructive: true,
+                });
                 if (!proceed) {
                     setImportReport({ ok: false, title: 'Import cancelled', details: ['Nothing was changed.'] });
                     return;
                 }
             }
 
-            await batchAddIngredients(items);
+            const saved = await batchAddIngredients(items);
+            if (!saved) {
+                setImportReport({
+                    ok: false,
+                    title: 'Import not saved',
+                    details: [
+                        `${items.length} row(s) were read correctly, but the database rejected the write.`,
+                        'Sign in and import the file again — nothing was stored.',
+                    ],
+                });
+                return;
+            }
             setImportReport({
                 ok: true,
                 title: `Imported ${items.length} item${items.length === 1 ? '' : 's'}`,
@@ -171,7 +259,7 @@ export default function PantryPage() {
         } finally {
             setImporting(false);
         }
-    }, [ingredients, batchAddIngredients]);
+    }, [ingredients, batchAddIngredients, confirm]);
 
     return (
         <motion.div 
@@ -232,9 +320,17 @@ export default function PantryPage() {
                                     <button
                                         role="menuitem"
                                         onClick={() => { setMenuOpen(false); downloadIngredientTemplate(); }}
-                                        className="flex w-full items-center gap-2.5 border-t border-app-border px-3 py-2 text-sm font-medium text-app-muted transition-colors hover:bg-app-elevated hover:text-app-text"
+                                        className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-app-muted transition-colors hover:bg-app-elevated hover:text-app-text"
                                     >
                                         <FileSpreadsheet className="h-4 w-4" /> Download template
+                                    </button>
+                                    <button
+                                        role="menuitem"
+                                        onClick={() => { setMenuOpen(false); setShowBatchModal(true); }}
+                                        className="flex w-full items-center gap-2.5 border-t border-app-border px-3 py-2 text-sm font-medium text-app-text transition-colors hover:bg-app-elevated"
+                                    >
+                                        <Layers className="h-4 w-4 text-app-muted" />
+                                        Set stock for {selectedIds.size > 0 ? `${selectedIds.size} selected` : 'all items'}
                                     </button>
                                 </div>
                             </>
@@ -331,12 +427,64 @@ export default function PantryPage() {
                             </Chip>
                         ))}
                         <div className="w-px h-8 bg-app-border mx-1 shrink-0"></div>
+                        <button
+                            onClick={() => { setIsSelectionMode(v => !v); setSelectedIds(new Set()); }}
+                            aria-pressed={isSelectionMode}
+                            className={cn(
+                                "shrink-0 h-9 px-3 border text-xs font-semibold transition-colors",
+                                isSelectionMode
+                                    ? "border-app-primary bg-app-primary text-primary-foreground"
+                                    : "border-app-border bg-app-elevated text-app-muted hover:text-app-text"
+                            )}
+                        >
+                            {isSelectionMode ? 'Done' : 'Select'}
+                        </button>
                         <div className="flex gap-1 bg-app-elevated p-1 rounded-md shrink-0">
                             <button onClick={() => setViewMode('grid')} aria-label="Grid view" aria-pressed={viewMode==='grid'} className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-all", viewMode==='grid'?'bg-app-primary text-primary-foreground':'text-app-muted hover:text-app-text')}><LayoutGrid className="h-4 w-4" /></button>
                             <button onClick={() => setViewMode('list')} aria-label="List view" aria-pressed={viewMode==='list'} className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-all", viewMode==='list'?'bg-app-primary text-primary-foreground':'text-app-muted hover:text-app-text')}><ListIcon className="h-4 w-4" /></button>
                         </div>
                     </div>
             </StickyToolbar>
+
+            {/* Selection actions */}
+            {isSelectionMode && (
+                <div className="flex flex-wrap items-center gap-2 border border-app-primary/40 bg-app-primary/5 px-2.5 py-2">
+                    <span className="text-xs font-semibold text-app-text">
+                        {selectedIds.size} selected
+                        <span className="font-normal text-app-muted"> of {filteredIngredients.length}</span>
+                    </span>
+                    <button
+                        onClick={() => setSelectedIds(new Set(filteredIngredients.map(i => i.id)))}
+                        className="h-7 border border-app-border bg-app-card px-2.5 text-[11px] font-semibold text-app-text hover:border-app-primary/50"
+                    >
+                        Select all
+                    </button>
+                    <button
+                        onClick={() => setSelectedIds(new Set())}
+                        disabled={selectedIds.size === 0}
+                        className="h-7 border border-app-border bg-app-card px-2.5 text-[11px] font-semibold text-app-text hover:border-app-primary/50 disabled:opacity-40"
+                    >
+                        Clear
+                    </button>
+
+                    <div className="ml-auto flex items-center gap-2">
+                        <button
+                            onClick={() => setShowBatchModal(true)}
+                            disabled={selectedIds.size === 0}
+                            className="inline-flex h-7 items-center gap-1.5 bg-app-primary px-2.5 text-[11px] font-semibold text-primary-foreground hover:brightness-105 disabled:opacity-40"
+                        >
+                            <Layers className="h-3 w-3" /> Update stock
+                        </button>
+                        <button
+                            onClick={handleBatchDelete}
+                            disabled={selectedIds.size === 0}
+                            className="inline-flex h-7 items-center gap-1.5 border border-app-danger/40 bg-app-danger/10 px-2.5 text-[11px] font-semibold text-app-danger hover:bg-app-danger hover:text-white disabled:opacity-40"
+                        >
+                            <Trash2 className="h-3 w-3" /> Delete
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Content Feed */}
             <div className="min-h-[500px]">
@@ -388,7 +536,14 @@ export default function PantryPage() {
             <AnimatePresence>
                 {showAddModal && <AddIngredientModal onClose={() => setShowAddModal(false)} onSave={(n) => { addIngredient(n); setShowAddModal(false); }} />}
                 {editingIngredient && <EditIngredientModal ingredient={editingIngredient} onClose={() => setEditingIngredient(null)} onSave={(u) => { updateIngredient(u); setEditingIngredient(null); }} />}
-                {showBatchModal && <BatchUpdateModal count={selectedIds.size} onClose={() => setShowBatchModal(false)} onSave={() => {}} />}
+                {showBatchModal && (
+                    <BatchUpdateModal
+                        count={batchTargets.length}
+                        scope={selectedIds.size > 0 ? 'selected' : 'all'}
+                        onClose={() => setShowBatchModal(false)}
+                        onSave={handleBatchStock}
+                    />
+                )}
             </AnimatePresence>
         </motion.div>
     );

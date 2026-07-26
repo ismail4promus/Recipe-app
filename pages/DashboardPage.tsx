@@ -6,8 +6,10 @@ import {
   AlertTriangle, PackageX, Clock3, CheckCircle2,
 } from 'lucide-react';
 import { useData } from '../context/DataContext';
-import { Ingredient, Order } from '../types';
+import { Order } from '../types';
 import { formatCurrency, ANIMATION_VARIANTS } from '../lib/utils';
+import { buildAlerts, expiryDate, AlertKind } from '../lib/alerts';
+import { LOW_STOCK_PACKAGES } from '../lib/shoppingList';
 
 import SummaryCard from '../components/dashboard/SummaryCard';
 import QuickAction from '../components/dashboard/QuickAction';
@@ -22,11 +24,19 @@ import { CookingStatus } from '../components/dashboard/StatusBadge';
 const startOfDay = (d: Date) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
 const isSameDay = (a?: Date, b?: Date) => !!a && !!b && startOfDay(new Date(a)).getTime() === startOfDay(new Date(b)).getTime();
 const daysBetween = (from: Date, to: Date) => Math.ceil((startOfDay(to).getTime() - startOfDay(from).getTime()) / 86400000);
-const expiryDate = (i: Ingredient) => { const e = new Date(i.last_verified || new Date()); e.setDate(e.getDate() + (i.shelf_life_days || 365)); return e; };
 const timeLabel = (d?: Date) => {
   if (!d) return undefined;
   const dt = new Date(d);
   return isNaN(dt.getTime()) ? undefined : new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(dt);
+};
+
+const ALERT_ICON: Record<AlertKind, typeof PackageX> = {
+  'out-of-stock': PackageX,
+  'low-stock': PackageMinus,
+  'expiring': Clock3,
+  'expired': Clock3,
+  'order-overdue': AlertTriangle,
+  'order-urgent': AlertTriangle,
 };
 
 const getGreeting = (h: number) => (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening');
@@ -40,7 +50,10 @@ const getWeekTarget = () => {
 const DashboardPage: React.FC = () => {
   const { ingredients, orders, cookingSessions, loading, getRecipeById } = useData();
 
-  const now = new Date();
+  // A fresh Date on every render invalidates every memo below it, so the whole
+  // dashboard model was being recomputed on each keystroke elsewhere in the
+  // tree. One timestamp per mount is what the figures actually need.
+  const now = useMemo(() => new Date(), []);
   const greeting = `${getGreeting(now.getHours())}, ${getUserName()}`;
   const dateLabel = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(now);
 
@@ -50,7 +63,7 @@ const DashboardPage: React.FC = () => {
     const todaysOrders = orders.filter(o => activeStatuses.includes(o.status) && isSameDay(o.dueDate, now));
 
     const criticalStock = ingredients.filter(i => i.packagesInStock === 0);
-    const lowStock = ingredients.filter(i => i.packagesInStock > 0 && i.packagesInStock <= 2);
+    const lowStock = ingredients.filter(i => i.packagesInStock > 0 && i.packagesInStock <= LOW_STOCK_PACKAGES);
     const expiring = ingredients
       .map(i => ({ i, days: daysBetween(now, expiryDate(i)) }))
       .filter(x => x.days <= 7)
@@ -71,42 +84,19 @@ const DashboardPage: React.FC = () => {
   }, [orders, ingredients, cookingSessions, now]);
 
   // --- Attention items (urgent first, capped at 6) ---
-  const alerts = useMemo(() => {
-    const list: (React.ComponentProps<typeof AlertItem> & { sev: number })[] = [];
-    const sevRank: Record<AlertSeverity, number> = { urgent: 0, warning: 1, info: 2 };
-
-    model.criticalStock.forEach(i => list.push({
-      sev: sevRank.urgent, icon: PackageX, severity: 'urgent',
-      title: i.name, message: 'Out of stock — restock to keep cooking.',
-      actionLabel: 'Update Stock', to: '/pantry?filter=low',
-    }));
-    model.lowStock.forEach(i => list.push({
-      sev: sevRank.warning, icon: PackageMinus, severity: 'warning',
-      title: i.name, message: `Running low — ${i.packagesInStock} ${i.packageUnit} left, below minimum.`,
-      actionLabel: 'Update Stock', to: '/pantry?filter=low',
-    }));
-    model.expiring.forEach(({ i, days }) => list.push({
-      sev: days < 0 ? sevRank.urgent : sevRank.warning, icon: Clock3,
-      severity: days < 0 ? 'urgent' : 'warning',
-      title: i.name,
-      message: days < 0 ? 'Expired — check before use.' : days === 0 ? 'Expires today.' : `Expires in ${days} day${days === 1 ? '' : 's'}.`,
-      actionLabel: 'View Ingredient', to: '/pantry?filter=expiring',
-    }));
-    orders.forEach(o => {
-      const overdue = o.dueDate && daysBetween(now, new Date(o.dueDate)) < 0 && ['approved', 'processing', 'pending_approval'].includes(o.status);
-      const urgent = o.priority === 'high' && ['approved', 'processing', 'pending_approval'].includes(o.status);
-      if (overdue || urgent) {
-        list.push({
-          sev: sevRank.urgent, icon: AlertTriangle, severity: 'urgent',
-          title: `Order #${o.orderNumber.slice(-5)} — ${o.customerName}`,
-          message: overdue ? 'Past its due date and not completed yet.' : 'Marked high priority — needs attention.',
-          actionLabel: 'View Order', to: `/orders?q=${encodeURIComponent(o.orderNumber)}`,
-        });
-      }
-    });
-
-    return list.sort((a, b) => a.sev - b.sev).slice(0, 6);
-  }, [model, orders, now]);
+  // Derived by lib/alerts so the header bell counts exactly what is listed here.
+  const allAlerts = useMemo(() => buildAlerts(ingredients, orders, now), [ingredients, orders, now]);
+  const alerts = useMemo(
+    () => allAlerts.slice(0, 6).map(a => ({
+      icon: ALERT_ICON[a.kind],
+      severity: a.severity as AlertSeverity,
+      title: a.title,
+      message: a.message,
+      actionLabel: a.actionLabel,
+      to: a.to,
+    })),
+    [allAlerts]
+  );
 
   // --- Today's cooking schedule ---
   const tasks = useMemo(() => {
@@ -246,7 +236,7 @@ const DashboardPage: React.FC = () => {
 
       {/* 4. Attention required */}
       <motion.div variants={ANIMATION_VARIANTS.item}>
-        <Section title="Attention Required" icon={AlertTriangle} count={alerts.length} countTone={model.criticalStock.length ? 'danger' : 'warning'}>
+        <Section title="Attention Required" icon={AlertTriangle} count={allAlerts.length} countTone={model.criticalStock.length ? 'danger' : 'warning'}>
           {alerts.length ? (
             <div className="space-y-2">
               {alerts.map((a, i) => <AlertItem key={i} {...a} />)}

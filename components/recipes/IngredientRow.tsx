@@ -132,7 +132,7 @@ const IngredientRow: React.FC<IngredientRowProps> = React.memo(({
         pantryIngredients.find(p => p.id === ingredient.ingredientId),
     [ingredient.ingredientId, pantryIngredients]);
 
-    const ratio = linkedPantryItem ? baseUnitRatio(ingredient, linkedPantryItem.baseUnit) : null;
+    const ratio = linkedPantryItem ? baseUnitRatio(ingredient, linkedPantryItem.baseUnit, linkedPantryItem.unitConversions) : null;
     const needsBridge = !!linkedPantryItem && ratio === null;
 
     const normalizedQty = ratio !== null ? (ingredient.quantity || 0) * ratio : 0;
