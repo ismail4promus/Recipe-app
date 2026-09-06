@@ -304,7 +304,7 @@ export default function CookingModePage() {
     if (isFinished) {
         return (
             <div className="fixed inset-0 bg-app-bg z-[200] flex items-center justify-center p-4">
-                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full bg-app-card p-6 border border-app-border shadow-card text-center relative overflow-hidden">
+                <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="max-w-md w-full bg-app-card p-6 rounded-2xl border border-app-border shadow-card text-center relative overflow-hidden">
                     <div className="h-14 w-14 bg-app-success/10 text-app-success border border-app-success/20 flex items-center justify-center mx-auto mb-4">
                         <PartyPopper className="h-7 w-7" />
                     </div>
@@ -324,7 +324,7 @@ export default function CookingModePage() {
                             {stockUpdated ? <Check className="h-4 w-4" /> : <PackageMinus className="h-4 w-4" />}
                             {stockUpdated ? 'Stock updated' : 'Update stock for what you used'}
                         </button>
-                        <button onClick={() => navigate(`/recipes/${recipeId}`)} className="w-full min-h-[44px] bg-app-primary text-primary-foreground font-semibold text-sm shadow-soft hover:brightness-105 active:scale-[0.99] transition-all">
+                        <button onClick={() => navigate(`/recipes/${recipeId}`)} className="w-full min-h-[44px] rounded-full bg-app-primary text-primary-foreground font-semibold text-sm shadow-soft hover:brightness-105 active:scale-[0.99] transition-all">
                             Done
                         </button>
                     </div>
@@ -350,7 +350,7 @@ export default function CookingModePage() {
             {/* Header */}
             <div className="bg-app-card border-b border-app-border h-16 flex items-center justify-between gap-2 px-3 md:px-6 shadow-soft z-30 pt-safe">
                 <div className="flex items-center gap-2 md:gap-4 min-w-0">
-                    <button aria-label="Back" onClick={() => setShowSaveNamingModal(true)} className="h-10 w-10 shrink-0 flex items-center justify-center bg-app-elevated border border-app-border text-app-muted hover:text-app-primary transition-all">
+                    <button aria-label="Back" onClick={() => setShowSaveNamingModal(true)} className="h-10 w-10 shrink-0 flex items-center justify-center bg-app-elevated rounded-xl border border-app-border text-app-muted hover:text-app-primary transition-all">
                         <ArrowLeft className="h-5 w-5"/>
                     </button>
                     <div className="min-w-0">
@@ -381,7 +381,7 @@ export default function CookingModePage() {
                         <PackageMinus className="h-4 w-4" />
                     </button>
 
-                     <div className="flex items-center bg-app-elevated border border-app-border">
+                     <div className="flex items-center bg-app-elevated rounded-xl border border-app-border">
                         <button aria-label="Fewer servings" onClick={() => setLocalServings(Math.max(1, localServings - 1))} className="h-10 w-9 md:w-10 flex items-center justify-center text-app-muted hover:text-app-primary transition-all active:scale-90 font-semibold text-lg">−</button>
                         <div className="px-2 text-center border-x border-app-border">
                             <input aria-label="Servings" type="number" min="1" value={localServings} onChange={(e) => setLocalServings(Math.max(1, parseInt(e.target.value) || 1))} className="w-9 bg-transparent text-center text-sm font-semibold tabular-nums text-app-text outline-none border-none" />
@@ -519,7 +519,7 @@ export default function CookingModePage() {
                  </div>
 
                 <div className="max-w-7xl mx-auto w-full flex items-center justify-between gap-2 md:gap-4">
-                    <button disabled={currentStepIndex === 0} onClick={() => setCurrentStepIndex(c => c - 1)} className="min-h-[44px] px-4 md:px-8 border border-app-border flex items-center gap-2 md:gap-3 text-app-muted hover:text-app-text hover:bg-app-muted/10 disabled:opacity-30 transition-all">
+                    <button disabled={currentStepIndex === 0} onClick={() => setCurrentStepIndex(c => c - 1)} className="min-h-[44px] px-4 md:px-8 rounded-xl border border-app-border flex items-center gap-2 md:gap-3 text-app-muted hover:text-app-text hover:bg-app-muted/10 disabled:opacity-30 transition-all">
                         <ArrowLeft className="h-4 w-4" />
                         <span className="text-sm font-semibold hidden sm:inline">Back</span>
                     </button>

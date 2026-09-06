@@ -8,18 +8,18 @@ export const StepsTab: React.FC<{ steps: Recipe['steps'] }> = ({ steps }) => (
         <div className="absolute left-[13px] top-2 bottom-8 w-px bg-app-border"></div>
 
         {(!steps || steps.length === 0) && (
-            <div className="py-10 text-center text-app-muted bg-app-elevated border border-dashed border-app-border">
+            <div className="py-10 text-center text-app-muted bg-app-elevated rounded-2xl border border-dashed border-app-border">
                 <p className="text-sm font-medium">No steps added yet</p>
             </div>
         )}
 
         {steps?.map((step, index) => (
             <div key={step.id} className="relative">
-                <div className="absolute -left-7 top-1.5 h-[26px] w-[26px] bg-app-elevated border border-app-primary/50 flex items-center justify-center z-10">
+                <div className="absolute -left-7 top-1.5 h-[26px] w-[26px] rounded-full bg-app-elevated border border-app-primary/50 flex items-center justify-center z-10">
                     <span className="text-[11px] font-bold text-app-primary tabular-nums">{index + 1}</span>
                 </div>
 
-                <div className="bg-app-elevated border border-app-border px-3 py-2 hover:border-app-primary/40 transition-colors">
+                <div className="bg-app-elevated rounded-xl border border-app-border px-3 py-2 hover:border-app-primary/40 transition-colors">
                     <p className="text-sm text-app-text font-medium leading-relaxed">
                         {step.instruction}
                     </p>

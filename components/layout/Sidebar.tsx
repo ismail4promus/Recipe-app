@@ -18,7 +18,7 @@ const Sidebar: React.FC = () => {
   return (
     <aside className="hidden md:flex flex-col md:w-[76px] lg:w-[224px] h-full bg-app-sidebar border-r border-app-border relative z-30 transition-[width] duration-200">
       <div className="flex items-center gap-3 px-4 lg:px-5 h-14 border-b border-app-border">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-app-primary text-primary-foreground">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-app-primary text-primary-foreground shadow-soft">
           <ChefHat className="h-5 w-5" />
         </div>
         <h1 className="hidden lg:block truncate text-lg font-bold tracking-tight text-app-text">{kitchenName}</h1>
@@ -32,11 +32,11 @@ const Sidebar: React.FC = () => {
             title={label}
             className={({ isActive }) =>
               cn(
-                'group relative flex items-center gap-3 rounded-md px-2.5 py-2 transition-colors md:justify-center lg:justify-start',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+                'group relative flex items-center gap-3 rounded-full px-3 py-2 transition-colors md:justify-center lg:justify-start',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/50',
                 isActive
                   ? 'bg-app-primary/12 text-app-primary font-semibold'
-                  : 'text-app-muted hover:bg-white/[0.04] hover:text-app-text'
+                  : 'text-app-muted hover:bg-app-muted/10 hover:text-app-text'
               )
             }
           >
@@ -56,9 +56,9 @@ const Sidebar: React.FC = () => {
       <div className="p-2">
         <Link
           to={user ? '/settings' : '/signin'}
-          className="flex items-center gap-2.5 border border-app-border bg-app-card p-2 transition-colors hover:border-app-primary/40 md:justify-center lg:justify-start"
+          className="flex items-center gap-2.5 rounded-2xl border border-app-border bg-app-card p-2 shadow-soft transition-colors hover:border-app-primary/35 md:justify-center lg:justify-start"
         >
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden border border-app-border bg-app-elevated text-app-muted">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-app-border bg-app-elevated text-app-muted">
             {user?.photoURL
               ? <img src={user.photoURL} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
               : <User className="h-4 w-4" />}

@@ -67,7 +67,7 @@ export const CostTab: React.FC<{
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <div className="bg-app-elevated border border-app-border p-2.5 shadow-soft">
+                <div className="bg-app-elevated rounded-xl border border-app-border p-2.5 shadow-soft">
                     <p className="text-[11px] font-semibold text-app-muted uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                         <Package className="h-3.5 w-3.5" /> Ingredient cost
                     </p>
@@ -77,7 +77,7 @@ export const CostTab: React.FC<{
                     </p>
                 </div>
 
-                <div className="bg-app-elevated border border-app-border p-2.5 shadow-soft">
+                <div className="bg-app-elevated rounded-xl border border-app-border p-2.5 shadow-soft">
                     <p className="text-[11px] font-semibold text-app-muted uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                         <Calculator className="h-3.5 w-3.5" /> Profit
                     </p>
@@ -87,17 +87,17 @@ export const CostTab: React.FC<{
                     </p>
                 </div>
 
-                <div className="bg-app-primary border border-app-primary p-2.5 shadow-soft relative overflow-hidden">
-                    <DollarSign className="absolute -bottom-3 -right-3 h-16 w-16 text-white/[0.1]" />
-                    <p className="text-[11px] font-semibold text-white/80 uppercase tracking-wider mb-1.5">Suggested price</p>
-                    <p className="text-2xl font-bold text-white tabular-nums leading-none tracking-tight">{formatCurrency(suggestedPrice)}</p>
-                    <p className="mt-1.5 pt-1.5 border-t border-white/20 text-xs font-medium text-white/90">
+                <div className="bg-app-primary rounded-xl border border-app-primary p-2.5 shadow-soft relative overflow-hidden">
+                    <DollarSign className="absolute -bottom-3 -right-3 h-16 w-16 text-primary-foreground/10" />
+                    <p className="text-[11px] font-semibold text-primary-foreground/80 uppercase tracking-wider mb-1.5">Suggested price</p>
+                    <p className="text-2xl font-bold text-primary-foreground tabular-nums leading-none tracking-tight">{formatCurrency(suggestedPrice)}</p>
+                    <p className="mt-1.5 pt-1.5 border-t border-primary-foreground/20 text-xs font-medium text-primary-foreground/90">
                         {formatCurrency(suggestedPrice / (recipe.servings * scaleFactor))} per serving
                     </p>
                 </div>
             </div>
 
-            <div className="bg-app-elevated border border-app-border shadow-soft">
+            <div className="bg-app-elevated rounded-xl border border-app-border shadow-soft">
                 <div className="px-2.5 py-1.5 border-b border-app-border font-semibold text-[11px] uppercase tracking-wider text-app-muted flex items-center gap-1.5">
                     <Calculator className="h-3.5 w-3.5 text-app-primary" /> Cost breakdown
                 </div>

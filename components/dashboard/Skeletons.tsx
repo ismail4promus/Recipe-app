@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '../../lib/utils';
 
 const Block: React.FC<{ className?: string }> = ({ className }) => (
-  <div className={cn('animate-pulse rounded-lg bg-white/[0.06]', className)} />
+  <div className={cn('animate-pulse rounded-xl bg-app-muted/15', className)} />
 );
 
 // Loading skeleton mirroring the dashboard layout so nothing flashes empty.

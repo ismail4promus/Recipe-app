@@ -5,7 +5,7 @@ import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from 'recharts';
 import { AlertCircle, Activity, Info } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+const COLORS = ['#2A7F72', '#C0A15A', '#7FB6A3', '#C4585F'];
 
 export const NutritionTab: React.FC<{ recipe: Recipe; scaleFactor: number }> = ({ recipe, scaleFactor }) => {
     const nutrition = recipe.nutrition || { calories: 0, protein: 0, carbs: 0, fat: 0 };
@@ -23,14 +23,14 @@ export const NutritionTab: React.FC<{ recipe: Recipe; scaleFactor: number }> = (
     return (
         <div className="space-y-2">
             {!hasData && (
-                <div className="bg-app-muted/10 p-2.5 flex items-center gap-2.5 border border-app-border">
+                <div className="bg-app-muted/10 p-2.5 flex items-center gap-2.5 rounded-xl border border-app-border">
                     <Info className="h-4 w-4 shrink-0 text-app-muted" />
                     <p className="text-xs text-app-muted">Nutrition data has not been added for this recipe.</p>
                 </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div className="bg-app-elevated border border-app-border p-2.5 flex flex-col relative">
+                <div className="bg-app-elevated rounded-xl border border-app-border p-2.5 flex flex-col relative">
                     <h3 className="text-[11px] font-semibold text-app-muted uppercase tracking-wider">Calorie breakdown</h3>
                     <div className="h-36 w-full flex items-center justify-center relative">
                         {hasData ? (
@@ -63,7 +63,7 @@ export const NutritionTab: React.FC<{ recipe: Recipe; scaleFactor: number }> = (
                     </div>
                 </div>
 
-                <div className="bg-app-elevated border border-app-border p-2.5 space-y-2.5">
+                <div className="bg-app-elevated rounded-xl border border-app-border p-2.5 space-y-2.5">
                     <h3 className="text-[11px] font-semibold text-app-muted uppercase tracking-wider">Macronutrients</h3>
                     {[
                         { label: 'Protein', grams: nutrition.protein, calories: nutrition.protein * 4, text: 'text-app-info', bar: 'bg-app-info', track: 'bg-app-info/15' },

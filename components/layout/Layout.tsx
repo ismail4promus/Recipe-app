@@ -13,7 +13,7 @@ const Layout: React.FC = () => {
   return (
     <div className="app-shell-bg flex h-screen w-full text-app-text">
       <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden relative">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header />
         <SaveStatusBanner />
 

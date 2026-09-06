@@ -199,7 +199,7 @@ const CommandPalette: React.FC = () => {
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="flex w-full max-w-xl flex-col overflow-hidden border border-app-border bg-app-card shadow-2xl"
+            className="flex w-full max-w-xl flex-col overflow-hidden rounded-2xl border border-app-border bg-app-card shadow-2xl"
           >
             <div className="flex h-12 shrink-0 items-center gap-2.5 border-b border-app-border px-3">
               <Search className="h-4 w-4 shrink-0 text-app-muted" />
@@ -212,7 +212,7 @@ const CommandPalette: React.FC = () => {
                 aria-label="Search or run a command"
                 className="w-full bg-transparent text-sm text-app-text outline-none placeholder:text-app-muted"
               />
-              <kbd className="hidden shrink-0 border border-app-border px-1.5 py-0.5 text-[10px] font-semibold text-app-muted sm:block">ESC</kbd>
+              <kbd className="hidden shrink-0 rounded-md border border-app-border px-1.5 py-0.5 text-[10px] font-semibold text-app-muted sm:block">ESC</kbd>
             </div>
 
             <div ref={listRef} className="max-h-[55vh] overflow-y-auto p-1.5">

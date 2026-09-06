@@ -3,16 +3,17 @@ import { Link } from 'react-router-dom';
 import { LucideIcon, ChevronLeft } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
-/* Shared UI kit: compact, subtly-rounded controls. Dark-first, orange primary,
-   fully theme-token driven (works in light + dark). */
+/* Shared UI kit: soft, pill-shaped controls on cream and sage surfaces.
+   Forest-green primary with a gold accent, fully theme-token driven. */
 
 // ---- Button ----
-type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'accent';
 const BTN: Record<BtnVariant, string> = {
-  primary: 'bg-app-primary text-primary-foreground hover:brightness-105 shadow-soft',
-  secondary: 'bg-app-elevated text-app-text hover:bg-app-elevated/70 border border-app-border',
+  primary: 'bg-app-primary text-primary-foreground hover:brightness-110 shadow-card',
+  secondary: 'bg-app-elevated text-app-text hover:bg-app-secondary border border-app-border',
   ghost: 'text-app-text hover:bg-app-muted/10',
-  danger: 'bg-app-danger text-white hover:brightness-105',
+  danger: 'bg-app-danger text-white hover:brightness-105 shadow-soft',
+  accent: 'bg-app-accent text-app-text hover:brightness-105 shadow-soft',
 };
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -23,7 +24,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button: React.FC<ButtonProps> = ({ variant = 'primary', icon: Icon, full, className, children, ...props }) => (
   <button
     className={cn(
-      'inline-flex h-9 items-center justify-center gap-1.5 px-3.5 text-sm font-semibold transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 disabled:opacity-50',
+      'inline-flex h-10 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-semibold tracking-tight transition-all active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-app-bg disabled:opacity-50',
       BTN[variant], full && 'w-full', className
     )}
     {...props}
@@ -42,7 +43,7 @@ interface SegmentedProps<T extends string> {
 }
 export function Segmented<T extends string>({ options, value, onChange, className }: SegmentedProps<T>) {
   return (
-    <div className={cn('inline-flex border border-app-border bg-app-elevated', className)} role="tablist">
+    <div className={cn('inline-flex gap-1 rounded-full border border-app-border bg-app-elevated p-1', className)} role="tablist">
       {options.map(o => (
         <button
           key={o.value}
@@ -50,8 +51,10 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
           aria-selected={value === o.value}
           onClick={() => onChange(o.value)}
           className={cn(
-            'h-8 px-3.5 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
-            value === o.value ? 'bg-app-primary text-primary-foreground' : 'text-app-muted hover:text-app-text'
+            'h-8 rounded-full px-4 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/50',
+            value === o.value
+              ? 'bg-app-primary text-primary-foreground shadow-soft'
+              : 'text-app-muted hover:bg-app-card hover:text-app-text'
           )}
         >
           {o.label}
@@ -66,10 +69,10 @@ export const Chip: React.FC<{ active?: boolean; onClick?: () => void; children: 
   <button
     onClick={onClick}
     className={cn(
-      'whitespace-nowrap border px-2.5 py-1 text-xs font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+      'whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/50',
       active
-        ? 'border-app-primary bg-app-primary text-primary-foreground'
-        : 'border-app-border bg-app-elevated text-app-muted hover:border-app-primary/40 hover:text-app-text',
+        ? 'border-app-primary bg-app-primary text-primary-foreground shadow-soft'
+        : 'border-app-border bg-app-card text-app-muted hover:border-app-primary/35 hover:text-app-text',
       className
     )}
   >
@@ -77,7 +80,7 @@ export const Chip: React.FC<{ active?: boolean; onClick?: () => void; children: 
   </button>
 );
 
-// ---- Compact icon button (square, subtly rounded) ----
+// ---- Compact icon button (circular) ----
 export const IconButton: React.FC<
   React.ButtonHTMLAttributes<HTMLButtonElement> & { icon: LucideIcon; label: string }
 > = ({ icon: Icon, label, className, ...props }) => (
@@ -85,7 +88,7 @@ export const IconButton: React.FC<
     aria-label={label}
     title={label}
     className={cn(
-      'flex h-8 w-8 items-center justify-center border border-app-border bg-app-elevated text-app-text transition-colors hover:border-app-primary/40 hover:bg-app-muted/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
+      'flex h-9 w-9 items-center justify-center rounded-full border border-app-border bg-app-card text-app-text shadow-soft transition-all active:scale-[0.95] hover:border-app-primary/35 hover:bg-app-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/50',
       className
     )}
     {...props}
@@ -103,14 +106,14 @@ export const PageHeader: React.FC<{
   action?: React.ReactNode;
   className?: string;
 }> = ({ title, subtitle, backTo, onBack, action, className }) => (
-  <div className={cn('mb-2 flex items-center gap-2 border-b border-app-border pb-2', className)}>
+  <div className={cn('mb-3 flex items-center gap-2.5 pb-1', className)}>
     {(backTo || onBack) &&
       (backTo ? (
-        <Link to={backTo} aria-label="Back" className="flex h-8 w-8 shrink-0 items-center justify-center border border-app-border bg-app-elevated text-app-text hover:border-app-primary/40 hover:bg-app-muted/15">
+        <Link to={backTo} aria-label="Back" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-app-border bg-app-card text-app-text shadow-soft transition-colors hover:border-app-primary/35 hover:bg-app-elevated">
           <ChevronLeft className="h-4 w-4" />
         </Link>
       ) : (
-        <button onClick={onBack} aria-label="Back" className="flex h-8 w-8 shrink-0 items-center justify-center border border-app-border bg-app-elevated text-app-text hover:border-app-primary/40 hover:bg-app-muted/15">
+        <button onClick={onBack} aria-label="Back" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-app-border bg-app-card text-app-text shadow-soft transition-colors hover:border-app-primary/35 hover:bg-app-elevated">
           <ChevronLeft className="h-4 w-4" />
         </button>
       ))}

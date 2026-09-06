@@ -32,11 +32,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ icon: Icon, title, value, hin
   const body = (
     <div
       className={cn(
-        'group relative flex h-full items-center gap-2.5 border border-app-border bg-app-card px-2.5 py-2 transition-colors duration-200',
+        'group relative flex h-full items-center gap-2.5 overflow-hidden rounded-2xl border border-app-border bg-app-card px-3 py-2.5 shadow-soft transition-colors duration-200',
         to && cn('cursor-pointer', a.ring)
       )}
     >
-      <span className={cn('flex h-8 w-8 shrink-0 items-center justify-center', a.icon)}>
+      <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', a.icon)}>
         <Icon className="h-4 w-4" strokeWidth={2} />
       </span>
 

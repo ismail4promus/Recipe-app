@@ -103,7 +103,7 @@ const OrdersPage: React.FC = () => {
                     { label: 'In Progress', val: metrics.active, icon: Utensils, color: 'text-app-primary', tint: 'bg-app-primary/10' },
                     { label: 'Revenue', val: formatCurrency(metrics.revenue).split('.')[0], icon: DollarSign, color: 'text-app-success', tint: 'bg-app-success/15' }
                 ].map((m) => (
-                    <div key={m.label} className="bg-app-card border border-app-border shadow-soft px-2.5 py-2 flex items-center gap-2.5">
+                    <div key={m.label} className="bg-app-card rounded-xl border border-app-border shadow-soft px-2.5 py-2 flex items-center gap-2.5">
                         <div className={cn("h-8 w-8 flex items-center justify-center shrink-0", m.tint)}>
                             <m.icon className={cn("h-4 w-4", m.color)} />
                         </div>
@@ -123,7 +123,7 @@ const OrdersPage: React.FC = () => {
                             placeholder="Search orders…"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full h-9 pl-9 pr-3 bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text transition-all placeholder:text-app-muted"
+                            className="w-full h-9 pl-9 pr-3 bg-app-elevated rounded-xl border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-sm text-app-text transition-all placeholder:text-app-muted"
                         />
                     </div>
 

@@ -167,7 +167,7 @@ export default function CookingLogsPage() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 md:gap-3 bg-app-card border border-app-border p-3 md:p-2.5 shadow-soft w-full md:w-auto md:min-w-[340px]">
+                <div className="grid grid-cols-3 gap-2 md:gap-3 bg-app-card rounded-xl border border-app-border p-3 md:p-2.5 shadow-soft w-full md:w-auto md:min-w-[340px]">
                     <div className="text-center px-1">
                         <p className="text-[11px] md:text-xs text-app-muted font-medium mb-1 truncate">Success</p>
                         <p className="text-lg md:text-xl font-bold text-app-success tabular-nums leading-none">{stats.successRate}%</p>
@@ -201,7 +201,7 @@ export default function CookingLogsPage() {
             </motion.div>
 
             {/* Filter Hub */}
-            <div className="bg-app-card border border-app-border p-1.5 flex flex-col md:flex-row md:items-center gap-2 shadow-soft sticky top-14 md:top-20 z-30 backdrop-blur-md">
+            <div className="bg-app-card rounded-xl border border-app-border p-1.5 flex flex-col md:flex-row md:items-center gap-2 shadow-soft sticky top-14 md:top-20 z-30 backdrop-blur-md">
                 <Segmented
                     value={activeTab}
                     onChange={setActiveTab}

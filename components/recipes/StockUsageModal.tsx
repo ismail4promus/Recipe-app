@@ -45,7 +45,7 @@ export const StockUsageModal: React.FC<{
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="flex max-h-[85vh] w-full max-w-lg flex-col border border-app-border bg-app-card shadow-card"
+                className="flex max-h-[85vh] w-full max-w-lg flex-col rounded-2xl border border-app-border bg-app-card shadow-card"
             >
                 <header className="flex items-center gap-2 border-b border-app-border px-3 py-2">
                     <PackageMinus className="h-4 w-4 text-app-primary" />
@@ -124,13 +124,13 @@ export const StockUsageModal: React.FC<{
                             ? `${shortCount} item${shortCount === 1 ? '' : 's'} will drop to zero.`
                             : 'Stock is reduced by the amounts above.'}
                     </p>
-                    <button onClick={onClose} className="h-8 border border-app-border bg-app-elevated px-3 text-xs font-semibold text-app-text hover:border-app-primary/40">
+                    <button onClick={onClose} className="h-8 rounded-xl border border-app-border bg-app-elevated px-3 text-xs font-semibold text-app-text hover:border-app-primary/40">
                         Cancel
                     </button>
                     <button
                         onClick={handleApply}
                         disabled={busy || done || plan.deductions.length === 0}
-                        className="inline-flex h-8 items-center gap-1.5 bg-app-primary px-3 text-xs font-semibold text-primary-foreground transition-all hover:brightness-105 disabled:opacity-50"
+                        className="inline-flex h-8 items-center gap-1.5 rounded-full bg-app-primary px-3.5 text-xs font-semibold text-primary-foreground transition-all hover:brightness-105 disabled:opacity-50"
                     >
                         {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : done ? <Check className="h-3.5 w-3.5" /> : <PackageMinus className="h-3.5 w-3.5" />}
                         {done ? 'Stock updated' : `Deduct ${plan.deductions.length} item${plan.deductions.length === 1 ? '' : 's'}`}

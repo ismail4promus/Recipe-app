@@ -19,8 +19,8 @@ const Card: React.FC<CardProps> = ({ className, children, isPrimary, ...props })
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        'rounded-lg border border-app-border bg-app-card text-app-text shadow-soft overflow-hidden',
-        isPrimary && 'border-t-2 border-t-app-primary',
+        'rounded-2xl border border-app-border bg-app-card text-app-text shadow-card overflow-hidden',
+        isPrimary && 'border-t-[3px] border-t-app-primary',
         className
       )}
       {...props}
@@ -31,7 +31,7 @@ const Card: React.FC<CardProps> = ({ className, children, isPrimary, ...props })
 };
 
 const CardHeader: React.FC<CardDivProps> = ({ className, children, ...props }) => (
-  <div className={cn('flex flex-col space-y-0.5 px-2.5 py-1.5 border-b border-app-border', className)} {...props}>
+  <div className={cn('flex flex-col space-y-0.5 px-3.5 py-2.5 border-b border-app-border', className)} {...props}>
     {children}
   </div>
 );
@@ -49,13 +49,13 @@ const CardDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
 );
 
 const CardContent: React.FC<CardDivProps> = ({ className, children, ...props }) => (
-  <div className={cn('p-2.5', className)} {...props}>
+  <div className={cn('p-3.5', className)} {...props}>
     {children}
   </div>
 );
 
 const CardFooter: React.FC<CardDivProps> = ({ className, children, ...props }) => (
-  <div className={cn('flex items-center px-2.5 py-1.5 border-t border-app-border bg-app-muted/5', className)} {...props}>
+  <div className={cn('flex items-center px-3.5 py-2.5 border-t border-app-border bg-app-elevated', className)} {...props}>
     {children}
   </div>
 );

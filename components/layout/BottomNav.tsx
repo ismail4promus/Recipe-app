@@ -6,11 +6,11 @@ import { BOTTOM_NAV_ITEMS } from './navConfig';
 
 const ICONS = { Home, ClipboardList, ChefHat, Warehouse, UtensilsCrossed };
 
-// Flat, minimal bottom bar (reference style): line icons, muted inactive,
-// teal active with a thin indicator line above the selected tab.
+// Soft bottom bar: line icons, muted inactive, forest-green active sitting in
+// a rounded pill.
 const BottomNav: React.FC = () => (
-  <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-app-border bg-app-sidebar pb-safe md:hidden">
-    <div className="flex h-[58px] items-stretch justify-around">
+  <nav className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl border-t border-app-border bg-app-card shadow-float pb-safe md:hidden">
+    <div className="flex h-[62px] items-stretch justify-around px-2">
       {BOTTOM_NAV_ITEMS.map(({ to, icon: Icon, label }) => (
         <NavLink
           key={to}
@@ -24,9 +24,9 @@ const BottomNav: React.FC = () => (
         >
           {({ isActive }) => (
             <>
-              {isActive && <span className="absolute top-0 left-0 right-0 h-[2px] bg-app-primary" />}
-              <Icon className="h-[21px] w-[21px]" strokeWidth={isActive ? 2.2 : 1.8} />
-              <span className="text-[10px] font-medium tracking-tight">{label}</span>
+              {isActive && <span aria-hidden className="absolute inset-x-2 inset-y-1.5 rounded-2xl bg-app-primary/10" />}
+              <Icon className="relative h-[21px] w-[21px]" strokeWidth={isActive ? 2.4 : 1.8} />
+              <span className={cn('relative text-[10px] tracking-tight', isActive ? 'font-bold' : 'font-medium')}>{label}</span>
             </>
           )}
         </NavLink>

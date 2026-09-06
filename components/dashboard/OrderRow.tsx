@@ -18,7 +18,7 @@ const OrderRow: React.FC<{ order: Order; to: string }> = ({ order, to }) => {
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-white/[0.03] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+      className="flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-app-muted/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">

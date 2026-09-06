@@ -1,8 +1,8 @@
 /* ==========================================================================
    iCooking — base layer
-   The design language is squared: no corner radii anywhere, weight carried by
-   1px borders, tight shadows and typography instead. Anything that must stay
-   a circle (spinners, status dots) opts in with .circle.
+   The design language is soft: generous corner radii, cream/sage surfaces,
+   pill-shaped controls and wide low-opacity shadows instead of hard borders.
+   Anything that must stay a hard rectangle opts in with .squared.
    ========================================================================== */
 
 /* --- Shell -------------------------------------------------------------- */
@@ -27,9 +27,14 @@ body {
 
 /* --- Escape hatches ----------------------------------------------------- */
 
-/* Radius is globally 0; these are the shapes that genuinely need to be round. */
+/* Radii are generous by default; .circle stays for anything that must be a
+   perfect pill, .squared for the rare surface that must keep hard corners
+   (print sheets, table cells butted against each other). */
 .circle {
   border-radius: 9999px !important;
+}
+.squared {
+  border-radius: 0 !important;
 }
 
 /* Used across the app for tab strips and toolbars. */
@@ -66,7 +71,7 @@ body {
 }
 /* Clears the fixed bottom nav plus the home indicator. */
 .pb-nav {
-  padding-bottom: calc(58px + env(safe-area-inset-bottom) + 1rem);
+  padding-bottom: calc(62px + env(safe-area-inset-bottom) + 1rem);
 }
 
 /* --- Forms -------------------------------------------------------------- */
@@ -83,15 +88,18 @@ body {
 
 input,
 select,
-textarea,
-button {
-  border-radius: 0;
+textarea {
+  border-radius: 12px;
 }
 
-/* Square, high-contrast focus ring that matches the sharp language. */
+button {
+  border-radius: 12px;
+}
+
+/* Soft, high-contrast focus ring that follows the rounded language. */
 :focus-visible {
   outline: 2px solid rgb(var(--c-primary));
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 /* Number inputs: the spinners crowd the small square fields. */
@@ -108,21 +116,26 @@ input[type='number'] {
 input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
-  background: rgb(var(--c-muted) / 0.25);
+  height: 6px;
+  border-radius: 9999px;
+  background: rgb(var(--c-muted) / 0.22);
 }
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   height: 18px;
-  width: 8px;
+  width: 18px;
+  border-radius: 9999px;
   background: currentColor;
+  box-shadow: 0 2px 6px rgba(20, 45, 38, 0.25);
   cursor: pointer;
 }
 input[type='range']::-moz-range-thumb {
   height: 18px;
-  width: 8px;
+  width: 18px;
   border: 0;
+  border-radius: 9999px;
   background: currentColor;
+  box-shadow: 0 2px 6px rgba(20, 45, 38, 0.25);
   cursor: pointer;
 }
 
@@ -139,15 +152,20 @@ input[type='range']::-moz-range-thumb {
 
 /* --- Sharp-design accents ----------------------------------------------- */
 
-/* A 2px rule on the leading edge — the squared equivalent of a pill accent. */
+/* A 3px rule on the leading edge, rounded to match the surface it sits on. */
 .edge-accent {
-  box-shadow: inset 2px 0 0 rgb(var(--c-primary));
+  box-shadow: inset 3px 0 0 rgb(var(--c-primary));
 }
 .edge-accent-top {
-  box-shadow: inset 0 2px 0 rgb(var(--c-primary));
+  box-shadow: inset 0 3px 0 rgb(var(--c-primary));
 }
 
-/* Hairline grid used behind hero sections; reads well with square corners. */
+/* Gold hairline used under section titles and around accent chips. */
+.accent-ring {
+  box-shadow: 0 0 0 1px rgb(var(--c-accent) / 0.35);
+}
+
+/* Hairline grid used behind hero sections. */
 .hairline-grid {
   background-image:
     linear-gradient(to right, rgb(var(--c-muted) / 0.06) 1px, transparent 1px),
@@ -158,5 +176,10 @@ input[type='range']::-moz-range-thumb {
 @media print {
   .print\:hidden {
     display: none !important;
+  }
+  /* Print sheets stay rectangular — rounded corners read as decoration on paper. */
+  * {
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 }

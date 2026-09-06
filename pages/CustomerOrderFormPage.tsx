@@ -109,7 +109,7 @@ const CustomerOrderFormPage: React.FC = () => {
                     <div className="md:col-span-2 space-y-2.5">
                         {recipes.map(recipe => (
                             <Card key={recipe.id} className="flex items-center overflow-hidden rounded-lg bg-app-card border border-app-border shadow-soft">
-                                <div className="w-24 h-24 bg-app-elevated shrink-0">
+                                <div className="w-24 h-24 rounded-xl overflow-hidden bg-app-elevated shrink-0">
                                     <img src={recipe.imageUrl} alt={recipe.name} className="w-full h-full object-cover" />
                                 </div>
                                 <CardContent className="p-2.5 flex-grow">

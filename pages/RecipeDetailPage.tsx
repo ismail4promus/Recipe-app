@@ -130,13 +130,13 @@ export default function RecipeDetailPage() {
                 {/* Only navigation sits on the image — the tools live in the bar below,
                     where they have room to wrap on a phone. */}
                 <div className="absolute top-2.5 left-2.5 right-2.5 md:top-3 md:left-4 md:right-4 flex justify-between items-start gap-2 z-20">
-                    <button aria-label="Back to recipes" onClick={() => navigate('/recipes')} className="h-9 w-9 flex items-center justify-center bg-app-card border border-app-border text-app-text hover:text-app-primary transition-all active:scale-90 shadow-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+                    <button aria-label="Back to recipes" onClick={() => navigate('/recipes')} className="h-9 w-9 flex items-center justify-center bg-app-card rounded-xl border border-app-border text-app-text hover:text-app-primary transition-all active:scale-90 shadow-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
                         <ArrowLeft className="h-4 w-4" />
                     </button>
 
                     <button
                         onClick={() => navigate(`/recipes/${recipeId}/logs?servings=${currentServings}`)}
-                        className="h-9 px-3.5 bg-app-primary text-primary-foreground font-semibold text-sm shadow-soft hover:brightness-105 active:scale-95 transition-all flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+                        className="h-9 px-4 rounded-full bg-app-primary text-primary-foreground font-semibold text-sm shadow-card hover:brightness-105 active:scale-95 transition-all flex items-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
                     >
                         <ChefHat className="h-4 w-4" /> Cook
                     </button>
@@ -164,8 +164,8 @@ export default function RecipeDetailPage() {
 
             {/* ACTION BAR — servings on the left, tools on the right; stacks on phones */}
             <div className="max-w-7xl mx-auto px-2 md:px-6 pt-2">
-                <div className="flex items-center gap-1.5 bg-app-card border border-app-border p-1.5 shadow-soft">
-                    <div className="flex items-center border border-app-border bg-app-elevated h-8 shrink-0">
+                <div className="flex items-center gap-1.5 bg-app-card rounded-xl border border-app-border p-1.5 shadow-soft">
+                    <div className="flex items-center rounded-xl border border-app-border bg-app-elevated h-8 shrink-0">
                         <button aria-label="Decrease servings" onClick={() => setLocalServings(Math.max(1, currentServings - 1))} className="w-8 h-8 flex items-center justify-center text-app-muted hover:text-app-primary hover:bg-app-muted/10 font-semibold transition-all">−</button>
                         <div className="px-1 text-center w-11 border-x border-app-border">
                             <input
@@ -220,7 +220,7 @@ export default function RecipeDetailPage() {
                         { label: 'Carbs', val: Math.round((recipe.nutrition?.carbs || 0) * scaleFactor) + 'g', color: 'text-app-success' },
                         { label: 'Fat', val: Math.round((recipe.nutrition?.fat || 0) * scaleFactor) + 'g', color: 'text-app-text' }
                     ].map(stat => (
-                        <div key={stat.label} className="bg-app-card border border-app-border px-2.5 py-1.5 flex items-baseline justify-between gap-2 transition-colors shadow-soft hover:border-app-primary/40">
+                        <div key={stat.label} className="bg-app-card rounded-xl border border-app-border px-2.5 py-1.5 flex items-baseline justify-between gap-2 transition-colors shadow-soft hover:border-app-primary/40">
                             <p className="text-[10px] font-semibold text-app-muted uppercase tracking-wider">{stat.label}</p>
                             <p className={cn("text-base font-bold tabular-nums leading-none", stat.color)}>{stat.val}</p>
                         </div>
@@ -252,7 +252,7 @@ export default function RecipeDetailPage() {
                 </div>
 
                 {/* SECTION VIEWER */}
-                <div className="min-h-[220px] bg-app-card border border-app-border p-1.5 md:p-2.5 relative overflow-hidden shadow-soft">
+                <div className="min-h-[220px] bg-app-card rounded-xl border border-app-border p-1.5 md:p-2.5 relative overflow-hidden shadow-soft">
                     <AnimatePresence mode="wait">
                         <motion.div key={activeTab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }}>
                             {activeTab === 'ingredients' && <IngredientsTab recipe={recipe} scaleFactor={scaleFactor} pantryIngredients={pantryIngredients} onUpdatePantryItem={updateIngredient} onUpdateRecipe={updateRecipe} />}

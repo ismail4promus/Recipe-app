@@ -61,7 +61,7 @@ const TaskRow: React.FC<{ task: CookingTask }> = ({ task }) => {
         <CookingStatusBadge status={task.status} className="hidden sm:inline-flex" />
         <Link
           to={task.to}
-          className="shrink-0 bg-app-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground transition-all hover:brightness-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+          className="shrink-0 rounded-full bg-app-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground transition-all hover:brightness-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
         >
           {task.actionLabel}
         </Link>

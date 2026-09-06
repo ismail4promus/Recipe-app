@@ -186,7 +186,7 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Weekly revenue target — label, figures and progress on one line */}
-        <div className="mt-2 flex items-center gap-3 border border-app-border bg-app-card px-2.5 py-1.5">
+        <div className="mt-2 flex items-center gap-3 rounded-xl border border-app-border bg-app-card px-2.5 py-1.5">
           <span className="shrink-0 text-xs font-medium text-app-muted">Weekly target</span>
           <div className="h-1.5 flex-1 overflow-hidden bg-app-muted/15">
             <div className={targetPct >= 100 ? 'h-full bg-app-success' : 'h-full bg-app-primary'} style={{ width: `${targetPct}%` }} />

@@ -144,12 +144,12 @@ export const IngredientsTab: React.FC<{
 
     return (
         <div className="space-y-2">
-            <div className="flex justify-between items-center gap-2 bg-app-elevated border border-app-border p-1.5 shadow-soft">
+            <div className="flex justify-between items-center gap-2 bg-app-elevated rounded-xl border border-app-border p-1.5 shadow-soft">
                 <span className="flex items-center gap-1.5 pl-1 text-xs font-medium text-app-muted">
                     <Boxes className="h-3.5 w-3.5 text-app-primary" />
                     {recipe.ingredientSections.length} sections
                 </span>
-                <div className="flex bg-app-card border border-app-border">
+                <div className="flex bg-app-card rounded-xl border border-app-border">
                     {(['original', 'metric', 'imperial'] as const).map((sys) => (
                         <button
                             key={sys}
@@ -184,7 +184,7 @@ export const IngredientsTab: React.FC<{
                                 type="button"
                                 onClick={handleAutoLink}
                                 disabled={busy}
-                                className="inline-flex items-center gap-1.5 border border-app-primary bg-app-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground transition-all hover:brightness-105 disabled:opacity-50"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-app-primary bg-app-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground transition-all hover:brightness-105 disabled:opacity-50"
                             >
                                 <LinkIcon className="h-3 w-3" /> Link {linkable.length} by name
                             </button>
@@ -194,7 +194,7 @@ export const IngredientsTab: React.FC<{
                                 type="button"
                                 onClick={handleCreateMissing}
                                 disabled={busy}
-                                className="inline-flex items-center gap-1.5 border border-app-border bg-app-card px-2.5 py-1 text-[11px] font-semibold text-app-text transition-colors hover:border-app-primary/50 disabled:opacity-50"
+                                className="inline-flex items-center gap-1.5 rounded-xl border border-app-border bg-app-card px-2.5 py-1 text-[11px] font-semibold text-app-text transition-colors hover:border-app-primary/50 disabled:opacity-50"
                             >
                                 <PackagePlus className="h-3 w-3" /> Add {missing.length} to inventory
                             </button>
@@ -227,7 +227,7 @@ export const IngredientsTab: React.FC<{
                             <div className="h-px flex-1 bg-app-border"></div>
                         </div>
 
-                        <div className="bg-app-elevated border border-app-border overflow-hidden divide-y divide-app-border">
+                        <div className="bg-app-elevated rounded-xl border border-app-border overflow-hidden divide-y divide-app-border">
                             {section.ingredients?.map((ing, index) => {
                                 // Fix: Change 'ri' to 'ing' as 'ri' is not defined in this scope
                                 const pantryItem = pantryIngredients.find(pi => pi.id === ing.ingredientId);

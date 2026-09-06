@@ -14,11 +14,11 @@ import { formatCurrency, cn, ANIMATION_VARIANTS } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Segmented } from '../components/ui/kit';
 
-const COLORS = ['#28A3CC', '#20B883', '#8EC1D6', '#F39A23', '#D85D68', '#64747D'];
+const COLORS = ['#2A7F72', '#C0A15A', '#7FB6A3', '#D89A2B', '#C4585F', '#6B7C76'];
 
 // Shared chart styling tokens
-const AXIS_STROKE = 'rgba(148,148,148,0.25)';
-const TICK_FILL = '#9C9C9C';
+const AXIS_STROKE = 'rgba(107,124,118,0.22)';
+const TICK_FILL = '#97A6A0';
 
 const MetricCard: React.FC<{
     title: string;
@@ -189,9 +189,9 @@ const AnalyticsPage: React.FC = () => {
                                             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 8px 28px -12px rgba(0,0,0,0.45)', fontSize: '12px', fontWeight: 600 }}
                                             formatter={(v: number) => formatCurrency(v)}
                                         />
-                                        <Bar dataKey="revenue" fill="#8EC1D6" fillOpacity={0.18} radius={[4, 4, 0, 0]} barSize={30} />
-                                        <Line type="monotone" dataKey="profit" stroke="#20B883" strokeWidth={2.5} dot={{ r: 3, fill: '#20B883' }} />
-                                        <Line type="monotone" dataKey="cogs" stroke="#F39A23" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
+                                        <Bar dataKey="revenue" fill="#7FB6A3" fillOpacity={0.25} radius={[4, 4, 0, 0]} barSize={30} />
+                                        <Line type="monotone" dataKey="profit" stroke="#2A7F72" strokeWidth={2.5} dot={{ r: 3, fill: '#2A7F72' }} />
+                                        <Line type="monotone" dataKey="cogs" stroke="#C0A15A" strokeWidth={1.5} strokeDasharray="4 4" dot={false} />
                                     </ComposedChart>
                                 </ResponsiveContainer>
                             </div>
@@ -234,7 +234,7 @@ const AnalyticsPage: React.FC = () => {
                                 half-row read as a rendering fault. */}
                             <div className="mt-2 space-y-1">
                                 {inventoryData.slice(0, 4).map((i, idx) => (
-                                    <div key={i.name} className="flex items-center justify-between px-2 py-1 bg-app-muted/10 border border-app-border">
+                                    <div key={i.name} className="flex items-center justify-between px-2 py-1 bg-app-muted/10 rounded-xl border border-app-border">
                                         <div className="flex items-center gap-2">
                                             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
                                             <span className="text-xs font-medium truncate max-w-[100px] text-app-muted">{i.name}</span>

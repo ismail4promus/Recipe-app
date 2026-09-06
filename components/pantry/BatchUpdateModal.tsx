@@ -76,7 +76,7 @@ export const BatchUpdateModal: React.FC<{
                         <div className="relative group">
                             <input
                                 type="number" step="any" min="0" autoFocus required value={value} onChange={e => setValue(e.target.value)}
-                                className="w-full h-14 px-3 bg-app-elevated border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-2xl font-bold text-app-text tabular-nums tracking-tight"
+                                className="w-full h-14 px-3 bg-app-elevated rounded-xl border border-app-border focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 text-2xl font-bold text-app-text tabular-nums tracking-tight"
                                 placeholder="0"
                             />
                             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none">
@@ -97,7 +97,7 @@ export const BatchUpdateModal: React.FC<{
 
                     <button
                         type="submit" disabled={!valid || count === 0}
-                        className="w-full min-h-[44px] bg-app-primary text-primary-foreground text-sm font-semibold shadow-soft hover:brightness-105 active:scale-[0.97] transition-all disabled:opacity-50"
+                        className="w-full min-h-[44px] rounded-full bg-app-primary text-primary-foreground text-sm font-semibold shadow-soft hover:brightness-105 active:scale-[0.97] transition-all disabled:opacity-50"
                     >
                         {operation === 'set' ? 'Set' : operation === 'add' ? 'Add' : 'Subtract'} stock on {count} item{count === 1 ? '' : 's'}
                     </button>

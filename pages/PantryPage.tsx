@@ -295,14 +295,14 @@ export default function PantryPage() {
                             aria-expanded={menuOpen}
                             title="Import / export"
                             disabled={importing}
-                            className="inline-flex h-10 w-10 items-center justify-center border border-app-border bg-app-elevated text-app-muted shadow-soft transition-all hover:text-app-text hover:border-app-primary/40 active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+                            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-app-border bg-app-elevated text-app-muted shadow-soft transition-all hover:text-app-text hover:border-app-primary/40 active:scale-[0.98] disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
                         >
                             {importing ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <MoreVertical className="h-[18px] w-[18px]" />}
                         </button>
                         {menuOpen && (
                             <>
                                 <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
-                                <div role="menu" className="absolute right-0 top-11 z-50 w-52 border border-app-border bg-app-card py-1 shadow-card">
+                                <div role="menu" className="absolute right-0 top-11 z-50 w-52 rounded-xl border border-app-border bg-app-card py-1 shadow-card">
                                     <button
                                         role="menuitem"
                                         onClick={() => { setMenuOpen(false); fileInputRef.current?.click(); }}
@@ -382,7 +382,7 @@ export default function PantryPage() {
                     { label: 'Low Stock', val: lowStockCount, icon: ShieldAlert, color: 'text-app-warning' },
                     { label: 'Expiring Soon', val: expiringSoonCount, icon: Activity, color: 'text-app-success' }
                 ].map((stat, i) => (
-                    <div key={i} className="bg-app-card border border-app-border px-2.5 py-2 flex items-center gap-2.5 shadow-soft transition-colors hover:border-app-primary/40">
+                    <div key={i} className="bg-app-card rounded-xl border border-app-border px-2.5 py-2 flex items-center gap-2.5 shadow-soft transition-colors hover:border-app-primary/40">
                         <span className="h-8 w-8 shrink-0 flex items-center justify-center bg-app-muted/10">
                             <stat.icon className={cn("h-4 w-4", stat.color)} />
                         </span>
@@ -402,7 +402,7 @@ export default function PantryPage() {
                             placeholder="Search inventory…"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full h-9 pl-9 pr-3 bg-app-elevated border border-app-border text-sm text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 placeholder:text-app-muted"
+                            className="w-full h-9 pl-9 pr-3 bg-app-elevated rounded-xl border border-app-border text-sm text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60 placeholder:text-app-muted"
                         />
                     </div>
 
@@ -455,14 +455,14 @@ export default function PantryPage() {
                     </span>
                     <button
                         onClick={() => setSelectedIds(new Set(filteredIngredients.map(i => i.id)))}
-                        className="h-7 border border-app-border bg-app-card px-2.5 text-[11px] font-semibold text-app-text hover:border-app-primary/50"
+                        className="h-7 rounded-xl border border-app-border bg-app-card px-2.5 text-[11px] font-semibold text-app-text hover:border-app-primary/50"
                     >
                         Select all
                     </button>
                     <button
                         onClick={() => setSelectedIds(new Set())}
                         disabled={selectedIds.size === 0}
-                        className="h-7 border border-app-border bg-app-card px-2.5 text-[11px] font-semibold text-app-text hover:border-app-primary/50 disabled:opacity-40"
+                        className="h-7 rounded-xl border border-app-border bg-app-card px-2.5 text-[11px] font-semibold text-app-text hover:border-app-primary/50 disabled:opacity-40"
                     >
                         Clear
                     </button>
@@ -471,7 +471,7 @@ export default function PantryPage() {
                         <button
                             onClick={() => setShowBatchModal(true)}
                             disabled={selectedIds.size === 0}
-                            className="inline-flex h-7 items-center gap-1.5 bg-app-primary px-2.5 text-[11px] font-semibold text-primary-foreground hover:brightness-105 disabled:opacity-40"
+                            className="inline-flex h-7 items-center gap-1.5 rounded-full bg-app-primary px-3 text-[11px] font-semibold text-primary-foreground hover:brightness-105 disabled:opacity-40"
                         >
                             <Layers className="h-3 w-3" /> Update stock
                         </button>

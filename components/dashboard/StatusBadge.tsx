@@ -8,7 +8,7 @@ export type CookingStatus = 'Not Started' | 'Preparing' | 'Cooking' | 'Ready' | 
 type Tone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
 
 const TONE_STYLES: Record<Tone, string> = {
-  neutral: 'bg-white/5 text-app-muted border-white/10',
+  neutral: 'bg-app-muted/10 text-app-muted border-app-muted/20',
   info: 'bg-app-info/10 text-app-info border-app-info/25',
   success: 'bg-app-success/10 text-app-success border-app-success/25',
   warning: 'bg-app-warning/10 text-app-warning border-app-warning/25',
@@ -37,7 +37,7 @@ export const orderStatusLabel = (status: OrderStatus) => ORDER_MAP[status]?.labe
 const Badge: React.FC<{ label: string; tone: Tone; className?: string; dot?: boolean }> = ({ label, tone, className, dot }) => (
   <span
     className={cn(
-      'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap',
+      'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap',
       TONE_STYLES[tone],
       className
     )}

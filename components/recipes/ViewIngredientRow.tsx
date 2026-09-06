@@ -154,7 +154,7 @@ export const ViewIngredientRow: React.FC<{
                                             onChange={(e) => setBridgeValue(e.target.value)}
                                             onKeyDown={(e) => { if (e.key === 'Enter') saveBridge(); if (e.key === 'Escape') setShowBridge(false); }}
                                             onClick={(e) => e.stopPropagation()}
-                                            className="w-16 h-5 px-1 text-center tabular-nums bg-app-elevated border border-app-border text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+                                            className="w-16 h-5 px-1 text-center tabular-nums bg-app-elevated rounded-xl border border-app-border text-app-text focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
                                             placeholder="0"
                                         />
                                         {unitLabel(pantryItem!.baseUnit)}
@@ -186,7 +186,7 @@ export const ViewIngredientRow: React.FC<{
             {/* Quantity + stock — one row (line 2) on mobile; dissolves into the desktop row */}
             <div className="flex items-center justify-between gap-2 pl-[34px] md:pl-0 md:contents">
                 {/* Quantity — fixed width on desktop so the column lines up down the list */}
-                <div className="flex items-center bg-app-muted/10 border border-app-border md:justify-end md:w-[128px] shrink-0">
+                <div className="flex items-center bg-app-muted/10 rounded-xl border border-app-border md:justify-end md:w-[128px] shrink-0">
                     {isConverted && (
                         <div className="flex items-center px-1.5 py-0.5 gap-1 text-app-muted opacity-70">
                             <span className="font-medium text-xs">{formatQuantity(requiredAmountBase, safeIngUnit)}</span>
@@ -194,7 +194,7 @@ export const ViewIngredientRow: React.FC<{
                             <ArrowRight className="h-3 w-3 mx-0.5" />
                         </div>
                     )}
-                    <div className="flex items-center justify-end flex-1 bg-app-card px-2 py-0.5 border border-app-border">
+                    <div className="flex items-center justify-end flex-1 bg-app-card px-2 py-0.5 rounded-xl border border-app-border">
                         <span className="font-semibold text-sm text-app-primary tabular-nums mr-1.5">{formatQuantity(displayedAmount, safeCurrentUnit)}</span>
                         <div className="relative">
                             <select
@@ -216,7 +216,7 @@ export const ViewIngredientRow: React.FC<{
                     <div className="hidden md:flex md:w-[72px] md:justify-end">{priceEl}</div>
 
                     {pantryItem ? (
-                        <div className="flex items-center justify-end gap-1 md:w-[92px] text-[11px] text-app-muted bg-app-muted/10 px-1.5 py-0.5 border border-app-border">
+                        <div className="flex items-center justify-end gap-1 md:w-[92px] text-[11px] text-app-muted bg-app-muted/10 px-1.5 py-0.5 rounded-xl border border-app-border">
                             <span className={cn("font-medium", isLowStock && "text-app-danger font-semibold")}>{pantryItem.packagesInStock} {pantryItem.packageUnit}</span>
                             <button aria-label="Edit inventory" onClick={(e) => { e.stopPropagation(); onEditPantryItem(pantryItem); }} className="hover:text-app-primary transition-colors border-l border-app-border pl-1 ml-0.5">
                                 <Edit className="h-2.5 w-2.5" />

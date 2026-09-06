@@ -253,7 +253,7 @@ export default function RecipesPage() {
               </>
             )}
           </div>
-          <Link to="/recipes/new" aria-label="Add recipe" className="inline-flex h-10 items-center justify-center gap-2 bg-app-primary px-3 sm:px-4 text-sm font-semibold text-primary-foreground shadow-soft transition-all hover:brightness-105 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+          <Link to="/recipes/new" aria-label="Add recipe" className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-app-primary px-4 sm:px-4 text-sm font-semibold text-primary-foreground shadow-soft transition-all hover:brightness-105 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
             <Plus className="h-[18px] w-[18px]" /> <span className="hidden sm:inline">Add Recipe</span>
           </Link>
         </div>
@@ -269,7 +269,7 @@ export default function RecipesPage() {
               aria-label="Search recipes"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-9 w-full border border-app-border bg-app-elevated pl-9 pr-3 text-sm text-app-text placeholder:text-app-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+              className="h-9 w-full rounded-xl border border-app-border bg-app-elevated pl-9 pr-3 text-sm text-app-text placeholder:text-app-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
             />
           </div>
 

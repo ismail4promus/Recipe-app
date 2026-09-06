@@ -200,7 +200,7 @@ export default function ShoppingListPage() {
       </motion.div>
 
       {list.lines.length === 0 ? (
-        <div className="flex flex-col items-center justify-center border border-dashed border-app-border bg-app-card py-16 text-center">
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-app-border bg-app-card py-16 text-center">
           <CheckCircle2 className="h-10 w-10 text-app-success" />
           <p className="mt-3 text-sm font-semibold text-app-text">Nothing to buy</p>
           <p className="mt-1 max-w-sm text-xs leading-relaxed text-app-muted">
@@ -212,7 +212,7 @@ export default function ShoppingListPage() {
         <>
           {/* Why the list looks like this */}
           {list.demandCount > 0 && (
-            <motion.p variants={ANIMATION_VARIANTS.item} className="flex items-start gap-2 border border-app-border bg-app-card px-2.5 py-2 text-xs leading-relaxed text-app-muted">
+            <motion.p variants={ANIMATION_VARIANTS.item} className="flex items-start gap-2 rounded-xl border border-app-border bg-app-card px-2.5 py-2 text-xs leading-relaxed text-app-muted">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-app-info" />
               <span>
                 <span className="font-semibold text-app-text">{list.demandCount}</span> item
@@ -246,7 +246,7 @@ export default function ShoppingListPage() {
                 <div
                   key={line.item.id}
                   className={cn(
-                    'flex items-center gap-2.5 border bg-app-card p-2.5 transition-colors',
+                    'flex items-center gap-2.5 rounded-xl border bg-app-card p-2.5 transition-colors',
                     isPicked ? 'border-app-success/50 bg-app-success/5' : 'border-app-border'
                   )}
                 >
@@ -282,7 +282,7 @@ export default function ShoppingListPage() {
                   </div>
 
                   {/* Quantity in packages — the unit the shop actually sells */}
-                  <div className="flex shrink-0 items-center border border-app-border">
+                  <div className="flex shrink-0 items-center rounded-xl border border-app-border">
                     <button
                       onClick={() => setQty(line.item.id, qty - 1)}
                       aria-label={`One less ${line.item.packageUnit} of ${line.item.name}`}
@@ -351,7 +351,7 @@ export default function ShoppingListPage() {
 
       {/* Basket bar — appears only once something is ticked */}
       {pickedLines.length > 0 && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-app-border bg-app-card px-3 py-2.5 pb-[calc(58px_+_env(safe-area-inset-bottom)_+_0.625rem)] shadow-soft md:pb-2.5">
+        <div className="fixed inset-x-0 bottom-0 z-40 rounded-t-3xl border-t border-app-border bg-app-card px-3 py-2.5 pb-[calc(62px_+_env(safe-area-inset-bottom)_+_0.625rem)] shadow-soft md:pb-2.5">
           <div className="mx-auto flex max-w-5xl items-center gap-3">
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-app-text">

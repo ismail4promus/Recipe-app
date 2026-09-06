@@ -30,11 +30,11 @@ export default function SignInPage() {
             <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md bg-app-card border border-app-border shadow-card"
+                className="w-full max-w-md bg-app-card rounded-2xl border border-app-border shadow-card"
             >
                 <div className="border-b border-app-border p-6 md:p-8">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="h-11 w-11 bg-app-primary text-primary-foreground flex items-center justify-center shrink-0">
+                        <div className="h-11 w-11 rounded-[14px] bg-app-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-soft">
                             <ChefHat className="h-6 w-6" />
                         </div>
                         <div>
@@ -61,7 +61,7 @@ export default function SignInPage() {
                         type="button"
                         onClick={() => { clearError(); signInWithGoogle(); }}
                         disabled={signingIn || loading}
-                        className="w-full min-h-[52px] bg-app-elevated border border-app-border text-app-text font-semibold text-sm flex items-center justify-center gap-3 hover:border-app-primary/50 hover:bg-app-muted/10 active:scale-[0.99] transition-all disabled:opacity-60 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+                        className="w-full min-h-[52px] bg-app-elevated rounded-xl border border-app-border text-app-text font-semibold text-sm flex items-center justify-center gap-3 hover:border-app-primary/50 hover:bg-app-muted/10 active:scale-[0.99] transition-all disabled:opacity-60 disabled:pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
                     >
                         {signingIn ? <Loader2 className="h-5 w-5 animate-spin" /> : <GoogleMark />}
                         {signingIn ? 'Signing in…' : 'Continue with Google'}

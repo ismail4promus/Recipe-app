@@ -25,6 +25,7 @@
               success: 'rgb(var(--c-success) / <alpha-value>)',
               warning: 'rgb(var(--c-warning) / <alpha-value>)',
               danger: 'rgb(var(--c-danger) / <alpha-value>)',
+              accent: 'rgb(var(--c-accent) / <alpha-value>)',
               muted: 'rgb(var(--c-muted) / <alpha-value>)',
               faint: 'rgb(var(--c-faint) / <alpha-value>)',
               text: 'rgb(var(--c-text) / <alpha-value>)',
@@ -40,26 +41,26 @@
               foreground: 'rgb(var(--c-primary-fg) / <alpha-value>)',
             }
           },
-          // Squared-off design language: every surface is a crisp rectangle.
-          // Genuinely circular things (spinners, status dots) opt back in with
-          // the .circle utility in index.css.
+          // Soft, rounded design language: generous radii on every surface,
+          // pill-shaped controls. `.squared` in index.css opts back out.
           borderRadius: {
             'none': '0px',
-            'sm': '0px',
-            DEFAULT: '0px',
-            'md': '0px',
-            'lg': '0px',
-            'xl': '0px',
-            '2xl': '0px',
-            '3xl': '0px',
-            'full': '0px',
+            'sm': '8px',
+            DEFAULT: '12px',
+            'md': '12px',
+            'lg': '16px',
+            'xl': '20px',
+            '2xl': '24px',
+            '3xl': '32px',
+            'full': '9999px',
           },
-          // Sharp edges need light, tight shadows — big soft blurs read as
-          // rounded even when the corners are square.
+          // Rounded surfaces carry their weight with wide, low-opacity blurs
+          // instead of borders.
           boxShadow: {
-            soft: '0 1px 0 rgba(20,40,50,0.04), 0 1px 2px rgba(20,40,50,0.07)',
-            card: '0 1px 0 rgba(20,40,50,0.05), 0 2px 8px -4px rgba(20,40,50,0.16)',
-            float: '0 1px 0 rgba(20,40,50,0.06), 0 6px 16px -8px rgba(20,40,50,0.28)',
+            soft: '0 1px 2px rgba(20,45,38,0.04), 0 2px 8px -2px rgba(20,45,38,0.07)',
+            card: '0 2px 4px rgba(20,45,38,0.04), 0 8px 24px -8px rgba(20,45,38,0.13)',
+            float: '0 4px 8px rgba(20,45,38,0.05), 0 18px 40px -12px rgba(20,45,38,0.22)',
+            inner: 'inset 0 1px 2px rgba(20,45,38,0.06)',
           },
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
@@ -74,44 +75,46 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@100..800&display=swap" rel="stylesheet">
   <style>
-    /* ---- Light theme (default) — pale, airy, slightly blue ---- */
+    /* ---- Light theme (default) — soft sage, cream cards, forest accents ---- */
     :root, .light {
-      --c-bg: 237 247 250;        /* #EDF7FA main */
-      --c-secondary: 228 242 246; /* #E4F2F6 */
-      --c-sidebar: 225 241 245;   /* #E1F1F5 navigation */
+      --c-bg: 238 243 240;        /* #EEF3F0 sage-tinted page */
+      --c-secondary: 228 237 232; /* #E4EDE8 */
+      --c-sidebar: 231 240 236;   /* #E7F0EC navigation */
       --c-card: 255 255 255;      /* #FFFFFF */
-      --c-elevated: 248 251 252;  /* #F8FBFC */
-      --c-primary: 42 145 179;    /* #2A91B3 teal */
+      --c-elevated: 247 246 240;  /* #F7F6F0 cream inner panels */
+      --c-primary: 19 61 53;      /* #133D35 deep forest */
       --c-primary-fg: 255 255 255;
-      --c-info: 42 145 179;       /* teal = information */
-      --c-success: 32 184 131;    /* #20B883 */
-      --c-warning: 243 154 35;    /* #F39A23 */
-      --c-danger: 216 93 104;     /* #D85D68 */
-      --c-muted: 100 116 125;     /* #64747D secondary text */
-      --c-faint: 152 166 172;     /* #98A6AC muted text */
-      --c-text: 32 42 51;         /* #202A33 */
-      --c-border: #D8E5E9;
-      --c-scrollbar: rgba(32, 42, 51, 0.20);
+      --c-accent: 192 161 90;     /* #C0A15A gold */
+      --c-info: 42 127 114;       /* #2A7F72 */
+      --c-success: 46 158 119;    /* #2E9E77 */
+      --c-warning: 216 154 43;    /* #D89A2B */
+      --c-danger: 196 88 95;      /* #C4585F */
+      --c-muted: 107 124 118;     /* #6B7C76 secondary text */
+      --c-faint: 151 166 160;     /* #97A6A0 muted text */
+      --c-text: 23 36 31;         /* #17241F */
+      --c-border: #DDE7E2;
+      --c-scrollbar: rgba(23, 36, 31, 0.18);
       color-scheme: light;
     }
 
-    /* ---- Dark theme — charcoal blue, not pure black ---- */
+    /* ---- Dark theme — deep forest, not pure black ---- */
     .dark {
-      --c-bg: 39 50 58;           /* #27323A main */
-      --c-secondary: 48 61 69;    /* #303D45 */
-      --c-sidebar: 37 48 57;      /* #253039 navigation */
-      --c-card: 55 70 78;         /* #37464E */
-      --c-elevated: 61 77 85;     /* #3D4D55 */
-      --c-primary: 40 163 204;    /* #28A3CC teal */
-      --c-primary-fg: 255 255 255;
-      --c-info: 40 163 204;       /* teal */
-      --c-success: 40 201 145;    /* #28C991 */
-      --c-warning: 245 160 42;    /* #F5A02A */
-      --c-danger: 224 105 114;    /* #E06972 */
-      --c-muted: 194 205 210;     /* #C2CDD2 secondary text */
-      --c-faint: 135 150 158;     /* #87969E muted text */
-      --c-text: 246 248 249;      /* #F6F8F9 */
-      --c-border: #46565E;
+      --c-bg: 22 33 29;           /* #16211D main */
+      --c-secondary: 29 42 38;    /* #1D2A26 */
+      --c-sidebar: 18 28 25;      /* #121C19 navigation */
+      --c-card: 34 48 43;         /* #22302B */
+      --c-elevated: 42 58 52;     /* #2A3A34 */
+      --c-primary: 111 194 166;   /* #6FC2A6 sage green */
+      --c-primary-fg: 16 32 27;   /* #10201B */
+      --c-accent: 214 185 107;    /* #D6B96B gold */
+      --c-info: 111 194 166;
+      --c-success: 69 199 149;    /* #45C795 */
+      --c-warning: 229 174 73;    /* #E5AE49 */
+      --c-danger: 224 117 124;    /* #E0757C */
+      --c-muted: 183 198 192;     /* #B7C6C0 secondary text */
+      --c-faint: 127 145 139;     /* #7F918B muted text */
+      --c-text: 242 246 244;      /* #F2F6F4 */
+      --c-border: #33453E;
       --c-scrollbar: rgba(255, 255, 255, 0.16);
       color-scheme: dark;
     }
@@ -119,12 +122,13 @@
     /* First-use: respect device dark preference before JS applies a class */
     @media (prefers-color-scheme: dark) {
       :root:not(.light):not(.dark) {
-        --c-bg: 39 50 58; --c-secondary: 48 61 69; --c-sidebar: 37 48 57;
-        --c-card: 55 70 78; --c-elevated: 61 77 85;
-        --c-primary: 40 163 204; --c-primary-fg: 255 255 255; --c-info: 40 163 204;
-        --c-success: 40 201 145; --c-warning: 245 160 42; --c-danger: 224 105 114;
-        --c-muted: 194 205 210; --c-faint: 135 150 158; --c-text: 246 248 249;
-        --c-border: #46565E; --c-scrollbar: rgba(255,255,255,0.16); color-scheme: dark;
+        --c-bg: 22 33 29; --c-secondary: 29 42 38; --c-sidebar: 18 28 25;
+        --c-card: 34 48 43; --c-elevated: 42 58 52;
+        --c-primary: 111 194 166; --c-primary-fg: 16 32 27; --c-accent: 214 185 107;
+        --c-info: 111 194 166; --c-success: 69 199 149; --c-warning: 229 174 73;
+        --c-danger: 224 117 124; --c-muted: 183 198 192; --c-faint: 127 145 139;
+        --c-text: 242 246 244; --c-border: #33453E;
+        --c-scrollbar: rgba(255,255,255,0.16); color-scheme: dark;
       }
     }
 
@@ -147,16 +151,17 @@
     /* Softened from the old all-caps "tactical" style */
     .tactical-label {
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: rgb(var(--c-muted));
+      letter-spacing: 0.08em;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: rgb(var(--c-faint));
     }
 
     .glass-panel {
-      background: rgb(var(--c-card) / 0.72);
-      backdrop-filter: blur(12px);
+      background: rgb(var(--c-card) / 0.78);
+      backdrop-filter: blur(14px);
       border: 1px solid var(--c-border);
+      border-radius: 20px;
     }
 
     .status-pulse {

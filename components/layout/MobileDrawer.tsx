@@ -31,12 +31,12 @@ const MobileDrawer: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
           >
             <div className="flex items-center justify-between px-5 h-[68px] border-b border-app-border">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-app-primary text-primary-foreground">
+                <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-app-primary text-primary-foreground shadow-soft">
                   <ChefHat className="h-5 w-5" />
                 </div>
                 <span className="text-lg font-bold tracking-tight text-app-text">iCooking</span>
               </div>
-              <button onClick={onClose} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text">
+              <button onClick={onClose} aria-label="Close menu" className="flex h-10 w-10 items-center justify-center rounded-full text-app-muted hover:bg-app-muted/10 hover:text-app-text">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -50,7 +50,7 @@ const MobileDrawer: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
                   className={({ isActive }) =>
                     cn(
                       'flex items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60',
-                      isActive ? 'bg-app-primary/12 text-app-primary font-semibold' : 'text-app-muted hover:bg-white/[0.04] hover:text-app-text'
+                      isActive ? 'bg-app-primary/12 text-app-primary font-semibold' : 'text-app-muted hover:bg-app-muted/10 hover:text-app-text'
                     )
                   }
                 >
@@ -64,9 +64,9 @@ const MobileDrawer: React.FC<{ open: boolean; onClose: () => void }> = ({ open, 
               <Link
                 to={user ? '/settings' : '/signin'}
                 onClick={onClose}
-                className="flex items-center gap-2.5 border border-app-border bg-app-card p-2"
+                className="flex items-center gap-2.5 rounded-2xl border border-app-border bg-app-card p-2 shadow-soft"
               >
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden border border-app-border bg-app-elevated text-app-muted">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-app-border bg-app-elevated text-app-muted">
                   {user?.photoURL
                     ? <img src={user.photoURL} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
                     : <User className="h-4 w-4" />}

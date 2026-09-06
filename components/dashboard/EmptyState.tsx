@@ -21,7 +21,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ icon: Icon, title, message, act
     {actionLabel && to && (
       <Link
         to={to}
-        className="mt-4 rounded-lg border border-app-border px-4 py-2 text-xs font-semibold text-app-text transition-colors hover:border-app-primary/50 hover:text-app-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+        className="mt-4 rounded-full border border-app-border bg-app-card px-4 py-2 text-xs font-semibold text-app-text shadow-soft transition-colors hover:border-app-primary/40 hover:text-app-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/50"
       >
         {actionLabel}
       </Link>

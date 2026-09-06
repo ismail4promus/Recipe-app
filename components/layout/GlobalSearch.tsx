@@ -109,7 +109,7 @@ const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNaviga
 
   return (
     <div ref={rootRef} className={cn('relative', className)}>
-      <div className="flex h-10 items-center rounded-lg border border-app-border bg-app-bg px-3 transition-colors focus-within:border-app-primary/50">
+      <div className="flex h-11 items-center rounded-full border border-app-border bg-app-card px-4 shadow-soft transition-colors focus-within:border-app-primary/50">
         <Search className="mr-2 h-4 w-4 shrink-0 text-app-muted" />
         <input
           value={q}
@@ -127,12 +127,12 @@ const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNaviga
           </button>
         ) : showShortcut ? (
           // Points at the faster route without getting in the way.
-          <kbd className="ml-2 hidden shrink-0 border border-app-border px-1.5 py-0.5 text-[10px] font-semibold text-app-muted lg:block">⌘K</kbd>
+          <kbd className="ml-2 hidden shrink-0 rounded-md border border-app-border px-1.5 py-0.5 text-[10px] font-semibold text-app-muted lg:block">⌘K</kbd>
         ) : null}
       </div>
 
       {open && q.trim() && (
-        <div className="absolute left-0 right-0 top-12 z-50 max-h-[70vh] overflow-y-auto rounded-xl border border-app-border bg-app-card p-2 shadow-2xl">
+        <div className="absolute left-0 right-0 top-14 z-50 max-h-[70vh] overflow-y-auto rounded-2xl border border-app-border bg-app-card p-2 shadow-float">
           {results.length === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-app-muted">No matches for “{q}”.</p>
           ) : (
@@ -151,7 +151,7 @@ const GlobalSearch: React.FC<{ className?: string; autoFocus?: boolean; onNaviga
                         onClick={() => go(r)}
                         className={cn(
                           'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors',
-                          idx === active ? 'bg-white/[0.06]' : 'hover:bg-white/[0.03]'
+                          idx === active ? 'bg-app-primary/10' : 'hover:bg-app-muted/10'
                         )}
                       >
                         <Icon className="h-4 w-4 shrink-0 text-app-muted" />

@@ -479,7 +479,7 @@ export default function AddRecipePage() {
             {/* Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 md:gap-2.5 border-b border-app-border pb-4 md:pb-3">
                 <div className="flex items-center gap-3 md:gap-2.5">
-                    <button aria-label="Go back" type="button" onClick={handleBack} className="h-11 w-11 shrink-0 flex items-center justify-center bg-app-card border border-app-border text-app-muted hover:text-app-primary transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
+                    <button aria-label="Go back" type="button" onClick={handleBack} className="h-11 w-11 shrink-0 flex items-center justify-center bg-app-card rounded-xl border border-app-border text-app-muted hover:text-app-primary transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60">
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                     <div className="min-w-0 flex-1">
@@ -499,11 +499,11 @@ export default function AddRecipePage() {
                 </div>
                 <button
                     type="submit"
-                    className="bg-app-primary text-primary-foreground min-h-[44px] px-8 rounded-md font-semibold text-sm shadow-soft hover:brightness-105 active:scale-[0.97] transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
+                    className="bg-app-primary text-primary-foreground min-h-[44px] px-8 rounded-full font-semibold text-sm shadow-soft hover:brightness-105 active:scale-[0.97] transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-app-primary/60"
                 >
                     <Save className="h-4 w-4" /> Save Recipe
                     {issues.length > 0 && (
-                        <span className="ml-1 h-5 min-w-[20px] px-1 rounded-full bg-white/25 text-[11px] font-bold flex items-center justify-center tabular-nums">{issues.length}</span>
+                        <span className="ml-1 h-5 min-w-[20px] px-1 rounded-full bg-primary-foreground/25 text-[11px] font-bold flex items-center justify-center tabular-nums">{issues.length}</span>
                     )}
                 </button>
             </div>
@@ -542,7 +542,7 @@ export default function AddRecipePage() {
             </AnimatePresence>
 
             {/* Spec Tabs */}
-            <div className="flex border border-app-border bg-app-card overflow-x-auto scrollbar-hide shadow-soft sticky top-14 md:top-20 z-30">
+            <div className="flex rounded-xl border border-app-border bg-app-card overflow-x-auto scrollbar-hide shadow-soft sticky top-14 md:top-20 z-30">
                 {[
                     { id: 'general', label: 'Details', icon: ChefHat },
                     { id: 'ingredients', label: 'Ingredients', icon: ListOrdered },
@@ -565,7 +565,7 @@ export default function AddRecipePage() {
                         {showErrors && issuesByTab[tab.id] > 0 && (
                             <span className={cn(
                                 "h-4 min-w-[16px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center tabular-nums",
-                                activeTab === tab.id ? "bg-white/25" : "bg-app-danger/15 text-app-danger"
+                                activeTab === tab.id ? "bg-primary-foreground/25" : "bg-app-danger/15 text-app-danger"
                             )}>
                                 {issuesByTab[tab.id]}
                             </span>
@@ -580,7 +580,7 @@ export default function AddRecipePage() {
                         <motion.div key="general" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="grid grid-cols-1 lg:grid-cols-12 gap-2.5">
                             <div className="lg:col-span-8 bg-app-card border border-app-border p-3 md:p-2.5 rounded-lg relative overflow-hidden group shadow-soft">
                                 <div className="space-y-2.5 relative z-10">
-                                    <div className="relative aspect-video w-full bg-app-elevated overflow-hidden group/img border border-app-border">
+                                    <div className="relative aspect-video w-full bg-app-elevated overflow-hidden group/img rounded-xl border border-app-border">
                                         <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                                         {/* Touch devices have no hover — keep the controls visible below md. */}
                                         <div className="absolute inset-x-0 bottom-0 md:inset-0 bg-black/45 flex flex-col items-center justify-center opacity-100 md:opacity-0 md:group-hover/img:opacity-100 transition-opacity gap-2 md:gap-2.5 p-2 md:p-2.5">
@@ -588,7 +588,7 @@ export default function AddRecipePage() {
                                                 <button type="button" onClick={() => imageInputRef.current?.click()} className="flex-1 md:flex-none justify-center bg-app-primary text-primary-foreground px-3 md:px-3 min-h-[40px] md:min-h-[44px] font-semibold text-sm flex items-center gap-2 shadow-soft hover:brightness-105 transition-all">
                                                     <Upload className="h-4 w-4" /> Upload
                                                 </button>
-                                                <button type="button" onClick={() => setShowUrlInput(!showUrlInput)} className="flex-1 md:flex-none justify-center bg-app-elevated text-app-text px-3 md:px-3 min-h-[40px] md:min-h-[44px] font-semibold text-sm flex items-center gap-2 border border-app-border hover:bg-app-muted/10 transition-all">
+                                                <button type="button" onClick={() => setShowUrlInput(!showUrlInput)} className="flex-1 md:flex-none justify-center bg-app-elevated text-app-text px-3 md:px-3 min-h-[40px] md:min-h-[44px] font-semibold text-sm flex items-center gap-2 rounded-xl border border-app-border hover:bg-app-muted/10 transition-all">
                                                     <LinkIcon className="h-4 w-4" /> Link URL
                                                 </button>
                                             </div>
@@ -597,7 +597,7 @@ export default function AddRecipePage() {
                                                     type="text"
                                                     value={formData.imageUrl}
                                                     onChange={(e) => handleChange('imageUrl', e.target.value)}
-                                                    className="w-full max-w-md h-11 md:h-12 px-4 text-sm bg-app-elevated border border-app-primary text-app-text outline-none font-medium"
+                                                    className="w-full max-w-md h-11 md:h-12 px-4 text-sm rounded-xl bg-app-elevated border border-app-primary text-app-text outline-none font-medium"
                                                     placeholder="Paste image URL…"
                                                     autoFocus
                                                 />
@@ -913,7 +913,7 @@ export default function AddRecipePage() {
                                         </div>
                                         <input type="range" aria-label="Profit margin percentage" min="0" max="200" value={formData.profitMargin} onChange={e => handleChange('profitMargin', parseInt(e.target.value))} className="w-full accent-app-success bg-app-elevated" />
                                     </div>
-                                    <div className="p-2.5 md:p-3 bg-app-elevated border border-app-border flex items-center justify-between gap-3 flex-wrap">
+                                    <div className="p-2.5 md:p-3 bg-app-elevated rounded-xl border border-app-border flex items-center justify-between gap-3 flex-wrap">
                                         <span className="text-sm font-medium text-app-muted">Difficulty</span>
                                         <div className="flex gap-2">
                                             {(['Easy', 'Medium', 'Hard'] as const).map(lvl => (
